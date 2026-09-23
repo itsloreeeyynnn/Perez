@@ -1,519 +1,832 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Perez, Quezon</title>
-
-
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
-
-
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-  >
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap"
-    rel="stylesheet"
-  >
-
-  <style>
-    :root {
-      --navy: #071629;
-      --gold: #d9a62e;
-      --light-bg: #f6f9fc;
-    }
-
-    body {
-      margin: 0;
-      font-family: "DM Sans", sans-serif;
-      background: var(--light-bg);
-    }
-
-    /* =========================
-       NAVBAR
-    ========================== */
-
-    .navbar {
-      min-height: 74px;
-      background: var(--navy);
-    }
-
-    .navbar-brand {
-      font-family: "Playfair Display", serif;
-      font-size: 1.45rem;
-      color: #fff !important;
-      letter-spacing: 1px;
-    }
-
-    .navbar-brand span {
-      color: #c8a35c;
-    }
-
-    .navbar .nav-link {
-      color: rgba(255,255,255,.65);
-      font-size: .9rem;
-      margin: 0 10px;
-    }
-
-    .navbar .nav-link:hover,
-    .navbar .nav-link.active {
-      color: var(--gold);
-    }
-
-    .search-btn {
-      color: white;
-      border: 0;
-      background: transparent;
-      font-size: 1.25rem;
-    }
-
-    .trip-btn {
-      background: var(--gold);
-      border: none;
-      color: #152033;
-      font-weight: 600;
-      font-size: .8rem;
-      padding: 12px 22px;
-      border-radius: 4px;
-    }
-
-    .trip-btn:hover {
-      background: #e8b73d;
-    }
-
-    /* =========================
-       HERO
-    ========================== */
-
-    .hero {
-      position: relative;
-      min-height: 650px;
-
-      background:
-        linear-gradient(
-          rgba(8, 21, 26, .45),
-          rgba(8, 21, 26, .45)
-        ),
-        url("perez-island.jpg");
-
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      color: white;
-    }
-
-    .hero-content {
-      max-width: 850px;
-      padding: 30px 20px 100px;
-    }
-
-    .hero-label {
-      color: var(--gold);
-      font-size: .85rem;
-      font-weight: 600;
-      letter-spacing: .5px;
-      margin-bottom: 22px;
-    }
-
-    .hero h1 {
-      font-family: "Playfair Display", serif;
-      font-size: clamp(2.6rem, 5vw, 4.4rem);
-      font-weight: 500;
-      margin-bottom: 22px;
-    }
-
-    .hero-description {
-      color: rgba(255,255,255,.85);
-      max-width: 700px;
-      margin: auto;
-      line-height: 1.8;
-      font-size: 1rem;
-    }
-
-    .hero-buttons {
-      margin-top: 35px;
-    }
-
-    .btn-explore {
-      background: var(--gold);
-      border: 1px solid var(--gold);
-      color: #152033;
-      font-weight: 600;
-      padding: 13px 27px;
-      border-radius: 3px;
-      font-size: .85rem;
-    }
-
-    .btn-explore:hover {
-      background: #e8b73d;
-      border-color: #e8b73d;
-    }
-
-    .btn-visit {
-      border: 1px solid white;
-      color: white;
-      padding: 13px 27px;
-      border-radius: 3px;
-      font-size: .85rem;
-      font-weight: 500;
-    }
-
-    .btn-visit:hover {
-      background: white;
-      color: #111;
-    }
-
-    /* =========================
-       QUICK NAVIGATION
-    ========================== */
-
-    .quick-nav-wrapper {
-      position: relative;
-      margin-top: -1px;
-      z-index: 10;
-    }
-
-    .quick-nav {
-      background: white;
-      min-height: 145px;
-      border-radius: 0 0 7px 7px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.04);
-    }
-
-    .quick-item {
-      text-decoration: none;
-      color: #172033;
-      text-align: center;
-      display: block;
-      padding: 28px 10px 20px;
-      transition: .2s ease;
-    }
-
-    .quick-item:hover {
-      color: var(--gold);
-      transform: translateY(-3px);
-    }
-
-    .icon-circle {
-      width: 50px;
-      height: 50px;
-      margin: 0 auto 12px;
-      border-radius: 50%;
-      background: #f5f8fc;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      font-size: 1.2rem;
-    }
-
-    .quick-item.active .icon-circle {
-      background: #fffdf6;
-      color: var(--gold);
-      border: 1px solid #d9bd72;
-    }
-
-    .quick-label {
-      font-size: .8rem;
-      font-weight: 500;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================== */
-
-    @media (max-width: 991px) {
-      .navbar-collapse {
-        padding: 15px 0;
-      }
-
-      .navbar .nav-link {
-        margin: 5px 0;
-      }
-
-      .hero {
-        min-height: 620px;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .hero {
-        min-height: 570px;
-      }
-
-      .hero-content {
-        padding-bottom: 60px;
-      }
-
-      .hero h1 {
-        font-size: 2.6rem;
-      }
-
-      .hero-description {
-        font-size: .9rem;
-      }
-
-      .hero-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .hero-buttons .btn {
-        width: 100%;
-      }
-
-      .quick-nav {
-        padding: 10px;
-      }
-
-      .quick-item {
-        padding: 15px 5px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <!-- =========================
-       NAVBAR
-  ========================== -->
-
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-
-      <a class="navbar-brand" href="#">
-        PEREZ <span>QUEZON</span>
-      </a>
-
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#mainNavbar"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="mainNavbar">
-
-        <ul class="navbar-nav mx-auto">
-
-          <li class="nav-item">
-            <a class="nav-link active" href="#">Home</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="#">Explore</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="#">Experiences</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="#">Events</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="#">Gallery</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="#">About Us</a>
-          </li>
-
-        </ul>
-
-        <div class="d-flex align-items-center gap-3">
-
-          <button class="search-btn">
-            <i class="bi bi-search"></i>
-          </button>
-
-          <button class="trip-btn">
-            PLAN YOUR TRIP
-          </button>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Perez, Quezon</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="page-wrapper">
+    <!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark main-navbar">
+      <div class="container">
+        <a class="navbar-brand" href="#"> PEREZ <span>QUEZON</span> </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#destinations">Explore</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#experiences">Experiences</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#events">Events</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#gallery">Gallery</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#footer">About Us</a>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center gap-3">
+            <button class="navbar-search">
+              <i class="bi bi-search"></i>
+            </button>
+
+            <button class="btn-trip">Plan Your Trip</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-content">
+
+    <!-- =========================================================
+     HERO
+========================================================= -->
+
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-eyebrow">An Unspoiled Island Paradise</div>
+
+        <h1>Discover Perez, Quezon</h1>
+
+        <p class="hero-description">
+          Escape to the serene shores of Perez Island. Experience rich heritage,
+          vibrant festival rhythms, and natural marine sanctuaries waiting to be
+          explored.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#destinations" class="btn btn-gold me-sm-2"> Explore Now </a>
+
+          <a href="#travel" class="btn btn-outline-light-custom">
+            Plan Your Visit
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+     QUICK NAVIGATION
+========================================================= -->
+
+    <section class="quick-nav-section">
+      <div class="container">
+        <div class="quick-nav">
+          <div class="row row-cols-3 row-cols-md-6 g-0">
+            <div class="col">
+              <a href="#destinations" class="quick-item active">
+                <div class="quick-icon">
+                  <i class="bi bi-compass"></i>
+                </div>
+                <span>Explore</span>
+              </a>
+            </div>
+
+            <div class="col">
+              <a href="#map" class="quick-item">
+                <div class="quick-icon">
+                  <i class="bi bi-map"></i>
+                </div>
+                <span>Map</span>
+              </a>
+            </div>
+
+            <div class="col">
+              <a href="#events" class="quick-item">
+                <div class="quick-icon">
+                  <i class="bi bi-calendar-event"></i>
+                </div>
+                <span>Events</span>
+              </a>
+            </div>
+
+            <div class="col">
+              <a href="#" class="quick-item">
+                <div class="quick-icon">
+                  <i class="bi bi-house-door"></i>
+                </div>
+                <span>Stay</span>
+              </a>
+            </div>
+
+            <div class="col">
+              <a href="#" class="quick-item">
+                <div class="quick-icon">
+                  <i class="bi bi-cup-hot"></i>
+                </div>
+                <span>Eat</span>
+              </a>
+            </div>
+
+            <div class="col">
+              <a href="#travel" class="quick-item">
+                <div class="quick-icon">
+                  <i class="bi bi-question-circle"></i>
+                </div>
+                <span>Travel Info</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+     TOP DESTINATIONS
+========================================================= -->
+
+    <section class="section-padding" id="destinations">
+      <div class="container">
+        <div class="row destination-header align-items-end">
+          <div class="col-lg-6">
+            <div class="section-label">Discover the best</div>
+
+            <h2 class="section-title">Top Destinations</h2>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="filter-tabs">
+              <button class="filter-btn active">All</button>
+
+              <button class="filter-btn">Beaches</button>
+
+              <button class="filter-btn">Nature</button>
+
+              <button class="filter-btn">Culture</button>
+            </div>
+          </div>
         </div>
 
+        <div class="row g-4">
+          <!-- Destination 1 -->
+
+          <div class="col-sm-6 col-lg-3">
+            <article class="destination-card">
+              <img
+                src="placeholder.svg"
+                class="destination-image"
+                alt="Perez Beach"
+              />
+
+              <div class="destination-body">
+                <div class="destination-category">BEACHES</div>
+
+                <h3 class="destination-title">Perez Beach</h3>
+
+                <p class="destination-text">
+                  An pristine stretch of sand and turquoise shallow waters ideal
+                  for peaceful sunbathing and swimming.
+                </p>
+
+                <a href="#" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Destination 2 -->
+
+          <div class="col-sm-6 col-lg-3">
+            <article class="destination-card">
+              <img
+                src="placeholder.svg"
+                class="destination-image"
+                alt="Alabat Island Mangroves"
+              />
+
+              <div class="destination-body">
+                <div class="destination-category">NATURE</div>
+
+                <h3 class="destination-title">Alabat Island Mangroves</h3>
+
+                <p class="destination-text">
+                  Navigate through vibrant lush mangrove forests protecting the
+                  rich marine bio-diversity of the island.
+                </p>
+
+                <a href="#" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Destination 3 -->
+
+          <div class="col-sm-6 col-lg-3">
+            <article class="destination-card">
+              <img
+                src="placeholder.svg"
+                class="destination-image"
+                alt="San Antonio De Padua"
+              />
+
+              <div class="destination-body">
+                <div class="destination-category">CULTURE</div>
+
+                <h3 class="destination-title">San Antonio De Padua</h3>
+
+                <p class="destination-text">
+                  Discover the serene spiritual charm of San Antonio de Padua
+                  Parish Church, a peaceful sanctuary nestled in the heart of
+                  Perez, Quezon.
+                </p>
+
+                <a href="#" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Destination 4 -->
+
+          <div class="col-sm-6 col-lg-3">
+            <article class="destination-card">
+              <img
+                src="placeholder.svg"
+                class="destination-image"
+                alt="Perez Fish Sanctuaries"
+              />
+
+              <div class="destination-body">
+                <div class="destination-category">ECOTOURISM</div>
+
+                <h3 class="destination-title">Perez Fish Sanctuaries</h3>
+
+                <p class="destination-text">
+                  Snorkel in clear ocean waters teeming with healthy coral reefs
+                  and colorful local marine life.
+                </p>
+
+                <a href="#" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
       </div>
-    </div>
-  </nav>
+    </section>
 
+    <!-- =========================================================
+     EXPLORE AREA / MAP
+========================================================= -->
 
-  <!-- =========================
-       HERO
-  ========================== -->
+    <section class="explore-area section-padding" id="map">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-5">
+            <div class="section-label">Navigate Alabat Island</div>
 
-  <section class="hero">
+            <h2 class="section-title">Explore the Area</h2>
 
-    <div class="hero-content">
+            <p class="explore-description">
+              Perez is a coastal town with prominent hills and upland areas
+              covering Barangays Pambuhan, Mainit Norte, and Sangirin. It has
+              irregular coastlines with rugged surfaces and beaches.
+            </p>
 
-      <div class="hero-label">
-        AN UNSPOILED ISLAND PARADISE
+            <p class="explore-description">
+              Inland water bodies consist of rivers, creeks, and springs. Most
+              notable are Sangirin River, Mainit River, Pinagtubigan Weste
+              River, Pinagsibangan River, Caguisi River and Mayanti Creek.
+            </p>
+
+            <ul class="map-legend">
+              <li>
+                <span class="legend-dot dot-beach"></span>
+                Beaches
+              </li>
+
+              <li>
+                <span class="legend-dot dot-mangrove"></span>
+                Ecological Mangrove Reserves
+              </li>
+
+              <li>
+                <span class="legend-dot dot-history"></span>
+                Historical &amp; Plaza Sites
+              </li>
+
+              <li>
+                <span class="legend-dot dot-snorkel"></span>
+                Snorkeling &amp; Dive Parks
+              </li>
+            </ul>
+          </div>
+
+          <div class="col-lg-7">
+            <div class="map-card">
+              <img src="placeholder.svg" alt="Map of Perez, Quezon" />
+
+              <div class="map-overlay">
+                <img src="placeholder.svg" class="map-thumb" alt="" />
+
+                <div>
+                  <small>PORT</small>
+                  <strong>Historical Pier Site</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <h1>
-        Discover Perez, Quezon
-      </h1>
+    <!-- =========================================================
+     UNIQUE EXPERIENCES
+========================================================= -->
 
-      <p class="hero-description">
-        Escape to the serene shores of Perez Island. Experience rich
-        heritage, vibrant festival rhythms, and natural marine sanctuaries
-        waiting to be explored.
-      </p>
+    <section class="section-padding" id="experiences">
+      <div class="container">
+        <div class="experiences-header">
+          <div class="section-label">What to expect</div>
 
-      <div class="hero-buttons">
-
-        <a href="#" class="btn btn-explore me-sm-2">
-          EXPLORE NOW
-        </a>
-
-        <a href="#" class="btn btn-visit">
-          PLAN YOUR VISIT
-        </a>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       QUICK NAVIGATION
-  ========================== -->
-
-  <div class="quick-nav-wrapper">
-    <div class="container">
-
-      <div class="quick-nav">
-
-        <div class="row row-cols-3 row-cols-md-6 g-0">
-
-          <!-- Explore -->
-          <div class="col">
-            <a href="#" class="quick-item active">
-
-              <div class="icon-circle">
-                <i class="bi bi-compass"></i>
-              </div>
-
-              <div class="quick-label">
-                Explore
-              </div>
-
-            </a>
-          </div>
-
-
-          <!-- Map -->
-          <div class="col">
-            <a href="#" class="quick-item">
-
-              <div class="icon-circle">
-                <i class="bi bi-map"></i>
-              </div>
-
-              <div class="quick-label">
-                Map
-              </div>
-
-            </a>
-          </div>
-
-
-          <!-- Events -->
-          <div class="col">
-            <a href="#" class="quick-item">
-
-              <div class="icon-circle">
-                <i class="bi bi-calendar-event"></i>
-              </div>
-
-              <div class="quick-label">
-                Events
-              </div>
-
-            </a>
-          </div>
-
-
-          <!-- Stay -->
-          <div class="col">
-            <a href="#" class="quick-item">
-
-              <div class="icon-circle">
-                <i class="bi bi-house-door"></i>
-              </div>
-
-              <div class="quick-label">
-                Stay
-              </div>
-
-            </a>
-          </div>
-
-
-          <!-- Eat -->
-          <div class="col">
-            <a href="#" class="quick-item">
-
-              <div class="icon-circle">
-                <i class="bi bi-cup-hot"></i>
-              </div>
-
-              <div class="quick-label">
-                Eat
-              </div>
-
-            </a>
-          </div>
-
-
-          <!-- Travel Info -->
-          <div class="col">
-            <a href="#" class="quick-item">
-
-              <div class="icon-circle">
-                <i class="bi bi-question-circle"></i>
-              </div>
-
-              <div class="quick-label">
-                Travel Info
-              </div>
-
-            </a>
-          </div>
-
+          <h2 class="section-title">Unique Experiences</h2>
         </div>
 
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="experience-card">
+              <img src="placeholder.svg" alt="Pristine Beaches" />
+
+              <div class="experience-name">
+                <span>Pristine Beaches</span>
+                <i class="bi bi-arrow-up-right"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="experience-card">
+              <img src="placeholder.svg" alt="Coastal Nature" />
+
+              <div class="experience-name">
+                <span>Coastal Nature</span>
+                <i class="bi bi-arrow-up-right"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="experience-card">
+              <img src="placeholder.svg" alt="Local Seafood and Cuisine" />
+
+              <div class="experience-name">
+                <span>Local Seafood &amp; Cuisine</span>
+                <i class="bi bi-arrow-up-right"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="experience-card large">
+              <img src="placeholder.svg" alt="Culture and Festival" />
+
+              <div class="experience-name">
+                <span>Culture &amp; Festival</span>
+                <i class="bi bi-arrow-up-right"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="experience-card large">
+              <img src="placeholder.svg" alt="Ecotourism" />
+
+              <div class="experience-name">
+                <span>Ecotourism</span>
+                <i class="bi bi-arrow-up-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </section>
 
-    </div>
-  </div>
+    <!-- =========================================================
+     TRAVEL INFORMATION
+========================================================= -->
 
+    <section class="travel-section section-padding" id="travel">
+      <div class="container">
+        <div class="row g-3 mb-4">
+          <!-- Getting There -->
 
-  <!-- Bootstrap JS -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
-  </script>
+          <div class="col-md-4">
+            <div class="travel-card">
+              <div class="travel-icon">
+                <i class="bi bi-signpost-2"></i>
+              </div>
 
-</body>
+              <h5>Getting There</h5>
+
+              <p>
+                Take a scenic passenger boat (lantsa) or RORO ferry from
+                Atimonan port directly to Alabat Island.
+              </p>
+            </div>
+          </div>
+
+          <!-- Best Time -->
+
+          <div class="col-md-4">
+            <div class="travel-card">
+              <div class="travel-icon">
+                <i class="bi bi-sun"></i>
+              </div>
+
+              <h5>Best Time</h5>
+
+              <p>
+                Visit between March and May for dry weather, calm ocean
+                crossings, and sunny beach days.
+              </p>
+            </div>
+          </div>
+
+          <!-- Local Tips -->
+
+          <div class="col-md-4">
+            <div class="travel-card">
+              <div class="travel-icon">
+                <i class="bi bi-lightbulb"></i>
+              </div>
+
+              <h5>Local Tips</h5>
+
+              <p>
+                Bring cash as ATMs are sparse. Rent a local tricycle or
+                motorcycle to explore freely.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Events -->
+
+        <div class="row g-4 align-items-stretch">
+          <div class="col-lg-6">
+            <div class="feature-event">
+              <img src="placeholder.svg" alt="Kayakas Festival" />
+
+              <div class="feature-event-content">
+                <span class="event-badge"> JUNE 15–20 </span>
+
+                <h3>Kayakas Festival</h3>
+
+                <p>
+                  A thanksgiving celebration of the bountiful coconut harvest
+                  and the marine livelihood of Perez, featuring energetic street
+                  dances, boats, and local crafts.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6" id="events">
+            <h3 class="events-title">Upcoming Local Events</h3>
+
+            <div class="event-row">
+              <div class="event-date">
+                <span class="month">May</span>
+                <span class="day">15</span>
+              </div>
+
+              <div class="event-info">
+                <strong>Fisherman's Feast Day</strong>
+                <small>Coastal San Jose Barangay</small>
+              </div>
+
+              <i class="bi bi-chevron-right event-arrow"></i>
+            </div>
+
+            <div class="event-row">
+              <div class="event-date">
+                <span class="month">June</span>
+                <span class="day">04</span>
+              </div>
+
+              <div class="event-info">
+                <strong>Coconut Agri-Trade Fair</strong>
+                <small>Municipal Complex</small>
+              </div>
+
+              <i class="bi bi-chevron-right event-arrow"></i>
+            </div>
+
+            <div class="event-row">
+              <div class="event-date">
+                <span class="month">June</span>
+                <span class="day">18</span>
+              </div>
+
+              <div class="event-info">
+                <strong>Perez Flotilla Parade</strong>
+                <small>Sande Bay Sanctuaries</small>
+              </div>
+
+              <i class="bi bi-chevron-right event-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+     PHOTO GALLERY
+========================================================= -->
+
+    <section class="section-padding" id="gallery">
+      <div class="container">
+        <div
+          class="gallery-header d-flex align-items-end justify-content-between"
+        >
+          <div>
+            <div class="section-label">Captured Moments</div>
+
+            <h2 class="section-title">Photo Gallery</h2>
+          </div>
+
+          <a href="#" class="gallery-link"> View All Photos </a>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+
+          <div class="col-6 col-md-3">
+            <img
+              src="placeholder.svg"
+              class="gallery-image"
+              alt="Perez gallery photo"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+     NEWSLETTER
+========================================================= -->
+
+    <section class="newsletter-wrapper">
+      <div class="container">
+        <div class="newsletter">
+          <div class="row align-items-center">
+            <div class="col-lg-7">
+              <h4>Join Our Newsletter</h4>
+
+              <p>
+                Get updates on the upcoming festival schedules, travel guides,
+                and ecotourism activities.
+              </p>
+            </div>
+
+            <div class="col-lg-5">
+              <form class="newsletter-form">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Enter your email address"
+                />
+
+                <button type="submit">Subscribe</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+     FOOTER
+========================================================= -->
+
+    <footer id="footer">
+      <div class="container">
+        <div class="row g-4">
+          <!-- About -->
+
+          <div class="col-lg-5">
+            <div class="footer-brand">PEREZ <span>QUEZON</span></div>
+
+            <p class="footer-description">
+              The pristine gateway municipality of Alabat Island. Experience
+              untouched natural beauty and rich historical Quezon culture.
+            </p>
+          </div>
+
+          <!-- Quick Links -->
+
+          <div class="col-6 col-lg-3">
+            <div class="footer-title">Quick Links</div>
+
+            <ul class="footer-links">
+              <li>
+                <a href="#">About Perez</a>
+              </li>
+
+              <li>
+                <a href="#">Tourist Destinations</a>
+              </li>
+
+              <li>
+                <a href="#">Local Festivals</a>
+              </li>
+
+              <li>
+                <a href="#">Accommodations</a>
+              </li>
+
+              <li>
+                <a href="#">Marine Parks</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact -->
+
+          <div class="col-6 col-lg-4">
+            <div class="footer-title">Contact Us</div>
+
+            <div class="contact-item">
+              <i class="bi bi-telephone"></i>
+              (042) 000-0000
+            </div>
+
+            <div class="contact-item">
+              <i class="bi bi-envelope"></i>
+              tourism@perezquezon.gov.ph
+            </div>
+
+            <div class="socials">
+              <a href="#" aria-label="Facebook">
+                <i class="bi bi-facebook"></i>
+              </a>
+
+              <a href="#" aria-label="Instagram">
+                <i class="bi bi-instagram"></i>
+              </a>
+
+              <a href="#" aria-label="Youtube">
+                <i class="bi bi-youtube"></i>
+              </a>
+
+              <a href="#" aria-label="Tiktok">
+                <i class="bi bi-tiktok"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center"
+        >
+          <span>
+            © 2025 Municipality of Perez, Quezon. All rights reserved.
+          </span>
+
+          <div>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    </div><!-- /.main-content -->
+    </div><!-- /.page-wrapper -->
+
+    <!-- Bootstrap JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      document.addEventListener('click', function (e) {
+        var link = e.target.closest('a[href^="#"]');
+        if (!link) return;
+        var id = link.getAttribute('href');
+        if (!id || id === '#') return;
+        var target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+        var collapse = document.querySelector('.navbar-collapse.show');
+        if (collapse) {
+          var bsCollapse = bootstrap.Collapse.getInstance(collapse);
+          if (bsCollapse) bsCollapse.hide();
+        }
+      });
+    </script>
+  </body>
 </html>
