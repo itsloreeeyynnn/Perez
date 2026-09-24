@@ -143,11 +143,22 @@ img {
 
 .hero {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: 590px;
   display: flex;
   align-items: center;
   justify-content: center;
 
+  color: white;
+  text-align: center;
+}
+
+.hero-background {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
   background-image:
     linear-gradient(rgba(5, 17, 22, 0.48), rgba(5, 17, 22, 0.48)),
     url("perez-island.jpg");
@@ -155,8 +166,6 @@ img {
   background-position: center;
   background-size: cover;
 
-  color: white;
-  text-align: center;
 }
 
 .hero-content {
@@ -199,6 +208,88 @@ img {
   font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
+  transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+}
+
+.hero-actions .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.18);
+}
+
+.hero h1 span {
+  color: var(--gold-light);
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  translate: -50% 0;
+  color: white;
+  font-size: 0.6875rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hero-scroll:hover {
+  color: var(--gold-light);
+}
+
+.hero-scroll i {
+  display: block;
+  margin-top: 4px;
+  animation: scroll-hint 2.5s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.hero-visible .hero-scroll i {
+  animation-play-state: running;
+}
+
+.hero-animated .hero-background {
+  animation: hero-zoom 15s ease-out both;
+}
+
+.hero-animated .hero-eyebrow,
+.hero-animated h1,
+.hero-animated .hero-description,
+.hero-animated .hero-actions,
+.hero-animated .hero-scroll {
+  animation: hero-entrance 650ms ease-out both;
+}
+
+.hero-animated h1 { animation-delay: 140ms; }
+.hero-animated .hero-description { animation-delay: 280ms; }
+.hero-animated .hero-actions { animation-delay: 420ms; }
+.hero-animated .hero-scroll { animation-delay: 600ms; }
+
+/* Keep the entrance ready while offscreen, without flashing visible content
+   just before the observer starts the next replay. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-observed:not(.hero-animated) .hero-eyebrow,
+  .hero-observed:not(.hero-animated) h1,
+  .hero-observed:not(.hero-animated) .hero-description,
+  .hero-observed:not(.hero-animated) .hero-actions,
+  .hero-observed:not(.hero-animated) .hero-scroll {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes hero-entrance {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+@keyframes scroll-hint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
 }
 
 .btn-gold {
@@ -280,6 +371,49 @@ img {
 }
 
 /* ========================================
+   DESTINATION INFORMATION
+======================================== */
+
+.destination-info-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.destination-info-section p {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.destination-info-label {
+  color: var(--navy);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.destination-fact {
+  padding: 12px 14px;
+  border-left: 3px solid var(--gold);
+  background: var(--section-bg);
+}
+
+.destination-fact dt {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.destination-fact dd {
+  margin: 4px 0 0;
+  color: var(--navy);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* ========================================
    DESTINATIONS
 ======================================== */
 
@@ -353,6 +487,10 @@ img {
 }
 
 .learn-more {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  text-align: left;
   color: #a17a1d;
   font-size: 0.875rem;
   font-weight: 600;
@@ -360,6 +498,89 @@ img {
 
 .learn-more i {
   margin-left: 5px;
+}
+
+/* The two faces share one grid cell, reserving space for the taller face.
+   Bootstrap stretches sibling cards equally; flipping never changes height. */
+.destination-card.flip-card {
+  perspective: 1200px;
+}
+
+.destination-flipper {
+  display: grid;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 500ms ease;
+}
+
+.is-flipped .destination-flipper {
+  transform: rotateY(180deg);
+}
+
+.destination-face {
+  grid-area: 1 / 1;
+  min-width: 0;
+  background: var(--page-bg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.destination-back {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  transform: rotateY(180deg);
+}
+
+.destination-details {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.destination-details dt {
+  color: var(--navy);
+}
+
+.destination-details dd {
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+
+.destination-back-actions {
+  margin-top: auto;
+}
+
+.destination-placeholder-note {
+  margin: 8px 0 12px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.destination-column {
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.destination-column.is-filtering-out {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.destination-column.is-filtering-in {
+  animation: destination-appear 180ms ease-out;
+}
+
+@keyframes destination-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero a:focus-visible,
+.filter-btn:focus-visible,
+.destination-card button:focus-visible,
+.destination-back h3:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
 }
 
 /* ========================================
@@ -414,51 +635,34 @@ img {
   background: #df62be;
 }
 
-.map-card {
-  position: relative;
-  min-height: 350px;
-  overflow: hidden;
-  border-radius: 5px;
-  background: #ccebf3;
-}
-
-.map-card img {
-  position: absolute;
+#perez-map {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: 430px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--section-bg);
+  isolation: isolate;
 }
 
-.map-overlay {
-  position: absolute;
-  right: 20px;
-  bottom: 18px;
-
-  width: 220px;
-  padding: 12px;
-
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  background: white;
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
+#perez-map.map-touch-scroll {
+  touch-action: pan-y;
 }
 
-.map-thumb {
-  width: 58px;
-  height: 42px;
-  object-fit: cover;
+#perez-map:focus-visible,
+#map-interact:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
 }
 
-.map-overlay small {
-  display: block;
-  color: #8a929b;
-  font-size: 0.8125rem;
+#perez-map .leaflet-popup-content {
+  color: var(--text);
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.5;
 }
 
-.map-overlay strong {
-  font-size: 0.9375rem;
+.destination-card.is-map-highlighted {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-light);
 }
 
 /* ========================================
@@ -472,10 +676,17 @@ img {
 
 .experience-card {
   position: relative;
+  display: block;
+  width: 100%;
   height: 210px;
+  padding: 0;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
   overflow: hidden;
   border-radius: 4px;
   background: #8f969f;
+  transition: transform 220ms ease, box-shadow 220ms ease;
 }
 
 .experience-card.large {
@@ -486,6 +697,51 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+.experience-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(7, 22, 41, 0.15);
+}
+
+.experience-card:hover img {
+  transform: scale(1.025);
+}
+
+.experience-card:focus-visible,
+.travel-toggle:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.experience-reveal {
+  transition: opacity 450ms ease, transform 450ms ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.experience-reveal:not(.is-revealed) {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.experience-modal-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.experience-facts {
+  font-size: 0.9375rem;
+}
+
+.experience-facts dt {
+  color: var(--navy);
+}
+
+.experience-facts dd {
+  color: var(--muted);
+  margin-bottom: 12px;
 }
 
 .experience-card::after {
@@ -550,6 +806,117 @@ img {
   color: var(--muted);
   font-size: 0.9375rem;
   line-height: 1.6;
+}
+
+.travel-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: #a17a1d;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.travel-toggle i {
+  transition: transform 220ms ease;
+}
+
+.travel-toggle[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+
+.travel-details.collapsing {
+  transition-duration: 220ms;
+}
+
+.travel-detail-content {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.travel-card .travel-detail-label,
+.travel-tip-list dt {
+  color: var(--navy);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.travel-route {
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.travel-route li + li::before {
+  display: block;
+  content: "\2193";
+  color: var(--gold);
+  margin: 3px 0;
+}
+
+.travel-card .travel-detail-note {
+  font-size: 0.8125rem;
+}
+
+.travel-tip-list {
+  margin: 0;
+}
+
+.travel-tip-list dd {
+  margin: 4px 0 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.travel-tip-list dd:last-child {
+  margin-bottom: 0;
+}
+
+.travel-budget-description {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.travel-table-wrapper {
+  border-radius: 4px;
+}
+
+.travel-table-wrapper .table {
+  min-width: 600px;
+  --bs-table-color: var(--text);
+  --bs-table-border-color: var(--border);
+  font-size: 0.9375rem;
+}
+
+.travel-table-wrapper thead {
+  --bs-table-bg: var(--navy);
+  --bs-table-color: var(--page-bg);
+}
+
+.travel-table-wrapper th,
+.travel-table-wrapper td {
+  padding: 14px 16px;
+}
+
+.travel-budget-note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.travel-budget-note i {
+  color: var(--navy-light);
 }
 
 /* ========================================
@@ -696,7 +1063,8 @@ img {
 
 .gallery-image {
   width: 100%;
-  height: 155px;
+  height: auto;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   transition: 0.25s;
 }
@@ -887,7 +1255,7 @@ footer {
     justify-content: start;
   }
 
-  .map-card {
+  #perez-map {
     margin-top: 30px;
   }
 }
@@ -902,11 +1270,15 @@ footer {
   }
 
   .hero-content {
-    padding-bottom: 50px;
+    padding-bottom: 70px;
   }
 
   .quick-item {
     min-height: 105px;
+  }
+
+  #perez-map {
+    height: 320px;
   }
 
   .experience-card,
@@ -941,10 +1313,6 @@ footer {
     height: 220px;
   }
 
-  .gallery-image {
-    height: 130px;
-  }
-
   .newsletter-form {
     flex-direction: column;
     gap: 8px;
@@ -952,5 +1320,50 @@ footer {
 
   .newsletter-form button {
     min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experience-reveal,
+  .experience-card,
+  .experience-card img,
+  .travel-toggle i,
+  .travel-details.collapsing {
+    transition: none;
+  }
+
+  .experience-reveal:not(.is-revealed),
+  .experience-card:hover,
+  .experience-card:hover img {
+    opacity: 1;
+    transform: none;
+  }
+
+  .main-content {
+    scroll-behavior: auto;
+  }
+
+  .hero-animated .hero-background,
+  .hero-animated .hero-eyebrow,
+  .hero-animated h1,
+  .hero-animated .hero-description,
+  .hero-animated .hero-actions,
+  .hero-animated .hero-scroll,
+  .hero-scroll i,
+  .destination-column.is-filtering-in {
+    animation: none;
+  }
+
+  .hero-actions .btn,
+  .destination-flipper,
+  .destination-column,
+  .destination-card {
+    transition: none;
+  }
+
+  .hero-actions .btn:hover,
+  .destination-card:hover,
+  .destination-column.is-filtering-out {
+    transform: none;
   }
 }
