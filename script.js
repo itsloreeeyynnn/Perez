@@ -1670,6 +1670,8 @@
     plus.setAttribute('aria-hidden', 'true');
     addCustom.append(plus, document.createTextNode('Add Custom Activity'));
     section.append(addCustom);
+    // Phase 6 integration: optional memory links for this day, if any exist.
+    window.perezMemories?.renderDayLinks?.(section, dayNumber);
     panel.append(section);
 
     if (itineraryUI.focusItem) {
@@ -2003,6 +2005,1018 @@
     renderItinerary();
   }
 
+  // ===================== PHASE 6 - PHOTO GALLERY + TRAVEL MEMORIES =====================
+  // Public photos stay in the markup. Personal photos are compressed in the
+  // browser and stored as Blobs in IndexedDB; nothing is ever uploaded.
+
+  const MEMORY_DB_NAME = 'PerezTourismDB';
+  const MEMORY_DB_VERSION = 1;
+  const MEMORY_STORE = 'memories';
+  const MEMORY_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  const MEMORY_MAX_BYTES = 10 * 1024 * 1024;
+  const MEMORY_MAX_EDGE = 1920;
+  const MEMORY_THUMB_EDGE = 640;
+  const MEMORY_JPEG_QUALITY = 0.85;
+  const MEMORY_THUMB_QUALITY = 0.82;
+  const MEMORY_TEXT_LIMITS = { caption: 100, notes: 500 };
+  const MEMORY_MESSAGES = {
+    required: 'Please choose a photo before saving this memory.',
+    type: 'Please choose a JPEG, PNG, or WebP image.',
+    size: 'This photo is too large. Please choose an image smaller than 10 MB.',
+    caption: 'Caption must be 100 characters or fewer.',
+    notes: 'Notes must be 500 characters or fewer.',
+    unavailable: 'Local photo storage is not available in this browser.',
+    saveFailed: "We couldn't save this memory on this device. Browser storage may be full or unavailable.",
+    saved: 'Memory saved',
+    deleted: 'Memory deleted',
+    cleared: 'All travel memories deleted',
+  };
+
+  const memoryState = {
+    db: null,
+    available: false,
+    records: [],
+    filter: { kind: 'all' },
+    sort: 'newest',
+    editingId: null,
+    detailsId: null,
+    pendingDeleteId: null,
+    saving: false,
+    reducePending: false,
+    persistRequested: false,
+    viewerIndex: 0,
+    urls: new Map(),
+  };
+
+  const memoryEl = (id) => document.getElementById(id);
+
+  // ---------- Object URL bookkeeping ----------
+  // Every created URL is tracked so it can be revoked on re-render, modal
+  // close, delete, or photo change.
+  function memoryCreateUrl(key, blob) {
+    memoryRevokeUrl(key);
+    if (!blob || typeof URL.createObjectURL !== 'function') return '';
+    const url = URL.createObjectURL(blob);
+    memoryState.urls.set(key, url);
+    return url;
+  }
+  function memoryRevokeUrl(key) {
+    const url = memoryState.urls.get(key);
+    if (!url) return;
+    memoryState.urls.delete(key);
+    if (typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url);
+  }
+  function memoryRevokeWhere(match) {
+    [...memoryState.urls.keys()].filter(match).forEach(memoryRevokeUrl);
+  }
+  function memoryRevokeAllUrls() {
+    [...memoryState.urls.keys()].forEach(memoryRevokeUrl);
+  }
+
+  // ---------- IndexedDB database layer ----------
+  function openMemoryDB() {
+    return new Promise((resolve, reject) => {
+      if (!('indexedDB' in window) || !window.indexedDB) {
+        reject(new Error(MEMORY_MESSAGES.unavailable));
+        return;
+      }
+      let request;
+      try {
+        request = window.indexedDB.open(MEMORY_DB_NAME, MEMORY_DB_VERSION);
+      } catch (error) {
+        reject(error);
+        return;
+      }
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(MEMORY_STORE)) {
+          db.createObjectStore(MEMORY_STORE, { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error(MEMORY_MESSAGES.unavailable));
+      request.onblocked = () => reject(new Error(MEMORY_MESSAGES.unavailable));
+    });
+  }
+  function memoryStore(mode, run) {
+    if (!memoryState.db) return Promise.reject(new Error(MEMORY_MESSAGES.unavailable));
+    return new Promise((resolve, reject) => {
+      let request;
+      try {
+        const transaction = memoryState.db.transaction(MEMORY_STORE, mode);
+        request = run(transaction.objectStore(MEMORY_STORE));
+      } catch (error) {
+        reject(error);
+        return;
+      }
+      if (!request) {
+        reject(new Error('Local photo storage request failed.'));
+        return;
+      }
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error('Local photo storage request failed.'));
+    });
+  }
+  const addMemory = (record) => memoryStore('readwrite', (store) => store.put(record));
+  const updateMemory = (record) => memoryStore('readwrite', (store) => store.put(record));
+  const deleteMemory = (id) => memoryStore('readwrite', (store) => store.delete(id));
+  const getMemory = (id) => memoryStore('readonly', (store) => store.get(id));
+  const getAllMemories = () => memoryStore('readonly', (store) => store.getAll());
+  const clearMemories = () => memoryStore('readwrite', (store) => store.clear());
+
+  function memoryCreateId() {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    return `memory-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  // ---------- Image validation, compression, thumbnails ----------
+  function validateImage(file) {
+    if (!file) return { ok: false, message: MEMORY_MESSAGES.required };
+    if (!MEMORY_IMAGE_TYPES.includes(file.type)) return { ok: false, message: MEMORY_MESSAGES.type };
+    if (file.size > MEMORY_MAX_BYTES) return { ok: false, message: MEMORY_MESSAGES.size };
+    return { ok: true };
+  }
+  async function decodeImage(input) {
+    if (typeof window.createImageBitmap === 'function') {
+      try {
+        const bitmap = await window.createImageBitmap(input, { imageOrientation: 'from-image' });
+        return {
+          source: bitmap,
+          width: bitmap.width,
+          height: bitmap.height,
+          release: () => { if (typeof bitmap.close === 'function') bitmap.close(); },
+        };
+      } catch (error) {
+        // Fall through to the image element decoder.
+      }
+    }
+    const url = typeof URL.createObjectURL === 'function' ? URL.createObjectURL(input) : '';
+    try {
+      const image = await new Promise((resolve, reject) => {
+        const element = new Image();
+        element.onload = () => resolve(element);
+        element.onerror = () => reject(new Error('The photo could not be read.'));
+        element.src = url;
+      });
+      return {
+        source: image,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+        release: () => { if (url && typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url); },
+      };
+    } catch (error) {
+      if (url && typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url);
+      throw error;
+    }
+  }
+  async function drawCompressed(source, width, height, edge, quality) {
+    if (!width || !height) throw new Error('The photo could not be read.');
+    const scale = Math.min(1, edge / Math.max(width, height));
+    const targetWidth = Math.max(1, Math.round(width * scale));
+    const targetHeight = Math.max(1, Math.round(height * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('Canvas drawing is not supported in this browser.');
+    // A neutral background keeps transparent PNG/WebP photos readable after
+    // they are compressed to JPEG.
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, targetWidth, targetHeight);
+    context.drawImage(source, 0, 0, targetWidth, targetHeight);
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve({ blob, width: targetWidth, height: targetHeight });
+        else reject(new Error('The photo could not be compressed.'));
+      }, 'image/jpeg', quality);
+    });
+  }
+  async function compressImage(file, edge, quality) {
+    const decoded = await decodeImage(file);
+    try {
+      return await drawCompressed(decoded.source, decoded.width, decoded.height, edge, quality);
+    } finally {
+      decoded.release();
+    }
+  }
+  const processImage = (file) => compressImage(file, MEMORY_MAX_EDGE, MEMORY_JPEG_QUALITY);
+  async function createThumbnail(imageBlob) {
+    const thumb = await compressImage(imageBlob, MEMORY_THUMB_EDGE, MEMORY_THUMB_QUALITY);
+    return thumb.blob;
+  }
+
+  // ---------- Small formatting helpers ----------
+  function formatBytes(bytes) {
+    if (!Number.isFinite(bytes) || bytes < 0) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+  function formatMemoryDate(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+  function setMemoryFieldError(inputId, errorId, message) {
+    const input = memoryEl(inputId);
+    const error = memoryEl(errorId);
+    if (input) input.classList.toggle('is-invalid', Boolean(message));
+    if (error) error.textContent = message || '';
+  }
+  function clearMemoryFormErrors() {
+    setMemoryFieldError('memory-photo', 'memory-photo-error', '');
+    setMemoryFieldError('memory-caption', 'memory-caption-error', '');
+    setMemoryFieldError('memory-notes', 'memory-notes-error', '');
+    hideMemorySaveError();
+  }
+  function showMemorySaveError(message) {
+    const alert = memoryEl('memory-save-error');
+    if (!alert) return;
+    alert.textContent = message;
+    alert.hidden = false;
+  }
+  function hideMemorySaveError() {
+    const alert = memoryEl('memory-save-error');
+    if (!alert) return;
+    alert.textContent = '';
+    alert.hidden = true;
+  }
+  function showModalError(modalId, message) {
+    const body = document.querySelector(`#${modalId} .modal-body`);
+    if (!body) return;
+    let alert = body.querySelector('.modal-error-alert');
+    if (!alert) {
+      alert = document.createElement('div');
+      alert.className = 'alert alert-danger mt-3 mb-0 modal-error-alert';
+      alert.setAttribute('role', 'alert');
+      body.append(alert);
+    }
+    alert.textContent = message;
+    alert.hidden = false;
+  }
+  function hideModalError(modalId) {
+    const alert = document.querySelector(`#${modalId} .modal-error-alert`);
+    if (alert) alert.hidden = true;
+  }
+  function announceMemory(message) {
+    const status = memoryEl('memory-status');
+    if (status) status.textContent = message;
+  }
+  function toastMemory(message) {
+    const body = memoryEl('memory-toast-body');
+    if (body) body.textContent = message;
+    const toast = memoryEl('memory-toast');
+    if (toast && window.bootstrap?.Toast) {
+      window.bootstrap.Toast.getOrCreateInstance(toast, { delay: 2500 }).show();
+    }
+    announceMemory(message);
+  }
+
+  // ---------- Related content (references only; names are never stored) ----------
+  function memoryRelatedOptions(type) {
+    if (type === 'destination') {
+      return destinationLocations.filter((item) => item.name).map((item) => ({ id: item.id, name: item.name }));
+    }
+    if (type === 'experience') {
+      return experiences.filter((item) => item.title).map((item) => ({ id: item.id, name: item.title }));
+    }
+    if (type === 'event') {
+      return eventsData.filter((item) => item.name).map((item) => ({ id: item.id, name: item.name }));
+    }
+    return [];
+  }
+  function resolveRelatedContent(type, id) {
+    if (!type || !id) return null;
+    const match = memoryRelatedOptions(type).find((item) => item.id === id);
+    return match ? { type, id, name: match.name } : { type, id, name: '' };
+  }
+  function getItineraryDays() {
+    const days = tripDays();
+    const list = [];
+    for (let n = 1; n <= days; n += 1) list.push(n);
+    return list;
+  }
+
+  // ---------- Memory form ----------
+  function fillMemoryDayOptions(selected) {
+    const select = memoryEl('memory-day');
+    if (!select) return;
+    select.replaceChildren();
+    const none = document.createElement('option');
+    none.value = '';
+    none.textContent = 'None';
+    select.append(none);
+    getItineraryDays().forEach((n) => {
+      const option = document.createElement('option');
+      option.value = String(n);
+      option.textContent = `Day ${n}`;
+      select.append(option);
+    });
+    select.value = selected == null ? '' : String(selected);
+    if (select.selectedIndex < 0) select.selectedIndex = 0;
+  }
+  function fillMemoryRelatedOptions(selected) {
+    const groups = {
+      destination: 'memory-related-destinations',
+      experience: 'memory-related-experiences',
+      event: 'memory-related-events',
+    };
+    Object.entries(groups).forEach(([type, id]) => {
+      const group = memoryEl(id);
+      if (!group) return;
+      group.replaceChildren();
+      memoryRelatedOptions(type).forEach((item) => {
+        const option = document.createElement('option');
+        option.value = `${type}:${item.id}`;
+        option.textContent = item.name;
+        group.append(option);
+      });
+      group.hidden = group.children.length === 0;
+    });
+    const select = memoryEl('memory-related');
+    if (!select) return;
+    select.value = selected || '';
+    if (select.selectedIndex < 0) select.selectedIndex = 0;
+  }
+  function showMemoryPreview(blob, options = {}) {
+    const preview = memoryEl('memory-preview');
+    if (!preview || !blob) return;
+    const url = memoryCreateUrl('preview', blob);
+    const image = memoryEl('memory-preview-image');
+    if (image) {
+      image.src = url;
+      image.alt = options.isCurrent ? 'Current memory photo' : 'Selected photo preview';
+    }
+    const name = memoryEl('memory-preview-name');
+    if (name) name.textContent = options.isCurrent ? 'Current photo' : (options.name || 'Selected photo');
+    const size = memoryEl('memory-preview-size');
+    if (size) size.textContent = formatBytes(blob.size);
+    const photo = memoryEl('memory-photo');
+    if (photo) photo.hidden = true;
+    preview.hidden = false;
+  }
+  function hideMemoryPreview() {
+    memoryRevokeUrl('preview');
+    const preview = memoryEl('memory-preview');
+    if (preview) preview.hidden = true;
+    const photo = memoryEl('memory-photo');
+    if (photo) photo.hidden = false;
+  }
+  function resetMemoryForm() {
+    const photo = memoryEl('memory-photo');
+    if (photo) {
+      photo.value = '';
+      photo.hidden = false;
+      photo.classList.remove('is-invalid');
+    }
+    const caption = memoryEl('memory-caption');
+    if (caption) caption.value = '';
+    const notes = memoryEl('memory-notes');
+    if (notes) notes.value = '';
+    hideMemoryPreview();
+    clearMemoryFormErrors();
+    const save = memoryEl('memory-save');
+    if (save) {
+      save.disabled = false;
+      save.textContent = 'Save Memory';
+    }
+  }
+  function setMemorySaveBusy(busy) {
+    const button = memoryEl('memory-save');
+    if (!button) return;
+    button.disabled = busy;
+    if (busy) {
+      const spinner = document.createElement('span');
+      spinner.className = 'spinner-border spinner-border-sm me-1';
+      spinner.setAttribute('role', 'status');
+      spinner.setAttribute('aria-hidden', 'true');
+      button.replaceChildren(spinner, document.createTextNode('Saving...'));
+    } else {
+      button.textContent = memoryState.editingId ? 'Save Changes' : 'Save Memory';
+    }
+  }
+
+  // ---------- Memory modal flows ----------
+  function openAddMemoryModal(prefill = {}) {
+    if (!memoryState.available) return;
+    memoryState.editingId = null;
+    resetMemoryForm();
+    const title = memoryEl('add-memory-title');
+    if (title) title.textContent = 'Add Travel Memory';
+    fillMemoryDayOptions(prefill.itineraryDay ?? null);
+    fillMemoryRelatedOptions(prefill.relatedType && prefill.relatedId ? `${prefill.relatedType}:${prefill.relatedId}` : '');
+    showModal('add-memory-modal');
+  }
+  function openEditMemory(id) {
+    if (!memoryState.available) return;
+    const record = memoryState.records.find((item) => item.id === id);
+    if (!record) return;
+    memoryState.editingId = id;
+    resetMemoryForm();
+    const title = memoryEl('add-memory-title');
+    if (title) title.textContent = 'Edit Travel Memory';
+    const saveButton = memoryEl('memory-save');
+    if (saveButton) saveButton.textContent = 'Save Changes';
+    fillMemoryDayOptions(record.itineraryDay);
+    fillMemoryRelatedOptions(record.relatedType && record.relatedId ? `${record.relatedType}:${record.relatedId}` : '');
+    const caption = memoryEl('memory-caption');
+    if (caption) caption.value = record.caption || '';
+    const notes = memoryEl('memory-notes');
+    if (notes) notes.value = record.notes || '';
+    showMemoryPreview(record.imageBlob, { isCurrent: true });
+    showModal('add-memory-modal');
+  }
+  function openMemoryViewer(id) {
+    const record = memoryState.records.find((item) => item.id === id);
+    if (!record) return;
+    memoryState.detailsId = id;
+    hideModalError('memory-details-modal');
+    const captionText = (record.caption || '').trim();
+    const image = memoryEl('memory-details-image');
+    if (image) {
+      image.src = memoryCreateUrl('details', record.imageBlob);
+      image.alt = captionText ? captionText : 'Travel memory photo';
+    }
+    const caption = memoryEl('memory-details-caption');
+    if (caption) {
+      caption.textContent = captionText;
+      caption.hidden = !captionText;
+    }
+    const notes = memoryEl('memory-details-notes');
+    const notesLabel = memoryEl('memory-details-notes-label');
+    if (notes) {
+      notes.textContent = record.notes || '';
+      notes.hidden = !record.notes;
+    }
+    if (notesLabel) notesLabel.hidden = !record.notes;
+    const day = memoryEl('memory-details-day');
+    if (day) day.textContent = record.itineraryDay == null ? 'Unassigned' : `Day ${record.itineraryDay}`;
+    const related = memoryEl('memory-details-related');
+    const relatedLabel = memoryEl('memory-details-related-label');
+    const resolved = resolveRelatedContent(record.relatedType, record.relatedId);
+    if (related) {
+      related.textContent = resolved ? (resolved.name || 'Related place unavailable') : '';
+      related.hidden = !resolved;
+    }
+    if (relatedLabel) relatedLabel.hidden = !resolved;
+    const date = memoryEl('memory-details-date');
+    if (date) date.textContent = `Saved on ${formatMemoryDate(record.createdAt)}`;
+    showModal('memory-details-modal');
+  }
+  function deleteMemoryWithConfirmation(id) {
+    if (!memoryState.available || !id) return;
+    memoryState.pendingDeleteId = id;
+    hideModalError('delete-memory-modal');
+    const details = memoryEl('memory-details-modal');
+    if (details?.classList.contains('show')) {
+      hideModal('memory-details-modal');
+      details.addEventListener('hidden.bs.modal', () => showModal('delete-memory-modal'), { once: true });
+    } else {
+      showModal('delete-memory-modal');
+    }
+  }
+  async function confirmDeleteMemory() {
+    const id = memoryState.pendingDeleteId;
+    if (!id || !memoryState.available) return;
+    try {
+      await deleteMemory(id);
+      memoryState.pendingDeleteId = null;
+      memoryRevokeWhere((key) => key === `grid:${id}` || key === `details:${id}`);
+      hideModal('delete-memory-modal');
+      if (memoryState.detailsId === id) hideModal('memory-details-modal');
+      toastMemory(MEMORY_MESSAGES.deleted);
+      await refreshMemories();
+      updateMemoryUsage();
+    } catch (error) {
+      showModalError('delete-memory-modal', MEMORY_MESSAGES.saveFailed);
+    }
+  }
+  async function confirmClearMemories() {
+    if (!memoryState.available) return;
+    try {
+      await clearMemories();
+      memoryRevokeAllUrls();
+      memoryState.records = [];
+      hideModal('clear-memories-modal');
+      toastMemory(MEMORY_MESSAGES.cleared);
+      renderMemories();
+      syncVisibleDayLinks();
+      updateMemoryUsage();
+    } catch (error) {
+      showModalError('clear-memories-modal', MEMORY_MESSAGES.saveFailed);
+    }
+  }
+  function handlePhotoSelection() {
+    const input = memoryEl('memory-photo');
+    const file = input?.files?.[0] || null;
+    if (!file) return;
+    const validation = validateImage(file);
+    if (!validation.ok) {
+      setMemoryFieldError('memory-photo', 'memory-photo-error', validation.message);
+      hideMemoryPreview();
+      try {
+        input.value = '';
+      } catch (error) {
+        // Some browsers block clearing; the message still shows.
+      }
+      return;
+    }
+    setMemoryFieldError('memory-photo', 'memory-photo-error', '');
+    showMemoryPreview(file, { name: file.name });
+  }
+  async function handleMemorySave() {
+    if (memoryState.saving) return;
+    const photoInput = memoryEl('memory-photo');
+    const file = photoInput?.files?.[0] || null;
+    const isEdit = Boolean(memoryState.editingId);
+    const existing = isEdit ? memoryState.records.find((item) => item.id === memoryState.editingId) : null;
+    if (isEdit && !existing) {
+      showMemorySaveError(MEMORY_MESSAGES.saveFailed);
+      return;
+    }
+    if (!isEdit || file) {
+      const validation = validateImage(file);
+      if (!validation.ok) {
+        setMemoryFieldError('memory-photo', 'memory-photo-error', validation.message);
+        photoInput?.focus();
+        return;
+      }
+    }
+    const caption = (memoryEl('memory-caption')?.value || '').trim();
+    const notes = (memoryEl('memory-notes')?.value || '').trim();
+    if (caption.length > MEMORY_TEXT_LIMITS.caption) {
+      setMemoryFieldError('memory-caption', 'memory-caption-error', MEMORY_MESSAGES.caption);
+      memoryEl('memory-caption')?.focus();
+      return;
+    }
+    if (notes.length > MEMORY_TEXT_LIMITS.notes) {
+      setMemoryFieldError('memory-notes', 'memory-notes-error', MEMORY_MESSAGES.notes);
+      memoryEl('memory-notes')?.focus();
+      return;
+    }
+
+    memoryState.saving = true;
+    setMemorySaveBusy(true);
+    hideMemorySaveError();
+    try {
+      let imageBlob = existing?.imageBlob || null;
+      let thumbnailBlob = existing?.thumbnailBlob || null;
+      if (!isEdit || file) {
+        const compressed = await processImage(file);
+        imageBlob = compressed.blob;
+        thumbnailBlob = await createThumbnail(compressed.blob);
+      }
+      const dayValue = memoryEl('memory-day')?.value || '';
+      const relatedValue = memoryEl('memory-related')?.value || '';
+      const [relatedType, relatedId] = relatedValue ? relatedValue.split(':') : [null, null];
+      const now = new Date().toISOString();
+      const record = {
+        id: existing?.id || memoryCreateId(),
+        imageBlob,
+        thumbnailBlob,
+        caption,
+        notes,
+        itineraryDay: dayValue ? Number(dayValue) : null,
+        relatedType: relatedType || null,
+        relatedId: relatedId || null,
+        createdAt: existing?.createdAt || now,
+        updatedAt: now,
+      };
+      if (existing) await updateMemory(record);
+      else await addMemory(record);
+      toastMemory(MEMORY_MESSAGES.saved);
+      hideModal('add-memory-modal');
+      await refreshMemories();
+      requestPersistentStorage();
+      updateMemoryUsage();
+    } catch (error) {
+      showMemorySaveError(MEMORY_MESSAGES.saveFailed);
+    } finally {
+      memoryState.saving = false;
+      setMemorySaveBusy(false);
+    }
+  }
+
+  // ---------- Rendering ----------
+  function updateMemoryCount() {
+    const count = memoryState.records.length;
+    const element = memoryEl('memory-count');
+    if (element) element.textContent = `${count} ${count === 1 ? 'Memory' : 'Memories'}`;
+  }
+  function memoryFilterMatches(record) {
+    const filter = memoryState.filter;
+    if (filter.kind === 'day') return (record.itineraryDay ?? null) === filter.day;
+    if (filter.kind === 'related') return record.relatedType === filter.relatedType;
+    return true;
+  }
+  function memoryFilterIsActive(chip) {
+    const filter = memoryState.filter;
+    if (chip.kind !== filter.kind) return false;
+    if (chip.kind === 'day') return (chip.day ?? null) === (filter.day ?? null);
+    if (chip.kind === 'related') return chip.relatedType === filter.relatedType;
+    return true;
+  }
+  function buildMemoryFilterChips() {
+    const records = memoryState.records;
+    const chips = [{ kind: 'all', label: 'All Memories' }];
+    const days = [...new Set(records.map((record) => record.itineraryDay).filter((day) => day != null))]
+      .sort((a, b) => a - b);
+    days.forEach((day) => chips.push({ kind: 'day', day, label: `Day ${day}` }));
+    if (records.some((record) => record.itineraryDay == null)) {
+      chips.push({ kind: 'day', day: null, label: 'Unassigned' });
+    }
+    [['destination', 'Destinations'], ['experience', 'Experiences'], ['event', 'Events']].forEach(([type, label]) => {
+      if (records.some((record) => record.relatedType === type)) chips.push({ kind: 'related', relatedType: type, label });
+    });
+    if (!chips.some((chip) => memoryFilterIsActive(chip))) memoryState.filter = { kind: 'all' };
+    return chips;
+  }
+  function renderMemoryFilters() {
+    const container = memoryEl('memory-filters');
+    if (!container) return;
+    const chips = buildMemoryFilterChips();
+    container.replaceChildren();
+    chips.forEach((chip) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'filter-btn' + (memoryFilterIsActive(chip) ? ' active' : '');
+      button.dataset.memoryFilter = chip.kind;
+      if (chip.kind === 'day') button.dataset.memoryFilterDay = chip.day == null ? '' : String(chip.day);
+      if (chip.kind === 'related') button.dataset.memoryFilterRelated = chip.relatedType;
+      if (chip.kind !== 'all') {
+        const groupName = chip.kind === 'day' ? 'day' : chip.relatedType;
+        button.setAttribute('aria-label', `Show ${chip.label} memories (${groupName} filter)`);
+      }
+      button.textContent = chip.label;
+      container.append(button);
+    });
+  }
+  function memorySortedRecords() {
+    const direction = memoryState.sort === 'oldest' ? 1 : -1;
+    return memoryState.records
+      .filter(memoryFilterMatches)
+      .sort((a, b) => (Date.parse(a.createdAt) - Date.parse(b.createdAt)) * direction);
+  }
+  function buildMemoryCard(record) {
+    const column = document.createElement('div');
+    column.className = 'col-6 col-md-4 col-lg-3';
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'memory-card';
+    card.dataset.memoryId = record.id;
+    const captionText = (record.caption || '').trim();
+    card.setAttribute('aria-label', captionText ? `Open memory: ${captionText}` : 'Open travel memory photo');
+    const image = document.createElement('img');
+    image.className = 'memory-card-image';
+    image.src = memoryCreateUrl(`grid:${record.id}`, record.thumbnailBlob);
+    image.alt = captionText ? captionText : 'Travel memory photo';
+    image.loading = 'lazy';
+    card.append(image);
+    const body = document.createElement('span');
+    body.className = 'memory-card-body';
+    const badges = document.createElement('span');
+    badges.className = 'memory-card-badges';
+    const dayBadge = document.createElement('span');
+    dayBadge.className = 'memory-badge memory-day-badge';
+    dayBadge.textContent = record.itineraryDay == null ? 'Unassigned' : `Day ${record.itineraryDay}`;
+    badges.append(dayBadge);
+    const resolved = resolveRelatedContent(record.relatedType, record.relatedId);
+    if (resolved && resolved.name) {
+      const relatedBadge = document.createElement('span');
+      relatedBadge.className = 'memory-badge memory-related-badge';
+      relatedBadge.textContent = resolved.name;
+      badges.append(relatedBadge);
+    }
+    body.append(badges);
+    if (captionText) {
+      const caption = document.createElement('span');
+      caption.className = 'memory-card-caption';
+      caption.textContent = captionText;
+      body.append(caption);
+    }
+    const saved = document.createElement('span');
+    saved.className = 'memory-card-date';
+    saved.textContent = `Saved on ${formatMemoryDate(record.createdAt)}`;
+    body.append(saved);
+    card.append(body);
+    column.append(card);
+    return column;
+  }
+  function renderMemories() {
+    const grid = memoryEl('memory-grid');
+    if (!grid) return;
+    memoryRevokeWhere((key) => key.startsWith('grid:'));
+    grid.replaceChildren();
+    updateMemoryCount();
+    renderMemoryFilters();
+    const records = memoryState.records;
+    const visible = memorySortedRecords();
+    const emptyState = memoryEl('memory-empty');
+    if (emptyState) emptyState.hidden = records.length > 0;
+    const filterEmpty = memoryEl('memory-filter-empty');
+    if (filterEmpty) filterEmpty.hidden = !(records.length > 0 && visible.length === 0);
+    visible.forEach((record) => grid.append(buildMemoryCard(record)));
+    const status = memoryEl('memory-filter-status');
+    if (status) {
+      status.textContent = records.length
+        ? `${visible.length} of ${records.length} ${records.length === 1 ? 'memory' : 'memories'} shown.`
+        : 'No travel memories yet.';
+    }
+  }
+  function setMemoryFilter(filter) {
+    memoryState.filter = filter;
+    renderMemories();
+  }
+  function setMemoryFilterFromButton(button) {
+    const kind = button.dataset.memoryFilter;
+    if (kind === 'day') {
+      const raw = button.dataset.memoryFilterDay;
+      setMemoryFilter({ kind: 'day', day: raw === '' ? null : Number(raw) });
+    } else if (kind === 'related') {
+      setMemoryFilter({ kind: 'related', relatedType: button.dataset.memoryFilterRelated });
+    } else {
+      setMemoryFilter({ kind: 'all' });
+    }
+  }
+  function activateMemoriesForDay(day) {
+    const tab = memoryEl('gallery-memories-tab');
+    if (tab && window.bootstrap?.Tab) window.bootstrap.Tab.getOrCreateInstance(tab).show();
+    const hasDay = memoryState.records.some((record) => record.itineraryDay === day);
+    setMemoryFilter(hasDay ? { kind: 'day', day } : { kind: 'all' });
+  }
+
+  // ---------- Itinerary day links (Phase 4 integration) ----------
+  function renderDayLinks(section, dayNumber) {
+    if (!section) return;
+    section.dataset.dayNumber = String(dayNumber);
+    const existing = section.querySelector('.itinerary-memory-links');
+    existing?.remove();
+    if (!memoryState.available) return;
+    const count = memoryState.records.filter((record) => record.itineraryDay === dayNumber).length;
+    const populated = Boolean(section.querySelector('.itinerary-list'));
+    if (!count && !populated) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'itinerary-memory-links';
+    if (count > 0) {
+      const link = document.createElement('a');
+      link.href = '#gallery';
+      link.className = 'itinerary-memory-link';
+      link.dataset.memoryDayLink = String(dayNumber);
+      link.textContent = `View ${count} ${count === 1 ? 'memory' : 'memories'} from Day ${dayNumber}`;
+      wrapper.append(link);
+    }
+    if (populated) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'btn btn-sm btn-outline-secondary itinerary-add-memory';
+      button.dataset.memoryDayAdd = String(dayNumber);
+      const icon = document.createElement('i');
+      icon.className = 'bi bi-camera me-1';
+      icon.setAttribute('aria-hidden', 'true');
+      button.append(icon, document.createTextNode(`Add Memory for Day ${dayNumber}`));
+      wrapper.append(button);
+    }
+    if (wrapper.children.length) section.append(wrapper);
+  }
+  function syncVisibleDayLinks() {
+    document.querySelectorAll('.itinerary-day[data-day-number]').forEach((section) => {
+      renderDayLinks(section, Number(section.dataset.dayNumber));
+    });
+  }
+
+  // ---------- Trip day reconciliation and refresh ----------
+  function handleReducedTripDays() {
+    if (!memoryState.available) return Promise.resolve(false);
+    const days = tripDays();
+    const stale = memoryState.records.filter((record) => record.itineraryDay != null && record.itineraryDay > days);
+    if (!stale.length) return Promise.resolve(false);
+    const now = new Date().toISOString();
+    return Promise.all(
+      stale.map((record) => updateMemory({ ...record, itineraryDay: null, updatedAt: now })
+        .then(() => { record.itineraryDay = null; })),
+    ).then(() => true).catch(() => false);
+  }
+  async function refreshMemories() {
+    if (memoryState.available && memoryState.db) {
+      try {
+        const records = await getAllMemories();
+        if (Array.isArray(records)) memoryState.records = records;
+      } catch (error) {
+        // Keep showing whatever is already loaded if a read fails.
+      }
+    }
+    await handleReducedTripDays();
+    renderMemories();
+    syncVisibleDayLinks();
+    updateMemoryUsage();
+  }
+  async function updateMemoryUsage() {
+    const usage = memoryEl('memory-usage');
+    if (!usage) return;
+    if (!memoryState.available || !navigator.storage?.estimate) {
+      usage.hidden = true;
+      return;
+    }
+    try {
+      const estimate = await navigator.storage.estimate();
+      if (estimate && typeof estimate.usage === 'number') {
+        usage.textContent = `Local storage used: approximately ${(estimate.usage / (1024 * 1024)).toFixed(1)} MB.`;
+        usage.hidden = false;
+      } else {
+        usage.hidden = true;
+      }
+    } catch (error) {
+      usage.hidden = true;
+    }
+  }
+  async function requestPersistentStorage() {
+    if (memoryState.persistRequested || !navigator.storage?.persist) return;
+    memoryState.persistRequested = true;
+    try {
+      const persisted = navigator.storage.persisted ? await navigator.storage.persisted() : false;
+      if (!persisted) await navigator.storage.persist();
+    } catch (error) {
+      // Persistence is optional; never block saving on it.
+    }
+  }
+  function setMemoryStorageUnavailable() {
+    memoryState.available = false;
+    memoryState.db = null;
+    memoryState.records = [];
+    const alert = memoryEl('memory-unavailable');
+    if (alert) alert.hidden = false;
+    ['memory-add-button', 'memory-empty-add', 'memory-clear-button'].forEach((id) => {
+      const element = memoryEl(id);
+      if (element) element.disabled = true;
+    });
+    announceMemory(MEMORY_MESSAGES.unavailable);
+  }
+
+  // ---------- Public gallery photo viewer ----------
+  function galleryPhotos() {
+    return [...document.querySelectorAll('#gallery-explore-pane .gallery-item')].map((item) => {
+      const image = item.querySelector('img');
+      return {
+        src: image?.getAttribute('src') || '',
+        alt: image?.getAttribute('alt') || '',
+      };
+    });
+  }
+  function showGalleryPhoto(index) {
+    const photos = galleryPhotos();
+    if (!photos.length) return;
+    const total = photos.length;
+    memoryState.viewerIndex = ((index % total) + total) % total;
+    const photo = photos[memoryState.viewerIndex];
+    const image = memoryEl('photo-viewer-image');
+    if (image) {
+      image.src = photo.src;
+      image.alt = photo.alt;
+    }
+    const caption = memoryEl('photo-viewer-caption');
+    if (caption) caption.textContent = photo.alt;
+    const counter = memoryEl('photo-viewer-counter');
+    if (counter) counter.textContent = `Photo ${memoryState.viewerIndex + 1} of ${total}`;
+  }
+  function stepGallery(delta) {
+    showGalleryPhoto(memoryState.viewerIndex + delta);
+  }
+  function initGalleryViewer() {
+    const modal = memoryEl('photo-viewer-modal');
+    if (!modal) return;
+    modal.addEventListener('show.bs.modal', (event) => {
+      const trigger = event.relatedTarget;
+      const index = Number(trigger?.dataset?.galleryIndex);
+      showGalleryPhoto(Number.isInteger(index) ? index : 0);
+    });
+    memoryEl('photo-viewer-prev')?.addEventListener('click', () => stepGallery(-1));
+    memoryEl('photo-viewer-next')?.addEventListener('click', () => stepGallery(1));
+    document.addEventListener('keydown', (event) => {
+      const viewer = memoryEl('photo-viewer-modal');
+      if (!viewer?.classList.contains('show')) return;
+      const target = event.target;
+      const tag = target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target?.isContentEditable) return;
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        stepGallery(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        stepGallery(1);
+      }
+    });
+  }
+
+  // ---------- Initialization ----------
+  function initMemories() {
+    if (!memoryEl('gallery')) return;
+
+    memoryEl('memory-photo')?.addEventListener('change', handlePhotoSelection);
+    memoryEl('memory-change-photo')?.addEventListener('click', () => memoryEl('memory-photo')?.click());
+    memoryEl('memory-caption')?.addEventListener('input', () => setMemoryFieldError('memory-caption', 'memory-caption-error', ''));
+    memoryEl('memory-notes')?.addEventListener('input', () => setMemoryFieldError('memory-notes', 'memory-notes-error', ''));
+    memoryEl('memory-save')?.addEventListener('click', handleMemorySave);
+    memoryEl('memory-add-button')?.addEventListener('click', () => openAddMemoryModal());
+    memoryEl('memory-empty-add')?.addEventListener('click', () => openAddMemoryModal());
+    memoryEl('memory-clear-button')?.addEventListener('click', () => {
+      hideModalError('clear-memories-modal');
+      showModal('clear-memories-modal');
+    });
+    memoryEl('memory-clear-confirm')?.addEventListener('click', confirmClearMemories);
+    memoryEl('memory-delete-confirm')?.addEventListener('click', confirmDeleteMemory);
+    memoryEl('memory-details-edit')?.addEventListener('click', () => {
+      const id = memoryState.detailsId;
+      const details = memoryEl('memory-details-modal');
+      if (!details || !id) return;
+      hideModal('memory-details-modal');
+      details.addEventListener('hidden.bs.modal', () => openEditMemory(id), { once: true });
+    });
+    memoryEl('memory-details-delete')?.addEventListener('click', () => deleteMemoryWithConfirmation(memoryState.detailsId));
+    memoryEl('memory-details-modal')?.addEventListener('hidden.bs.modal', () => {
+      memoryRevokeUrl('details');
+      memoryState.detailsId = null;
+    });
+    memoryEl('add-memory-modal')?.addEventListener('hidden.bs.modal', () => {
+      memoryState.editingId = null;
+      resetMemoryForm();
+    });
+    memoryEl('delete-memory-modal')?.addEventListener('hidden.bs.modal', () => {
+      memoryState.pendingDeleteId = null;
+      hideModalError('delete-memory-modal');
+    });
+    memoryEl('clear-memories-modal')?.addEventListener('hidden.bs.modal', () => hideModalError('clear-memories-modal'));
+    memoryEl('memory-sort')?.addEventListener('change', (event) => {
+      memoryState.sort = event.target.value === 'oldest' ? 'oldest' : 'newest';
+      renderMemories();
+    });
+    memoryEl('gallery-memories-tab')?.addEventListener('shown.bs.tab', () => refreshMemories());
+
+    document.addEventListener('click', (event) => {
+      const filterButton = event.target.closest?.('[data-memory-filter]');
+      if (filterButton) {
+        setMemoryFilterFromButton(filterButton);
+        return;
+      }
+      const dayAdd = event.target.closest?.('[data-memory-day-add]');
+      if (dayAdd) {
+        openAddMemoryModal({ itineraryDay: Number(dayAdd.dataset.memoryDayAdd) });
+        return;
+      }
+      const dayLink = event.target.closest?.('[data-memory-day-link]');
+      if (dayLink) {
+        activateMemoriesForDay(Number(dayLink.dataset.memoryDayLink));
+        return;
+      }
+      const card = event.target.closest?.('[data-memory-id]');
+      if (card && card.closest('#memory-grid')) openMemoryViewer(card.dataset.memoryId);
+    });
+
+    // Trip day reductions reconcile memory day associations without deleting
+    // any memory. Reset Trip and Clear Itinerary never touch memories. The
+    // change hook sits on the planner form so Phase 3 updates the day count
+    // and Phase 4 opens the reduce-days modal before this runs.
+    const reduceModal = memoryEl('reduce-days-modal');
+    reduceModal?.addEventListener('show.bs.modal', () => { memoryState.reducePending = true; });
+    reduceModal?.addEventListener('hidden.bs.modal', () => {
+      memoryState.reducePending = false;
+      refreshMemories();
+    });
+    memoryEl('trip-planner')?.addEventListener('change', (event) => {
+      if (event.target.id !== 'planner-days' || memoryState.reducePending) return;
+      refreshMemories();
+    });
+    memoryEl('confirm-reset-trip')?.addEventListener('click', () => {
+      if (memoryState.reducePending) return;
+      refreshMemories();
+    });
+
+    if (!('indexedDB' in window) || !window.indexedDB) {
+      setMemoryStorageUnavailable();
+      renderMemories();
+      return;
+    }
+    openMemoryDB()
+      .then((db) => {
+        memoryState.db = db;
+        memoryState.available = true;
+        return refreshMemories();
+      })
+      .catch(() => {
+        setMemoryStorageUnavailable();
+        renderMemories();
+      });
+  }
+
+  // Small, read-mostly surface for the itinerary integration and tests.
+  window.perezMemories = Object.freeze({
+    renderDayLinks,
+    refresh: refreshMemories,
+    getAll: () => memoryState.records.slice(),
+    countForDay: (day) => memoryState.records.filter((record) => record.itineraryDay === day).length,
+    isAvailable: () => memoryState.available,
+    openAdd: (day) => openAddMemoryModal(day ? { itineraryDay: day } : {}),
+  });
+
   function init() {
     initHero();
     initSmoothScrolling();
@@ -2017,6 +3031,8 @@
     initTravelInfoCards();
     initTripPlanner();
     initItinerary();
+    initGalleryViewer();
+    initMemories();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });

@@ -1569,10 +1569,6 @@ footer {
   color: var(--muted);
 }
 
-#event-filters {
-  justify-content: flex-end;
-}
-
 .event-column {
   min-width: 0;
 }
@@ -1774,5 +1770,332 @@ footer {
   .event-card:hover {
     transform: none;
     box-shadow: none;
+  }
+}
+
+/* ========================================
+   PHASE 6 - PHOTO GALLERY + TRAVEL MEMORIES
+======================================== */
+
+.gallery-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 0;
+  padding: 0;
+}
+
+.gallery-tabs .nav-link {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 18px;
+  color: #89909a;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.gallery-tabs .nav-link:hover {
+  color: var(--navy);
+  border-color: var(--navy);
+}
+
+.gallery-tabs .nav-link.active {
+  color: #172033;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.gallery-tabs .nav-link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.gallery-item {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.gallery-item:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.gallery-intro {
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.memory-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.memory-toolbar-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.memory-count {
+  color: var(--navy);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.memory-sort {
+  width: auto;
+  min-width: 145px;
+}
+
+#memory-filters {
+  justify-content: start;
+  margin-bottom: 16px;
+}
+
+.memory-filter-empty {
+  margin: 4px 0 0;
+}
+
+.memory-empty {
+  text-align: center;
+  padding: 40px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.memory-empty > i {
+  font-size: 2.2rem;
+  color: var(--gold);
+}
+
+.memory-empty-title {
+  margin: 12px 0 6px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--navy);
+}
+
+.memory-empty-text {
+  margin-bottom: 16px;
+  color: #89909a;
+}
+
+.memory-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: 0.25s ease;
+}
+
+.memory-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.memory-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.memory-card-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #e9ecef;
+}
+
+.memory-card-body {
+  display: block;
+  padding: 12px;
+}
+
+.memory-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.memory-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: #eef1f5;
+  color: var(--navy);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.memory-day-badge {
+  background: var(--navy);
+  color: #fff;
+}
+
+.memory-related-badge {
+  background: #fff7e2;
+  color: #7a5a10;
+}
+
+.memory-card-caption {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--navy);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.memory-card-date {
+  display: block;
+  color: #89909a;
+  font-size: 0.75rem;
+}
+
+.memory-preview {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.memory-preview[hidden] {
+  display: none;
+}
+
+.memory-preview img {
+  width: 92px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #e9ecef;
+}
+
+.memory-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.memory-preview-name {
+  color: var(--navy);
+  font-size: 0.8rem;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.memory-preview-size {
+  color: #89909a;
+  font-size: 0.75rem;
+}
+
+.photo-viewer-dialog {
+  max-width: 900px;
+}
+
+.photo-viewer-image {
+  max-height: 70vh;
+  width: auto;
+  object-fit: contain;
+  background: #f8f9fa;
+}
+
+.photo-viewer-footer {
+  justify-content: center;
+  gap: 12px;
+}
+
+.memory-details-image {
+  width: 100%;
+  max-height: 50vh;
+  object-fit: contain;
+  background: #f8f9fa;
+}
+
+.itinerary-memory-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.itinerary-memory-link {
+  color: #aa852a;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.itinerary-memory-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 575.98px) {
+  .gallery-tabs .nav-link {
+    padding: 7px 14px;
+    font-size: 0.85rem;
+  }
+
+  .memory-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .memory-toolbar-tools {
+    justify-content: space-between;
+  }
+
+  .memory-sort {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .photo-viewer-image {
+    max-height: 60vh;
+  }
+
+  .memory-preview {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-card {
+    transition: none;
+  }
+
+  .memory-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .gallery-image {
+    transition: none;
   }
 }

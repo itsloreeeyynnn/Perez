@@ -1096,69 +1096,298 @@
               <a href="#" class="gallery-link"> View All Photos </a>
             </div>
 
-            <div class="row g-3">
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
+            <ul class="nav gallery-tabs" id="gallery-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link active"
+                  id="gallery-explore-tab"
+                  type="button"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#gallery-explore-pane"
+                  aria-controls="gallery-explore-pane"
+                  aria-selected="true"
+                >
+                  Explore Perez
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button
+                  class="nav-link"
+                  id="gallery-memories-tab"
+                  type="button"
+                  role="tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#gallery-memories-pane"
+                  aria-controls="gallery-memories-pane"
+                  aria-selected="false"
+                >
+                  My Travel Memories
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="gallery-tab-content">
+              <div
+                class="tab-pane fade show active"
+                id="gallery-explore-pane"
+                role="tabpanel"
+                aria-labelledby="gallery-explore-tab"
+                tabindex="0"
+              >
+                <div class="row g-3">
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="0"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 1 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 2 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 3 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="3"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 4 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="4"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 5 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="5"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 6 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="6"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 7 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <button
+                      type="button"
+                      class="gallery-item"
+                      data-gallery-index="7"
+                      data-bs-toggle="modal"
+                      data-bs-target="#photo-viewer-modal"
+                      aria-label="Open gallery photo 8 of 8"
+                    >
+                      <img
+                        src="placeholder.svg"
+                        class="img-fluid img-thumbnail gallery-image"
+                        alt="Perez gallery photo"
+                        loading="lazy"
+                      />
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
-              </div>
+              <div
+                class="tab-pane fade"
+                id="gallery-memories-pane"
+                role="tabpanel"
+                aria-labelledby="gallery-memories-tab"
+                tabindex="0"
+              >
+                <p class="gallery-intro">
+                  Save photos and notes from your visit to Perez on this device.
+                </p>
+                <p class="small text-secondary mb-3" id="memory-storage-notice">
+                  Your travel memories are stored only in this browser on this
+                  device and are not uploaded to a server.
+                </p>
+                <div
+                  class="alert alert-warning"
+                  id="memory-unavailable"
+                  role="alert"
+                  hidden
+                >
+                  Local photo storage is not available in this browser.
+                </div>
 
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
-              </div>
+                <div class="memory-toolbar">
+                  <button
+                    type="button"
+                    class="btn btn-gold"
+                    id="memory-add-button"
+                  >
+                    <i class="bi bi-camera me-1" aria-hidden="true"></i>Add a
+                    Memory
+                  </button>
+                  <div class="memory-toolbar-tools">
+                    <span
+                      class="memory-count"
+                      id="memory-count"
+                      role="status"
+                      aria-live="polite"
+                      >0 Memories</span
+                    >
+                    <div>
+                      <label class="visually-hidden" for="memory-sort"
+                        >Sort memories</label
+                      >
+                      <select
+                        class="form-select form-select-sm memory-sort"
+                        id="memory-sort"
+                      >
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                      </select>
+                    </div>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-sm"
+                      id="memory-clear-button"
+                    >
+                      Clear All Memories
+                    </button>
+                  </div>
+                </div>
 
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
-              </div>
+                <div
+                  class="filter-tabs"
+                  id="memory-filters"
+                  role="group"
+                  aria-label="Filter travel memories"
+                ></div>
+                <p
+                  class="visually-hidden"
+                  id="memory-filter-status"
+                  role="status"
+                ></p>
 
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
-              </div>
+                <div class="row g-3" id="memory-grid"></div>
+                <p class="text-secondary memory-filter-empty" id="memory-filter-empty" hidden>
+                  No memories match this filter.
+                </p>
 
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
-              </div>
+                <div class="memory-empty" id="memory-empty" hidden>
+                  <i class="bi bi-images" aria-hidden="true"></i>
+                  <h3 class="memory-empty-title">YOUR TRAVEL STORY STARTS HERE</h3>
+                  <p class="memory-empty-text">
+                    Add photos from your Perez trip and turn them into personal
+                    memories.
+                  </p>
+                  <button
+                    type="button"
+                    class="btn btn-gold"
+                    id="memory-empty-add"
+                  >
+                    Add Your First Memory
+                  </button>
+                </div>
 
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
-              </div>
-
-              <div class="col-6 col-md-4 col-lg-3">
-                <img
-                  src="placeholder.svg"
-                  class="img-fluid img-thumbnail gallery-image"
-                  alt="Perez gallery photo"
-                />
+                <p class="small text-secondary mt-3 mb-0" id="memory-local-note">
+                  Memories are stored locally in this browser. Clearing
+                  browser/site data may remove them.
+                </p>
+                <p class="small text-secondary mb-0" id="memory-usage" hidden></p>
+                <p
+                  class="visually-hidden"
+                  id="memory-status"
+                  role="status"
+                  aria-live="polite"
+                ></p>
               </div>
             </div>
           </div>
@@ -1913,6 +2142,327 @@
       </div>
     </div>
 
+    <!-- ==================== Photo gallery and travel memories ==================== -->
+
+    <!-- One reusable public photo viewer modal. -->
+    <div
+      class="modal fade"
+      id="photo-viewer-modal"
+      tabindex="-1"
+      aria-labelledby="photo-viewer-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered photo-viewer-dialog">
+        <div class="modal-content photo-viewer-content">
+          <div class="modal-header">
+            <div>
+              <div class="section-label">Photo Viewer</div>
+              <h2 class="modal-title fs-5" id="photo-viewer-title">
+                Explore Perez
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close photo viewer"
+            ></button>
+          </div>
+          <div class="modal-body text-center">
+            <img
+              id="photo-viewer-image"
+              class="img-fluid rounded photo-viewer-image"
+              src="placeholder.svg"
+              alt=""
+            />
+            <p class="mt-2 mb-0" id="photo-viewer-caption"></p>
+            <p class="small text-secondary mb-0" id="photo-viewer-counter"></p>
+          </div>
+          <div class="modal-footer photo-viewer-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-icon"
+              id="photo-viewer-prev"
+              aria-label="Previous photo"
+            >
+              <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-icon"
+              id="photo-viewer-next"
+              aria-label="Next photo"
+            >
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add or edit a travel memory (one reusable form). -->
+    <div
+      class="modal fade"
+      id="add-memory-modal"
+      tabindex="-1"
+      aria-labelledby="add-memory-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="add-memory-title">
+              Add Travel Memory
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close travel memory form"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label" for="memory-photo">Photo *</label>
+              <input
+                type="file"
+                class="form-control"
+                id="memory-photo"
+                accept="image/jpeg,image/png,image/webp"
+                required
+              />
+              <div class="invalid-feedback" id="memory-photo-error"></div>
+            </div>
+            <div class="memory-preview mb-3" id="memory-preview" hidden>
+              <img id="memory-preview-image" alt="Selected photo preview" />
+              <div class="memory-preview-meta">
+                <span class="memory-preview-name" id="memory-preview-name"></span>
+                <span class="memory-preview-size" id="memory-preview-size"></span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  id="memory-change-photo"
+                >
+                  Change Photo
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="memory-caption">Caption</label>
+              <input
+                type="text"
+                class="form-control"
+                id="memory-caption"
+                maxlength="100"
+                placeholder="e.g. First day in Perez"
+              />
+              <div class="invalid-feedback" id="memory-caption-error"></div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="memory-day">Itinerary Day</label>
+              <select class="form-select" id="memory-day"></select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="memory-related">Related To</label>
+              <select class="form-select" id="memory-related">
+                <option value="">None</option>
+                <optgroup
+                  label="Destinations"
+                  id="memory-related-destinations"
+                ></optgroup>
+                <optgroup
+                  label="Experiences"
+                  id="memory-related-experiences"
+                ></optgroup>
+                <optgroup label="Events" id="memory-related-events"></optgroup>
+              </select>
+            </div>
+            <div class="mb-0">
+              <label class="form-label" for="memory-notes">Notes</label>
+              <textarea
+                class="form-control"
+                id="memory-notes"
+                rows="3"
+                maxlength="500"
+                placeholder="Add notes from your visit..."
+              ></textarea>
+              <div class="invalid-feedback" id="memory-notes-error"></div>
+            </div>
+            <div
+              class="alert alert-danger mt-3 mb-0"
+              id="memory-save-error"
+              role="alert"
+              hidden
+            ></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-gold" id="memory-save">
+              Save Memory
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- One reusable memory details viewer. -->
+    <div
+      class="modal fade"
+      id="memory-details-modal"
+      tabindex="-1"
+      aria-labelledby="memory-details-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <div class="section-label">Memory Details</div>
+              <h2 class="modal-title fs-5" id="memory-details-title">
+                My Travel Memories
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close memory details"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <img
+              id="memory-details-image"
+              class="img-fluid rounded memory-details-image mb-3"
+              src="placeholder.svg"
+              alt=""
+            />
+            <p class="fw-bold mb-2" id="memory-details-caption" hidden></p>
+            <dl class="experience-facts memory-facts">
+              <dt id="memory-details-notes-label" hidden>Notes</dt>
+              <dd id="memory-details-notes" hidden></dd>
+              <dt>Itinerary day</dt>
+              <dd id="memory-details-day"></dd>
+              <dt id="memory-details-related-label" hidden>Related to</dt>
+              <dd id="memory-details-related" hidden></dd>
+              <dt>Date saved</dt>
+              <dd id="memory-details-date"></dd>
+            </dl>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-gold me-auto"
+              id="memory-details-edit"
+            >
+              Edit
+            </button>
+            <button type="button" class="btn btn-danger" id="memory-details-delete">
+              Delete
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Single memory delete confirmation -->
+    <div
+      class="modal fade"
+      id="delete-memory-modal"
+      tabindex="-1"
+      aria-labelledby="delete-memory-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="delete-memory-title">
+              DELETE THIS MEMORY?
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close delete confirmation"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-0">
+              This photo and its notes will be removed from this device.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-danger" id="memory-delete-confirm">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clear all memories confirmation -->
+    <div
+      class="modal fade"
+      id="clear-memories-modal"
+      tabindex="-1"
+      aria-labelledby="clear-memories-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="clear-memories-title">
+              Delete all travel memories stored on this device?
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close clear confirmation"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-0">This cannot be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="memory-clear-confirm"
+            >
+              Clear All Memories
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Itinerary toast -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
       <div
@@ -1933,6 +2483,25 @@
           ></button>
         </div>
         <div class="toast-body" id="itinerary-toast-body"></div>
+      </div>
+      <div
+        id="memory-toast"
+        class="toast"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <i class="bi bi-images me-2" aria-hidden="true"></i>
+          <strong class="me-auto">My Travel Memories</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close notification"
+          ></button>
+        </div>
+        <div class="toast-body" id="memory-toast-body"></div>
       </div>
     </div>
 
