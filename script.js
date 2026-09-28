@@ -145,6 +145,7 @@
           top: main.scrollTop + target.getBoundingClientRect().top - main.getBoundingClientRect().top,
           behavior: reducedMotion.matches ? 'instant' : 'smooth',
         });
+        if (link.classList.contains('skip-link')) target.focus({ preventScroll: true });
       };
       const expandedNavbar = document.querySelector('.navbar-collapse.show');
       if (expandedNavbar && window.bootstrap?.Collapse) {
@@ -334,6 +335,7 @@
         hidden.setAttribute('aria-hidden', 'true');
       }
       destinationCardActions.set(card.dataset.destination, flip);
+      front.querySelector('.learn-more')?.addEventListener('click', () => flip(true));
       front.addEventListener('click', (event) => {
         if (!event.target.closest('a, button, input, select, textarea')) flip(true);
       });
@@ -3017,6 +3019,29 @@
     openAdd: (day) => openAddMemoryModal(day ? { itineraryDay: day } : {}),
   });
 
+  function initNewsletterSignup() {
+    const form = document.getElementById('newsletter-form');
+    const status = document.getElementById('newsletter-status');
+    const email = document.getElementById('newsletter-email');
+    if (!form || !status || !email) return;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!email.value.trim() || !email.checkValidity()) {
+        email.classList.add('is-invalid');
+        status.textContent = 'Enter a valid email address.';
+        email.focus();
+        return;
+      }
+      email.classList.remove('is-invalid');
+      form.reset();
+      status.textContent = 'Thanks for subscribing! This school-project demo does not send emails.';
+    });
+    email.addEventListener('input', () => {
+      email.classList.remove('is-invalid');
+      if (status.textContent) status.textContent = '';
+    });
+  }
+
   function init() {
     initHero();
     initSmoothScrolling();
@@ -3026,13 +3051,14 @@
     initPerezMap();
     initExperienceCards();
     initExperienceModal();
-    initEvents();
     initExperienceReveal();
     initTravelInfoCards();
     initTripPlanner();
     initItinerary();
+    initEvents();
     initGalleryViewer();
     initMemories();
+    initNewsletterSignup();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });

@@ -5,7 +5,7 @@
   --gold-light: #e3ba51;
 
   --text: #142033;
-  --muted: #6f7884;
+  --muted: #67707c;
 
   --page-bg: #ffffff;
   --section-bg: #f4f7fb;
@@ -34,6 +34,11 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
+}
+
+.page-wrapper > header {
+  flex-shrink: 0;
 }
 
 .main-content {
@@ -41,6 +46,30 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+}
+
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1200;
+  padding: 10px 18px;
+  border-radius: 4px;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 600;
+  transform: translateY(-250%);
+}
+
+.skip-link:focus {
+  transform: none;
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+#main-content:focus,
+#main-content:focus-visible {
+  outline: none;
 }
 
 h1,
@@ -66,7 +95,7 @@ img {
 
 .section-label {
   margin-bottom: 4px;
-  color: #8b929b;
+  color: #67707c;
   font-size: 0.8125rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -120,6 +149,11 @@ img {
   color: #fff;
   background: transparent;
   font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .btn-trip {
@@ -131,6 +165,20 @@ img {
   font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.btn-close {
+  width: 44px;
+  height: 44px;
+  padding: 14px;
 }
 
 .btn-trip:hover {
@@ -341,7 +389,7 @@ img {
 }
 
 .quick-item:hover {
-  color: var(--gold);
+  color: #8a6a12;
   transform: translateY(-3px);
 }
 
@@ -361,7 +409,7 @@ img {
 
 .quick-item.active .quick-icon {
   border: 1px solid #dec778;
-  color: var(--gold);
+  color: #8a6a12;
   background: #fffdf6;
 }
 
@@ -432,7 +480,7 @@ img {
   border: 0;
   border-radius: 20px;
   padding: 7px 16px;
-  color: #89909a;
+  color: #67707c;
   background: transparent;
   font-size: 0.875rem;
 }
@@ -468,7 +516,7 @@ img {
 
 .destination-category {
   margin-bottom: 5px;
-  color: var(--gold);
+  color: #8a6a12;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 1.2px;
@@ -491,7 +539,7 @@ img {
   padding: 0;
   background: transparent;
   text-align: left;
-  color: #a17a1d;
+  color: #8a6a12;
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -802,7 +850,7 @@ img {
   background: #fff9e9;
 }
 
-.travel-card h5 {
+.travel-card h3 {
   margin-bottom: 8px;
   font-size: 1.25rem;
 }
@@ -824,7 +872,7 @@ img {
   padding: 4px 0;
   border: 0;
   background: transparent;
-  color: #a17a1d;
+  color: #8a6a12;
   font-size: 0.875rem;
   font-weight: 600;
   text-align: left;
@@ -982,9 +1030,17 @@ img {
 }
 
 .gallery-link {
-  color: #aa852a;
+  border: 0;
+  padding: 8px 0;
+  background: transparent;
+  color: #8a6a12;
   font-size: 0.875rem;
   font-weight: 600;
+  cursor: pointer;
+}
+
+.gallery-link:hover {
+  color: #6f5310;
 }
 
 .gallery-image {
@@ -1013,7 +1069,7 @@ img {
   background: var(--navy-light);
 }
 
-.newsletter h4 {
+.newsletter h2 {
   margin-bottom: 3px;
   color: white;
   font-size: 1.375rem;
@@ -1059,6 +1115,13 @@ img {
   background: var(--gold);
   font-size: 0.875rem;
   font-weight: 700;
+}
+
+.newsletter-status {
+  min-height: 1.25rem;
+  margin: 8px 0 0;
+  color: var(--gold-light);
+  font-size: 0.875rem;
 }
 
 /* ========================================
@@ -1446,7 +1509,7 @@ footer {
 .itinerary-day-head { display: flex; gap: 14px; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
 .itinerary-day-number {
   margin: 0 0 4px;
-  color: var(--gold);
+  color: #8a6a12;
   font-size: .8125rem;
   font-weight: 700;
   letter-spacing: 2px;
@@ -1513,7 +1576,7 @@ footer {
   gap: 4px;
   min-height: 38px;
 }
-.itinerary-item-controls .btn-icon { min-width: 40px; justify-content: center; padding-inline: 8px; }
+.itinerary-item-controls .btn-icon { min-width: 44px; justify-content: center; padding-inline: 8px; }
 .itinerary-item-controls .btn:disabled { opacity: .4; }
 .itinerary-item-controls .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
@@ -1676,7 +1739,7 @@ footer {
   justify-content: space-between;
   gap: 8px;
   margin-top: 14px;
-  color: #a17a1d;
+  color: #8a6a12;
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -1790,7 +1853,7 @@ footer {
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 8px 18px;
-  color: #89909a;
+  color: #67707c;
   background: transparent;
   font-size: 0.9rem;
   font-weight: 600;
@@ -1891,7 +1954,7 @@ footer {
 
 .memory-empty-text {
   margin-bottom: 16px;
-  color: #89909a;
+  color: #67707c;
 }
 
 .memory-card {
@@ -1968,7 +2031,7 @@ footer {
 
 .memory-card-date {
   display: block;
-  color: #89909a;
+  color: #67707c;
   font-size: 0.75rem;
 }
 
@@ -2009,7 +2072,7 @@ footer {
 }
 
 .memory-preview-size {
-  color: #89909a;
+  color: #67707c;
   font-size: 0.75rem;
 }
 
@@ -2045,7 +2108,7 @@ footer {
 }
 
 .itinerary-memory-link {
-  color: #aa852a;
+  color: #8a6a12;
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;

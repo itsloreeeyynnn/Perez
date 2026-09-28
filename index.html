@@ -38,11 +38,13 @@
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <div class="page-wrapper">
       <!-- =========================================================
      NAVBAR
 ========================================================= -->
 
+      <header>
       <nav class="navbar navbar-expand-lg navbar-dark main-navbar">
         <div class="container">
           <a class="navbar-brand" href="#home"> PEREZ <span>QUEZON</span> </a>
@@ -93,17 +95,23 @@
             </ul>
 
             <div class="d-flex align-items-center gap-3">
-              <button class="navbar-search" aria-label="Find a destination">
-                <i class="bi bi-search"></i>
-              </button>
+              <a
+                class="navbar-search"
+                href="#destinations"
+                aria-label="Find a destination"
+              >
+                <i class="bi bi-search" aria-hidden="true"></i>
+              </a>
 
               <a class="btn-trip" href="#travel">Plan Your Trip</a>
             </div>
           </div>
         </div>
       </nav>
+      </header>
 
       <div class="main-content">
+        <main id="main-content" tabindex="-1">
         <!-- =========================================================
      HERO
 ========================================================= -->
@@ -126,7 +134,7 @@
                 Explore Now
               </a>
 
-              <a href="#travel" class="btn btn-outline-light-custom">
+              <a href="#trip-planner" class="btn btn-outline-light-custom">
                 Plan Your Visit
               </a>
             </div>
@@ -173,7 +181,7 @@
                 </div>
 
                 <div class="col">
-                  <a href="#" class="quick-item">
+                  <a href="#trip-planner" class="quick-item">
                     <div class="quick-icon">
                       <i class="bi bi-house-door"></i>
                     </div>
@@ -182,7 +190,7 @@
                 </div>
 
                 <div class="col">
-                  <a href="#" class="quick-item">
+                  <a href="#experiences" class="quick-item">
                     <div class="quick-icon">
                       <i class="bi bi-cup-hot"></i>
                     </div>
@@ -354,7 +362,7 @@
                     <h3 class="destination-title">Perez Beach</h3>
 
                     <p class="destination-text">
-                      An pristine stretch of sand and turquoise shallow waters
+                      A pristine stretch of sand and turquoise shallow waters
                       ideal for peaceful sunbathing and swimming.
                     </p>
 
@@ -548,7 +556,7 @@
                   class="small"
                   href="https://perezquezon.gov.ph/profile/"
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   >Municipality location source</a
                 >
                 <p id="map-status" class="small mt-2 mb-0" role="status"></p>
@@ -703,7 +711,7 @@
                     <i class="bi bi-signpost-2"></i>
                   </div>
 
-                  <h5>Getting There</h5>
+                  <h3 class="travel-card-title">Getting There</h3>
 
                   <p>
                     Take a passenger boat (lantsa) or RORO ferry from Atimonan
@@ -756,7 +764,7 @@
                     <i class="bi bi-sun"></i>
                   </div>
 
-                  <h5>Best Time to Visit</h5>
+                  <h3 class="travel-card-title">Best Time to Visit</h3>
 
                   <p>
                     Visit between March and May for generally drier weather,
@@ -807,7 +815,7 @@
                     <i class="bi bi-lightbulb"></i>
                   </div>
 
-                  <h5>Local Tips</h5>
+                  <h3 class="travel-card-title">Local Tips</h3>
 
                   <p>
                     Bring sufficient cash since access to ATMs may be limited.
@@ -1093,7 +1101,14 @@
                 <h2 class="section-title">Photo Gallery</h2>
               </div>
 
-              <a href="#" class="gallery-link"> View All Photos </a>
+              <button
+                type="button"
+                class="gallery-link"
+                data-bs-toggle="modal"
+                data-bs-target="#photo-viewer-modal"
+              >
+                View All Photos
+              </button>
             </div>
 
             <ul class="nav gallery-tabs" id="gallery-tabs" role="tablist">
@@ -1402,7 +1417,7 @@
             <div class="newsletter">
               <div class="row align-items-center">
                 <div class="col-lg-7">
-                  <h4>Join Our Newsletter</h4>
+                  <h2 class="newsletter-title">Join Our Newsletter</h2>
 
                   <p>
                     Get updates on the upcoming festival schedules, travel
@@ -1411,20 +1426,34 @@
                 </div>
 
                 <div class="col-lg-5">
-                  <form class="newsletter-form">
+                  <form class="newsletter-form" id="newsletter-form" novalidate>
+                    <label class="visually-hidden" for="newsletter-email"
+                      >Email address</label
+                    >
                     <input
                       type="email"
+                      id="newsletter-email"
+                      name="email"
                       class="form-control"
                       placeholder="Enter your email address"
+                      required
                     />
 
                     <button type="submit">Subscribe</button>
                   </form>
+                  <p
+                    class="newsletter-status"
+                    id="newsletter-status"
+                    role="status"
+                    aria-live="polite"
+                  ></p>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
+        </main>
 
         <!-- =========================================================
      FOOTER
@@ -1451,23 +1480,23 @@
 
                 <ul class="footer-links">
                   <li>
-                    <a href="#">About Perez</a>
+                    <a href="#about-perez">About Perez</a>
                   </li>
 
                   <li>
-                    <a href="#">Tourist Destinations</a>
+                    <a href="#destinations">Tourist Destinations</a>
                   </li>
 
                   <li>
-                    <a href="#">Local Festivals</a>
+                    <a href="#events">Local Festivals</a>
                   </li>
 
                   <li>
-                    <a href="#">Accommodations</a>
+                    <a href="#trip-planner">Plan Your Trip</a>
                   </li>
 
                   <li>
-                    <a href="#">Marine Parks</a>
+                    <a href="#map">Explore the Map</a>
                   </li>
                 </ul>
               </div>
@@ -1486,24 +1515,6 @@
                   <i class="bi bi-envelope"></i>
                   tourism@perezquezon.gov.ph
                 </div>
-
-                <div class="socials">
-                  <a href="#" aria-label="Facebook">
-                    <i class="bi bi-facebook"></i>
-                  </a>
-
-                  <a href="#" aria-label="Instagram">
-                    <i class="bi bi-instagram"></i>
-                  </a>
-
-                  <a href="#" aria-label="Youtube">
-                    <i class="bi bi-youtube"></i>
-                  </a>
-
-                  <a href="#" aria-label="Tiktok">
-                    <i class="bi bi-tiktok"></i>
-                  </a>
-                </div>
               </div>
             </div>
 
@@ -1511,13 +1522,8 @@
               class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center"
             >
               <span>
-                © 2025 Municipality of Perez, Quezon. All rights reserved.
+                © 2026 Municipality of Perez, Quezon. All rights reserved.
               </span>
-
-              <div>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-              </div>
             </div>
           </div>
         </footer>
