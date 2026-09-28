@@ -307,8 +307,8 @@
           <dt>Estimated cost</dt><dd>Not verified; confirm locally.</dd>
         </dl>
         <div class="destination-back-actions">
-          <button class="btn btn-gold btn-sm" type="button" disabled aria-describedby="${back.id}-note">Add to Itinerary</button>
-          <p class="destination-placeholder-note" id="${back.id}-note">Itinerary planning is coming in a later phase.</p>
+          <button class="btn btn-gold btn-sm" type="button" data-itinerary-add="destination" data-ref-id="${card.dataset.destination}" aria-describedby="${back.id}-note">Add to Itinerary</button>
+          <p class="destination-placeholder-note" id="${back.id}-note">Adds this place to a day in your trip plan.</p>
           <button class="learn-more destination-back-button" type="button"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back</button>
         </div>`;
       const backTitle = back.querySelector('h3');
@@ -535,12 +535,23 @@
   }
 
   // Supplied planning guidance and operator notices, not live services.
+  // Every origin only provides GENERAL guidance toward Atimonan Port. This
+  // planner does not calculate routes, fares, or travel times from a start point.
   const travelOrigins = {
-    lucena: { name: 'Lucena City', stages: ['Lucena City', 'Land Transportation', 'Atimonan'] },
-    manila: { name: 'Manila', stages: ['Manila', 'Travel toward Quezon Province', 'Atimonan'] },
-    atimonan: { name: 'Atimonan', stages: ['Atimonan'] },
-    gumaca: { name: 'Gumaca', stages: ['Gumaca', 'Land Transportation toward Atimonan', 'Atimonan'] },
-    other: { name: 'Other', stages: [] },
+    manila: { name: 'Metro Manila', direction: 'Travel toward Quezon Province and continue to Atimonan', stages: ['Metro Manila', 'Land Travel Toward Quezon', 'Atimonan'] },
+    lucena: { name: 'Lucena City', direction: 'Travel toward Atimonan', stages: ['Lucena City', 'Travel Toward Atimonan'] },
+    'san-pablo': { name: 'San Pablo City', direction: 'Travel toward Atimonan', stages: ['San Pablo City', 'Travel Toward Atimonan'] },
+    tayabas: { name: 'Tayabas City', direction: 'Travel toward Atimonan', stages: ['Tayabas City', 'Travel Toward Atimonan'] },
+    sariaya: { name: 'Sariaya', direction: 'Travel toward Atimonan', stages: ['Sariaya', 'Travel Toward Atimonan'] },
+    candelaria: { name: 'Candelaria', direction: 'Travel toward Atimonan', stages: ['Candelaria', 'Travel Toward Atimonan'] },
+    tiaong: { name: 'Tiaong', direction: 'Travel toward Atimonan', stages: ['Tiaong', 'Travel Toward Atimonan'] },
+    pagbilao: { name: 'Pagbilao', direction: 'Travel toward Atimonan', stages: ['Pagbilao', 'Travel Toward Atimonan'] },
+    atimonan: { name: 'Atimonan', direction: 'Proceed from the town center to Atimonan Port', stages: ['Atimonan'] },
+    gumaca: { name: 'Gumaca', direction: 'Travel toward Atimonan', stages: ['Gumaca', 'Travel Toward Atimonan'] },
+    lopez: { name: 'Lopez', direction: 'Travel toward Atimonan', stages: ['Lopez', 'Travel Toward Atimonan'] },
+    calauag: { name: 'Calauag', direction: 'Travel toward Atimonan', stages: ['Calauag', 'Travel Toward Atimonan'] },
+    tagkawayan: { name: 'Tagkawayan', direction: 'Travel toward Atimonan', stages: ['Tagkawayan', 'Travel Toward Atimonan'] },
+    other: { name: 'Other location', direction: 'Travel toward Atimonan Port', stages: [] },
   };
   const vesselSchedules = {
     'mb-capricorn': { name: 'MB Capricorn', route: 'Perez', departures: ['11:00 AM'] },
@@ -558,7 +569,7 @@
   const passengerLabels = { regular: 'Regular', student: 'Student', seniorPwd: 'Senior / PWD', child: 'Children' };
   const budgetDefaults = { otherTransportation: 500, localTransport: 150, meals: 350, accommodation: 800, activities: 300, miscellaneous: 300 };
   const plannerKey = 'perezTripPlannerV1';
-  const otherRouteNotice = 'Exact routing from your location is not available in this planner. Atimonan Port is used as the reference gateway for the final journey toward Perez.';
+  const otherRouteNotice = 'Detailed directions from custom locations are not calculated by this planner. Atimonan Port is used as the starting point for the island crossing.';
   const defaultPlannerState = () => ({ origin: '', customOrigin: '', routeOption: '', transportMode: '', vessel: '', departureTime: '', passengers: { regular: 2, student: 0, seniorPwd: 0, child: 0 }, days: 2, budget: { ...budgetDefaults } });
   let plannerState = defaultPlannerState();
   const currency = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
@@ -680,8 +691,13 @@
       }); return timeline;
     }
     function originStages() {
-      const origin = travelOrigins[plannerState.origin];
-      return [...origin.stages.map(name => ({ name, icon: /Transportation|Travel toward/.test(name) ? 'bus-front' : 'geo-alt' })), { name: 'Atimonan Port', icon: 'signpost-split' }];
+      const names = plannerState.origin === 'other'
+        ? [startName(), 'Travel Toward Atimonan Port']
+        : [...(travelOrigins[plannerState.origin]?.stages || [])];
+      return [
+        ...names.map(name => ({ name, icon: /travel toward|land travel|transportation/i.test(name) ? 'bus-front' : 'geo-alt' })),
+        { name: 'Atimonan Port', icon: 'signpost-split' },
+      ];
     }
     let renderedDepartureVessel = null;
     function renderDepartures() {
@@ -714,7 +730,10 @@
       if (!hasOrigin) route.append(textElement('p', 'Choose your starting point to begin your journey.', 'text-secondary'));
       else {
         route.append(textElement('h4', 'Your route toward Atimonan Port', 'fs-5'));
-        if (plannerState.origin === 'other') route.append(textElement('p', 'Starting from: ' + startName()), textElement('p', otherRouteNotice, 'small text-secondary'));
+        if (plannerState.origin === 'other') {
+          route.append(textElement('p', otherRouteNotice, 'small text-secondary'));
+          if (!plannerState.customOrigin.trim()) route.append(textElement('p', 'Enter your city or municipality above to personalize this route.', 'small text-secondary'));
+        } else if (travelOrigins[plannerState.origin]?.direction) route.append(textElement('p', travelOrigins[plannerState.origin].direction, 'small text-secondary'));
         route.append(makeTimeline(originStages(), 'General route to Atimonan Port'));
         if (journeyComplete()) {
           const vessel = vesselSchedules[plannerState.vessel];
@@ -734,12 +753,15 @@
         return;
       }
       const facts = document.createElement('dl'); facts.className = 'travel-tip-list';
-      const rows = { From: startName(), Gateway: 'Atimonan Port' };
+      const rows = { From: startName() };
       if (!plannerState.routeOption) {
+        rows['Next Gateway'] = 'Atimonan Port';
         rows['Next Step'] = 'Choose whether you will land in Perez or Alabat.';
       } else if (plannerState.routeOption === 'direct') {
+        rows['Gateway'] = 'Atimonan Port';
         rows['Island Landing'] = 'Perez'; rows['Sea Transport'] = 'Lantsa'; rows['Vessel'] = 'MB Capricorn'; rows['Departure'] = '11:00 AM'; rows['Final Stop'] = 'Perez';
       } else {
+        rows['Gateway'] = 'Atimonan Port';
         rows['Island Landing'] = 'Alabat';
         rows['Sea Transport'] = plannerState.transportMode ? (plannerState.transportMode === 'roro' ? 'RORO' : 'Lantsa') : 'Choose Lantsa or RORO';
         if (plannerState.vessel) rows['Vessel'] = vesselSchedules[plannerState.vessel].name;
@@ -755,7 +777,7 @@
         if (plannerState.vessel) routeStages.push({ name: vesselSchedules[plannerState.vessel].name, icon: 'water', note: plannerState.departureTime || 'Choose departure' });
         routeStages.push({ name: 'Alabat', icon: 'geo-alt' }, { name: 'Tricycle to Perez', icon: 'truck' }, { name: 'Perez', icon: 'geo-alt' });
       }
-      gettingThere.replaceChildren(textElement('p', 'Your Route Based on Your Input', 'travel-detail-label'), makeTimeline(routeStages, 'Getting there based on your trip planner input'), facts, textElement('p', 'Schedules and fares may change. Confirm the latest operator or port advisory before traveling.', 'travel-detail-note'));
+      gettingThere.replaceChildren(textElement('p', 'Your Current Plan', 'travel-detail-label'), makeTimeline(routeStages, 'Getting there based on your trip planner input'), facts, textElement('p', 'Schedules and fares may change. Confirm the latest operator or port advisory before traveling.', 'travel-detail-note'));
       if (plannerState.origin === 'other') gettingThere.append(textElement('p', otherRouteNotice, 'travel-detail-note'));
     }
     function renderBudget() {
@@ -839,6 +861,798 @@
     });
   }
 
+  // ===================== Phase 4 · My Perez Trip itinerary =====================
+  // The itinerary keeps its own stored document (perezItineraryV1) and always
+  // follows the Phase 3 trip length. It never changes Phase 3 journey,
+  // vessel, fare, or budget calculations.
+  const itineraryKey = 'perezItineraryV1';
+  const itineraryPeriods = { any: 'Any Time', morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
+  const itineraryTypes = { destination: 'Destination', experience: 'Experience', custom: 'Custom' };
+  const itineraryLimits = { title: 60, dayNotes: 600, name: 80, note: 300 };
+  let itineraryState = { days: {} };
+  let activeItineraryDay = 1;
+  let newestItineraryItemId = null;
+  const itineraryUI = {
+    addTarget: null, duplicate: null, editing: null, moving: null, removing: null,
+    reducing: null, revertingDays: false, experienceId: null, focusItem: null,
+  };
+
+  const itineraryEl = (id) => document.getElementById(id);
+  const emptyDay = () => ({ title: '', notes: '', items: [] });
+  const clampText = (value, max) => (typeof value === 'string' ? value.slice(0, max) : '');
+  const tripDays = () => {
+    const days = window.perezTripPlanner?.getTripDays?.();
+    return Number.isInteger(days) && days > 0 ? days : 1;
+  };
+  const tripTravelers = () => {
+    const count = window.perezTripPlanner?.getTravelerCount?.();
+    return Number.isFinite(count) ? count : 0;
+  };
+  function itineraryNode(tag, text, className = '') {
+    const node = document.createElement(tag);
+    node.textContent = text;
+    if (className) node.className = className;
+    return node;
+  }
+  function itineraryUUID() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    return 'iti-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+  }
+
+  // Display names come from the existing website content, never duplicated copy.
+  const destinationName = (id) => destinationLocations.find((d) => d.id === id)?.name || '';
+  const experienceName = (id) => experiences.find((e) => e.id === id)?.title || '';
+  function itemSourceName(item) {
+    if (!item) return '';
+    if (item.type === 'custom') return item.name;
+    if (item.type === 'destination') return destinationName(item.refId);
+    if (item.type === 'experience') return experienceName(item.refId);
+    return '';
+  }
+  function validItineraryRef(type, refId) {
+    if (type === 'destination') return Boolean(destinationDetails[refId]);
+    if (type === 'experience') return experiences.some((e) => e.id === refId);
+    return false;
+  }
+  function sameSource(item, target) {
+    if (item.type !== target.type) return false;
+    return target.type === 'custom' ? item.name === target.name : item.refId === target.refId;
+  }
+
+  function sanitizeItineraryItem(raw) {
+    if (!raw || typeof raw !== 'object' || !owns(itineraryTypes, raw.type)) return null;
+    const type = raw.type;
+    const period = owns(itineraryPeriods, raw.period) ? raw.period : 'any';
+    const note = clampText(raw.note, itineraryLimits.note).trim();
+    const id = typeof raw.id === 'string' && raw.id.trim() ? raw.id.slice(0, 64) : itineraryUUID();
+    if (type === 'custom') {
+      const name = clampText(raw.name, itineraryLimits.name).trim();
+      return name ? { id, type, name, period, note } : null;
+    }
+    if (typeof raw.refId !== 'string' || !validItineraryRef(type, raw.refId)) return null;
+    return { id, type, refId: raw.refId, period, note };
+  }
+
+  function loadItinerary() {
+    itineraryState = { days: {} };
+    try {
+      const saved = JSON.parse(localStorage.getItem(itineraryKey));
+      const source = saved && typeof saved === 'object' && saved.days && typeof saved.days === 'object' ? saved.days : null;
+      if (!source) return;
+      const seenIds = new Set();
+      Object.keys(source).forEach((key) => {
+        if (!/^[1-9]\d?$/.test(key)) return;
+        const raw = source[key];
+        if (!raw || typeof raw !== 'object') return;
+        const items = (Array.isArray(raw.items) ? raw.items : []).map(sanitizeItineraryItem).filter(Boolean);
+        items.forEach((item) => {
+          if (seenIds.has(item.id)) item.id = itineraryUUID();
+          seenIds.add(item.id);
+        });
+        itineraryState.days[key] = {
+          title: clampText(raw.title, itineraryLimits.title),
+          notes: clampText(raw.notes, itineraryLimits.dayNotes),
+          items,
+        };
+      });
+    } catch { /* Corrupt or unavailable storage starts from an empty itinerary. */ }
+  }
+  function saveItinerary() {
+    try { localStorage.setItem(itineraryKey, JSON.stringify({ days: itineraryState.days })); }
+    catch { /* Storage failures never block planning in this session. */ }
+  }
+
+  const dayKeys = () => Object.keys(itineraryState.days).map(Number).sort((a, b) => a - b);
+  const itineraryDayCount = () => dayKeys().reduce((max, n) => Math.max(max, n), 0);
+  function dayData(number) {
+    if (!itineraryState.days[number]) itineraryState.days[number] = emptyDay();
+    return itineraryState.days[number];
+  }
+  function ensureItineraryDays(count) {
+    for (let n = 1; n <= count; n += 1) dayData(n);
+  }
+  function occupiedDaysAbove(count) {
+    return dayKeys().filter((n) => {
+      const day = itineraryState.days[n];
+      return n > count && (day.items.length > 0 || Boolean(day.title.trim()) || Boolean(day.notes.trim()));
+    });
+  }
+  function mergeDayInto(fromNumber, toNumber) {
+    const source = itineraryState.days[fromNumber];
+    if (!source || fromNumber === toNumber) return;
+    const target = dayData(toNumber);
+    target.items.push(...source.items);
+    const notes = source.notes.trim();
+    if (notes) target.notes = target.notes ? `${target.notes}\n${notes}` : notes;
+    if (source.title.trim()) {
+      if (!target.title.trim()) target.title = source.title;
+      else {
+        const line = `Day ${fromNumber} title: ${source.title}`;
+        target.notes = target.notes ? `${target.notes}\n${line}` : line;
+      }
+    }
+    delete itineraryState.days[fromNumber];
+  }
+  function findItineraryItem(id, dayNumber = activeItineraryDay) {
+    return itineraryState.days[dayNumber]?.items.find((item) => item.id === id) || null;
+  }
+
+  // ===================== Phase 3 ↔ Phase 4 day synchronisation =====================
+  function applyPlannerDays() {
+    if (itineraryUI.revertingDays) return;
+    const days = tripDays();
+    const current = itineraryDayCount();
+    if (days === current) { ensureItineraryDays(days); return; }
+    if (days > current) {
+      ensureItineraryDays(days);
+      saveItinerary();
+      renderItinerary();
+      return;
+    }
+    const occupied = occupiedDaysAbove(days);
+    if (occupied.length) { openReduceDaysModal(days, occupied); return; }
+    dayKeys().filter((n) => n > days).forEach((n) => { delete itineraryState.days[n]; });
+    ensureItineraryDays(days);
+    saveItinerary();
+    renderItinerary();
+  }
+  function restorePlannerDays(value) {
+    itineraryUI.revertingDays = true;
+    const input = itineraryEl('planner-days');
+    if (input) {
+      input.value = String(value);
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    itineraryUI.revertingDays = false;
+  }
+  function openReduceDaysModal(newDays, orphanDays) {
+    const last = orphanDays[orphanDays.length - 1];
+    const range = orphanDays.length === 1 ? `Day ${last}` : `Days ${orphanDays[0]}–${last}`;
+    itineraryUI.reducing = { newDays, orphanDays };
+    itineraryEl('reduce-days-intro').textContent =
+      `Reducing your trip to ${newDays} ${newDays === 1 ? 'day' : 'days'} will remove ${range} from your itinerary. Nothing is removed until you choose.`;
+    const list = itineraryEl('reduce-days-list');
+    list.replaceChildren();
+    orphanDays.forEach((n) => {
+      const day = itineraryState.days[n];
+      const parts = [`${day.items.length} ${day.items.length === 1 ? 'activity' : 'activities'}`];
+      if (day.title.trim()) parts.push(`title "${day.title}"`);
+      if (day.notes.trim()) parts.push('day notes');
+      list.append(itineraryNode('li', `Day ${n}: ${parts.join(', ')}`));
+    });
+    itineraryEl('reduce-days-move').textContent = `Move to Day ${newDays}`;
+    itineraryEl('reduce-days-remove').textContent = orphanDays.length === 1
+      ? `Remove Day ${last} activities`
+      : `Remove ${range} activities`;
+    showModal('reduce-days-modal');
+  }
+  function reduceDaysMove() {
+    const pending = itineraryUI.reducing;
+    if (!pending) return;
+    pending.orphanDays.forEach((n) => mergeDayInto(n, pending.newDays));
+    dayKeys().filter((n) => n > pending.newDays).forEach((n) => { delete itineraryState.days[n]; });
+    ensureItineraryDays(pending.newDays);
+    if (activeItineraryDay > pending.newDays) activeItineraryDay = pending.newDays;
+    itineraryUI.reducing = null;
+    hideModal('reduce-days-modal');
+    saveItinerary();
+    renderItinerary();
+    showItineraryToast(`Activities moved to Day ${pending.newDays}`);
+  }
+  function reduceDaysRemove() {
+    const pending = itineraryUI.reducing;
+    if (!pending) return;
+    const last = pending.orphanDays[pending.orphanDays.length - 1];
+    const range = pending.orphanDays.length === 1 ? `Day ${last}` : `Days ${pending.orphanDays[0]}–${last}`;
+    pending.orphanDays.forEach((n) => { delete itineraryState.days[n]; });
+    dayKeys().filter((n) => n > pending.newDays).forEach((n) => { delete itineraryState.days[n]; });
+    ensureItineraryDays(pending.newDays);
+    if (activeItineraryDay > pending.newDays) activeItineraryDay = pending.newDays;
+    itineraryUI.reducing = null;
+    hideModal('reduce-days-modal');
+    saveItinerary();
+    renderItinerary();
+    showItineraryToast(`${range} removed from your itinerary`);
+  }
+  function reduceDaysCancel() {
+    itineraryUI.reducing = null;
+    restorePlannerDays(itineraryDayCount() || 1);
+  }
+
+  // ===================== Itinerary rendering =====================
+  function renderTripMeta() {
+    const meta = itineraryEl('itinerary-trip-meta');
+    if (!meta) return;
+    const days = tripDays(), travelers = tripTravelers();
+    meta.textContent = `${days} ${days === 1 ? 'Day' : 'Days'} • ${travelers} ${travelers === 1 ? 'Traveler' : 'Travelers'}`;
+  }
+
+  function renderJourneySummary() {
+    const host = itineraryEl('itinerary-journey');
+    if (!host) return;
+    host.replaceChildren();
+    const state = window.perezTripPlanner?.getPlannerState?.() || {};
+    const rows = [];
+    const originName = state.origin === 'other'
+      ? (state.customOrigin?.trim() || 'Other location')
+      : travelOrigins[state.origin]?.name || '';
+    if (state.origin) rows.push(['From', originName]);
+    if (state.routeOption === 'direct') {
+      rows.push(['Landing', 'Perez'], ['Vessel', vesselSchedules['mb-capricorn'].name], ['Departure', vesselSchedules['mb-capricorn'].departures[0]]);
+    } else if (state.routeOption === 'via-alabat') {
+      rows.push(['Landing', 'Alabat']);
+      if (state.transportMode) rows.push(['Transport', state.transportMode === 'roro' ? 'RORO' : 'Lantsa']);
+      if (state.vessel) {
+        rows.push(['Vessel', vesselSchedules[state.vessel].name]);
+        if (state.departureTime) rows.push(['Departure', state.departureTime]);
+      }
+      rows.push(['Final Connection', 'Tricycle to Perez']);
+    } else if (state.origin) {
+      rows.push(['Landing', 'Not chosen yet']);
+    }
+    if (rows.length) {
+      const list = document.createElement('dl');
+      list.className = 'itinerary-journey-list';
+      rows.forEach(([label, value]) => list.append(itineraryNode('dt', label), itineraryNode('dd', value)));
+      host.append(list);
+    }
+    const complete = Boolean(state.origin && state.vessel && state.departureTime);
+    if (!complete) {
+      host.append(
+        itineraryNode('p', 'Complete Your Journey above to include transportation details in your trip plan.', 'itinerary-notice'),
+      );
+      const link = document.createElement('a');
+      link.href = '#trip-planner';
+      link.className = 'btn btn-sm btn-gold mt-2';
+      link.textContent = 'Plan Your Journey';
+      host.append(link);
+    }
+  }
+
+  function renderItinerarySummary() {
+    const host = itineraryEl('itinerary-summary');
+    if (!host) return;
+    const days = tripDays(), travelers = tripTravelers();
+    const counts = [];
+    let total = 0, filled = 0;
+    for (let n = 1; n <= days; n += 1) {
+      const count = dayData(n).items.length;
+      counts.push(count);
+      total += count;
+      if (count > 0) filled += 1;
+    }
+    const stats = document.createElement('ul');
+    stats.className = 'itinerary-stats';
+    [[String(days), days === 1 ? 'Day' : 'Days'], [String(travelers), travelers === 1 ? 'Traveler' : 'Travelers'], [String(total), total === 1 ? 'Planned Activity' : 'Planned Activities']]
+      .forEach(([value, label]) => {
+        const cell = document.createElement('li');
+        cell.append(itineraryNode('strong', value), itineraryNode('span', label));
+        stats.append(cell);
+      });
+    const breakdown = document.createElement('ul');
+    breakdown.className = 'itinerary-summary-days';
+    counts.forEach((count, index) => {
+      breakdown.append(itineraryNode('li', `Day ${index + 1} — ${count} ${count === 1 ? 'activity' : 'activities'}`));
+    });
+    host.replaceChildren(
+      stats, breakdown,
+      itineraryNode('p', `${filled} of ${days} ${days === 1 ? 'day has' : 'days have'} activities`, 'itinerary-summary-status'),
+    );
+  }
+
+  function renderDayTabs() {
+    const tabs = itineraryEl('itinerary-day-tabs');
+    if (!tabs) return;
+    const days = tripDays();
+    if (activeItineraryDay > days) activeItineraryDay = days;
+    tabs.replaceChildren();
+    for (let n = 1; n <= days; n += 1) {
+      const count = dayData(n).items.length;
+      const item = document.createElement('li');
+      item.className = 'nav-item';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'nav-link' + (n === activeItineraryDay ? ' active' : '');
+      button.dataset.day = String(n);
+      button.setAttribute('aria-pressed', String(n === activeItineraryDay));
+      button.setAttribute('aria-label', `Day ${n}, ${count} ${count === 1 ? 'activity' : 'activities'}`);
+      button.append(itineraryNode('span', `Day ${n}`));
+      button.addEventListener('click', () => {
+        activeItineraryDay = n;
+        renderDayTabs();
+        renderActiveDay();
+      });
+      item.append(button);
+      tabs.append(item);
+    }
+  }
+
+  function buildEmptyDay(dayNumber) {
+    const box = document.createElement('div');
+    box.className = 'itinerary-empty';
+    const icon = document.createElement('i');
+    icon.className = 'bi bi-calendar-plus';
+    icon.setAttribute('aria-hidden', 'true');
+    box.append(
+      icon,
+      itineraryNode('p', `Nothing planned for Day ${dayNumber} yet.`, 'itinerary-empty-title'),
+      itineraryNode('p', 'Explore destinations and experiences, then add them to this day.'),
+    );
+    const actions = document.createElement('div');
+    actions.className = 'itinerary-empty-actions';
+    [['Browse Destinations', '#destinations'], ['Browse Experiences', '#experiences']].forEach(([label, href]) => {
+      const link = document.createElement('a');
+      link.href = href;
+      link.className = 'btn btn-sm btn-outline-secondary';
+      link.textContent = label;
+      actions.append(link);
+    });
+    box.append(actions);
+    return box;
+  }
+
+  function itineraryItemButton(action, icon, label, options = {}) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.action = action;
+    button.className = 'btn btn-sm btn-outline-secondary' + (options.iconOnly ? ' btn-icon' : '');
+    button.setAttribute('aria-label', label);
+    button.title = label;
+    if (options.disabled) button.disabled = true;
+    const glyph = document.createElement('i');
+    glyph.className = 'bi bi-' + icon;
+    glyph.setAttribute('aria-hidden', 'true');
+    button.append(glyph);
+    if (!options.iconOnly) button.append(document.createTextNode(' ' + options.text));
+    return button;
+  }
+
+  function renderItineraryItem(item, index, total) {
+    const card = document.createElement('li');
+    card.className = 'itinerary-item' + (item.id === newestItineraryItemId ? ' is-new' : '');
+    card.dataset.itemId = item.id;
+
+    const main = document.createElement('div');
+    main.className = 'itinerary-item-main';
+    const top = document.createElement('div');
+    top.className = 'itinerary-item-top';
+    top.append(
+      itineraryNode('span', itineraryTypes[item.type], 'itinerary-item-type'),
+      itineraryNode('strong', itemSourceName(item), 'itinerary-item-name'),
+      itineraryNode('span', itineraryPeriods[item.period], 'badge itinerary-period'),
+    );
+    main.append(top);
+    if (item.note) main.append(itineraryNode('p', item.note, 'itinerary-item-note'));
+
+    const name = itemSourceName(item);
+    const controls = document.createElement('div');
+    controls.className = 'itinerary-item-controls';
+    controls.append(
+      itineraryItemButton('up', 'arrow-up', `Move ${name} up`, { iconOnly: true, disabled: index === 0 }),
+      itineraryItemButton('down', 'arrow-down', `Move ${name} down`, { iconOnly: true, disabled: index === total - 1 }),
+      itineraryItemButton('move', 'arrow-left-right', 'Move', { text: 'Move' }),
+      itineraryItemButton('edit', 'pencil', 'Edit', { text: 'Edit' }),
+      itineraryItemButton('remove', 'trash', 'Remove', { text: 'Remove' }),
+    );
+    card.append(main, controls);
+    return card;
+  }
+
+  function renderActiveDay() {
+    const panel = itineraryEl('itinerary-day-panel');
+    if (!panel) return;
+    const days = tripDays();
+    if (activeItineraryDay > days) activeItineraryDay = days;
+    if (activeItineraryDay < 1) activeItineraryDay = 1;
+    const dayNumber = activeItineraryDay;
+    const day = dayData(dayNumber);
+    panel.replaceChildren();
+
+    const section = document.createElement('section');
+    section.className = 'itinerary-day';
+    section.setAttribute('aria-label', `Day ${dayNumber} itinerary`);
+
+    const head = document.createElement('div');
+    head.className = 'itinerary-day-head';
+    const heading = document.createElement('div');
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.className = 'form-control itinerary-day-title';
+    titleInput.id = 'itinerary-day-title';
+    titleInput.maxLength = itineraryLimits.title;
+    titleInput.placeholder = 'e.g. Beach & Nature Day';
+    titleInput.value = day.title;
+    titleInput.setAttribute('aria-label', `Day ${dayNumber} title`);
+    titleInput.addEventListener('input', () => {
+      day.title = clampText(titleInput.value, itineraryLimits.title);
+      saveItinerary();
+    });
+    heading.append(itineraryNode('p', `Day ${dayNumber}`, 'itinerary-day-number'), titleInput);
+    head.append(heading);
+    section.append(head);
+
+    const notesGroup = document.createElement('div');
+    notesGroup.className = 'mb-3';
+    const notesLabel = document.createElement('label');
+    notesLabel.className = 'form-label';
+    notesLabel.htmlFor = 'itinerary-day-notes';
+    notesLabel.textContent = 'Day notes';
+    const notesInput = document.createElement('textarea');
+    notesInput.className = 'form-control';
+    notesInput.id = 'itinerary-day-notes';
+    notesInput.rows = 2;
+    notesInput.maxLength = itineraryLimits.dayNotes;
+    notesInput.placeholder = 'Add notes for this day...';
+    notesInput.value = day.notes;
+    notesInput.addEventListener('input', () => {
+      day.notes = clampText(notesInput.value, itineraryLimits.dayNotes);
+      saveItinerary();
+    });
+    notesGroup.append(notesLabel, notesInput);
+    section.append(notesGroup);
+
+    section.append(itineraryNode('h3', 'Planned Activities', 'itinerary-subhead'));
+    if (day.items.length) {
+      const list = document.createElement('ol');
+      list.className = 'itinerary-list';
+      list.id = 'itinerary-items';
+      day.items.forEach((item, index) => list.append(renderItineraryItem(item, index, day.items.length)));
+      section.append(list);
+    } else {
+      section.append(buildEmptyDay(dayNumber));
+    }
+
+    const addCustom = document.createElement('button');
+    addCustom.type = 'button';
+    addCustom.className = 'btn btn-outline-secondary btn-sm itinerary-add-custom';
+    addCustom.dataset.action = 'add-custom';
+    const plus = document.createElement('i');
+    plus.className = 'bi bi-plus-lg me-1';
+    plus.setAttribute('aria-hidden', 'true');
+    addCustom.append(plus, document.createTextNode('Add Custom Activity'));
+    section.append(addCustom);
+    panel.append(section);
+
+    if (itineraryUI.focusItem) {
+      const { id, action } = itineraryUI.focusItem;
+      itineraryUI.focusItem = null;
+      const movedCard = [...panel.querySelectorAll('.itinerary-item')].find((node) => node.dataset.itemId === id);
+      movedCard?.querySelector(`[data-action="${action}"]`)?.focus({ preventScroll: true });
+    }
+  }
+
+  function renderItinerary() {
+    renderTripMeta();
+    renderJourneySummary();
+    renderItinerarySummary();
+    renderDayTabs();
+    renderActiveDay();
+  }
+  function refreshItineraryContext() {
+    renderTripMeta();
+    renderJourneySummary();
+  }
+
+  // ===================== Itinerary actions =====================
+  function showModal(id) {
+    const element = itineraryEl(id);
+    if (element && window.bootstrap?.Modal) window.bootstrap.Modal.getOrCreateInstance(element).show();
+  }
+  function hideModal(id) {
+    const element = itineraryEl(id);
+    if (element && window.bootstrap?.Modal) window.bootstrap.Modal.getOrCreateInstance(element).hide();
+  }
+  function showItineraryToast(message) {
+    const body = itineraryEl('itinerary-toast-body');
+    if (body) body.textContent = message;
+    const toast = itineraryEl('itinerary-toast');
+    if (toast && window.bootstrap?.Toast) window.bootstrap.Toast.getOrCreateInstance(toast, { delay: 2500 }).show();
+    announceItinerary(message);
+  }
+  function announceItinerary(message) {
+    const status = itineraryEl('itinerary-status');
+    if (status) status.textContent = message;
+  }
+  function fillDaySelect(select, selectedDay) {
+    if (!select) return;
+    const days = tripDays();
+    select.replaceChildren();
+    for (let n = 1; n <= days; n += 1) {
+      const option = document.createElement('option');
+      option.value = String(n);
+      option.textContent = `Day ${n}`;
+      select.append(option);
+    }
+    select.value = String(Math.min(Math.max(selectedDay || 1, 1), days));
+  }
+
+  function addItineraryItem(partial, dayNumber) {
+    const item = { id: itineraryUUID(), ...partial };
+    dayData(dayNumber).items.push(item);
+    newestItineraryItemId = item.id;
+    activeItineraryDay = dayNumber;
+    saveItinerary();
+    renderItinerary();
+    showItineraryToast(`Added to Day ${dayNumber}`);
+    setTimeout(() => { if (newestItineraryItemId === item.id) newestItineraryItemId = null; }, 800);
+  }
+
+  function openAddToItinerary(target) {
+    itineraryUI.addTarget = target;
+    const name = target.type === 'destination' ? destinationName(target.refId) : experienceName(target.refId);
+    itineraryEl('add-itinerary-item-name').textContent = name;
+    fillDaySelect(itineraryEl('add-itinerary-day'), activeItineraryDay);
+    itineraryEl('add-itinerary-period').value = 'any';
+    itineraryEl('add-itinerary-note').value = '';
+    showModal('add-itinerary-modal');
+  }
+  function confirmAddToItinerary() {
+    const target = itineraryUI.addTarget;
+    if (!target) return;
+    const dayNumber = Number(itineraryEl('add-itinerary-day').value) || activeItineraryDay;
+    const selectedPeriod = itineraryEl('add-itinerary-period').value;
+    const period = owns(itineraryPeriods, selectedPeriod) ? selectedPeriod : 'any';
+    const note = clampText(itineraryEl('add-itinerary-note').value, itineraryLimits.note).trim();
+    const candidate = target.type === 'custom'
+      ? { type: 'custom', name: target.name, period, note }
+      : { type: target.type, refId: target.refId, period, note };
+    hideModal('add-itinerary-modal');
+    const day = dayData(dayNumber);
+    if (day.items.some((item) => sameSource(item, candidate))) {
+      itineraryUI.duplicate = { item: candidate, day: dayNumber };
+      itineraryEl('duplicate-activity-question').textContent =
+        `This is already on Day ${dayNumber}. Add it again?`;
+      showModal('duplicate-activity-modal');
+      return;
+    }
+    addItineraryItem(candidate, dayNumber);
+  }
+  function confirmDuplicate() {
+    const pending = itineraryUI.duplicate;
+    itineraryUI.duplicate = null;
+    hideModal('duplicate-activity-modal');
+    if (pending) addItineraryItem(pending.item, pending.day);
+  }
+
+  function openCustomActivityModal() {
+    itineraryEl('custom-activity-name').value = '';
+    itineraryEl('custom-activity-name').classList.remove('is-invalid');
+    itineraryEl('custom-activity-note').value = '';
+    itineraryEl('custom-activity-period').value = 'any';
+    fillDaySelect(itineraryEl('custom-activity-day'), activeItineraryDay);
+    showModal('custom-activity-modal');
+  }
+  function confirmCustomActivity() {
+    const nameInput = itineraryEl('custom-activity-name');
+    const name = nameInput.value.trim().slice(0, itineraryLimits.name);
+    if (!name) {
+      nameInput.classList.add('is-invalid');
+      nameInput.focus();
+      return;
+    }
+    nameInput.classList.remove('is-invalid');
+    const dayNumber = Number(itineraryEl('custom-activity-day').value) || activeItineraryDay;
+    const selectedPeriod = itineraryEl('custom-activity-period').value;
+    const period = owns(itineraryPeriods, selectedPeriod) ? selectedPeriod : 'any';
+    const note = clampText(itineraryEl('custom-activity-note').value, itineraryLimits.note).trim();
+    hideModal('custom-activity-modal');
+    addItineraryItem({ type: 'custom', name, period, note }, dayNumber);
+  }
+
+  function reorderItineraryItem(id, delta) {
+    const day = dayData(activeItineraryDay);
+    const index = day.items.findIndex((item) => item.id === id);
+    const next = index + delta;
+    if (index < 0 || next < 0 || next >= day.items.length) return;
+    [day.items[index], day.items[next]] = [day.items[next], day.items[index]];
+    itineraryUI.focusItem = { id, action: delta < 0 ? 'up' : 'down' };
+    saveItinerary();
+    renderActiveDay();
+    renderItinerarySummary();
+    announceItinerary(`${itemSourceName(day.items[next])} moved to position ${next + 1} of Day ${activeItineraryDay}`);
+  }
+
+  function openMoveModal(id) {
+    const item = findItineraryItem(id);
+    if (!item) return;
+    itineraryUI.moving = { id, day: activeItineraryDay };
+    itineraryEl('move-activity-question').textContent = `Move "${itemSourceName(item)}" to:`;
+    fillDaySelect(itineraryEl('move-activity-day'), activeItineraryDay);
+    showModal('move-activity-modal');
+  }
+  function confirmMove() {
+    const pending = itineraryUI.moving;
+    if (!pending) return;
+    const targetDay = Number(itineraryEl('move-activity-day').value) || pending.day;
+    hideModal('move-activity-modal');
+    itineraryUI.moving = null;
+    if (targetDay === pending.day) return;
+    const source = dayData(pending.day);
+    const index = source.items.findIndex((item) => item.id === pending.id);
+    if (index < 0) return;
+    const [item] = source.items.splice(index, 1);
+    dayData(targetDay).items.push(item);
+    activeItineraryDay = targetDay;
+    saveItinerary();
+    renderItinerary();
+    showItineraryToast(`Moved to Day ${targetDay}`);
+  }
+
+  function openEditModal(id) {
+    const item = findItineraryItem(id);
+    if (!item) return;
+    itineraryUI.editing = { id, day: activeItineraryDay };
+    const custom = item.type === 'custom';
+    itineraryEl('edit-activity-name-field').hidden = !custom;
+    itineraryEl('edit-activity-name').hidden = custom;
+    itineraryEl('edit-activity-name').textContent = itemSourceName(item);
+    itineraryEl('edit-activity-custom-name').value = custom ? item.name : '';
+    itineraryEl('edit-activity-custom-name').classList.remove('is-invalid');
+    itineraryEl('edit-activity-period').value = item.period;
+    itineraryEl('edit-activity-note').value = item.note;
+    showModal('edit-activity-modal');
+  }
+  function confirmEdit() {
+    const pending = itineraryUI.editing;
+    if (!pending) return;
+    const item = findItineraryItem(pending.id, pending.day);
+    if (!item) { itineraryUI.editing = null; hideModal('edit-activity-modal'); return; }
+    if (item.type === 'custom') {
+      const nameInput = itineraryEl('edit-activity-custom-name');
+      const name = nameInput.value.trim().slice(0, itineraryLimits.name);
+      if (!name) {
+        nameInput.classList.add('is-invalid');
+        nameInput.focus();
+        return;
+      }
+      nameInput.classList.remove('is-invalid');
+      item.name = name;
+    }
+    const period = itineraryEl('edit-activity-period').value;
+    item.period = owns(itineraryPeriods, period) ? period : 'any';
+    item.note = clampText(itineraryEl('edit-activity-note').value, itineraryLimits.note).trim();
+    itineraryUI.editing = null;
+    hideModal('edit-activity-modal');
+    saveItinerary();
+    renderActiveDay();
+    renderItinerarySummary();
+    showItineraryToast('Itinerary updated');
+  }
+
+  function openRemoveModal(id) {
+    const item = findItineraryItem(id);
+    if (!item) return;
+    itineraryUI.removing = { id, day: activeItineraryDay };
+    itineraryEl('remove-activity-question').textContent =
+      `Remove "${itemSourceName(item)}" from Day ${activeItineraryDay}?`;
+    showModal('remove-activity-modal');
+  }
+  function confirmRemove() {
+    const pending = itineraryUI.removing;
+    itineraryUI.removing = null;
+    hideModal('remove-activity-modal');
+    if (!pending) return;
+    const day = dayData(pending.day);
+    const index = day.items.findIndex((item) => item.id === pending.id);
+    if (index < 0) return;
+    const [removed] = day.items.splice(index, 1);
+    saveItinerary();
+    renderActiveDay();
+    renderItinerarySummary();
+    showItineraryToast(`Removed "${itemSourceName(removed)}" from Day ${pending.day}`);
+  }
+
+  function clearItinerary() {
+    const days = tripDays();
+    const fresh = {};
+    for (let n = 1; n <= days; n += 1) fresh[n] = emptyDay();
+    itineraryState.days = fresh;
+    activeItineraryDay = 1;
+    hideModal('clear-itinerary-modal');
+    saveItinerary();
+    renderItinerary();
+    showItineraryToast('Itinerary cleared');
+  }
+
+  // ===================== Phase 4 wiring =====================
+  function initItinerarySources() {
+    document.addEventListener('click', (event) => {
+      const trigger = event.target.closest?.('[data-itinerary-add]');
+      if (!trigger) return;
+      event.preventDefault();
+      event.stopPropagation();
+      let type = trigger.dataset.itineraryAdd;
+      let refId = trigger.dataset.refId || null;
+      if (type === 'experience' && !refId) refId = itineraryUI.experienceId;
+      if (!validItineraryRef(type, refId)) return;
+      const experienceModal = itineraryEl('experience-modal');
+      if (experienceModal?.classList.contains('show') && window.bootstrap?.Modal) {
+        const instance = window.bootstrap.Modal.getOrCreateInstance(experienceModal);
+        experienceModal.addEventListener('hidden.bs.modal', () => openAddToItinerary({ type, refId }), { once: true });
+        instance.hide();
+        return;
+      }
+      openAddToItinerary({ type, refId });
+    });
+    document.querySelectorAll('[data-experience]').forEach((card) => {
+      card.addEventListener('click', () => { itineraryUI.experienceId = card.dataset.experience; });
+    });
+  }
+
+  function initItinerary() {
+    const section = itineraryEl('itinerary');
+    if (!section) return;
+    loadItinerary();
+    // Startup reconciliation never deletes data: extra stored days are merged.
+    const days = tripDays();
+    occupiedDaysAbove(days).slice().reverse().forEach((n) => mergeDayInto(n, Math.max(1, days)));
+    dayKeys().filter((n) => n > days).forEach((n) => { delete itineraryState.days[n]; });
+    ensureItineraryDays(days);
+    saveItinerary();
+
+    const panel = itineraryEl('itinerary-day-panel');
+    panel?.addEventListener('click', (event) => {
+      const control = event.target.closest('[data-action]');
+      if (!control || !panel.contains(control)) return;
+      const action = control.dataset.action;
+      if (action === 'add-custom') { openCustomActivityModal(); return; }
+      const itemCard = control.closest('.itinerary-item');
+      const itemId = itemCard?.dataset.itemId;
+      if (!itemId) return;
+      if (action === 'up') reorderItineraryItem(itemId, -1);
+      else if (action === 'down') reorderItineraryItem(itemId, 1);
+      else if (action === 'move') openMoveModal(itemId);
+      else if (action === 'edit') openEditModal(itemId);
+      else if (action === 'remove') openRemoveModal(itemId);
+    });
+
+    itineraryEl('add-itinerary-confirm')?.addEventListener('click', confirmAddToItinerary);
+    itineraryEl('duplicate-activity-confirm')?.addEventListener('click', confirmDuplicate);
+    itineraryEl('custom-activity-confirm')?.addEventListener('click', confirmCustomActivity);
+    itineraryEl('custom-activity-name')?.addEventListener('input', (event) => event.target.classList.remove('is-invalid'));
+    itineraryEl('move-activity-confirm')?.addEventListener('click', confirmMove);
+    itineraryEl('edit-activity-confirm')?.addEventListener('click', confirmEdit);
+    itineraryEl('remove-activity-confirm')?.addEventListener('click', confirmRemove);
+    itineraryEl('reduce-days-move')?.addEventListener('click', reduceDaysMove);
+    itineraryEl('reduce-days-remove')?.addEventListener('click', reduceDaysRemove);
+    itineraryEl('reduce-days-cancel')?.addEventListener('click', reduceDaysCancel);
+    itineraryEl('clear-itinerary-confirm')?.addEventListener('click', clearItinerary);
+
+    const planner = itineraryEl('trip-planner');
+    planner?.addEventListener('change', (event) => {
+      if (event.target.id === 'planner-days') applyPlannerDays();
+      refreshItineraryContext();
+    });
+    planner?.addEventListener('input', refreshItineraryContext);
+    itineraryEl('confirm-reset-trip')?.addEventListener('click', () => {
+      applyPlannerDays();
+      refreshItineraryContext();
+    });
+
+    initItinerarySources();
+    renderItinerary();
+  }
+
   function init() {
     initHero();
     initSmoothScrolling();
@@ -851,6 +1665,7 @@
     initExperienceReveal();
     initTravelInfoCards();
     initTripPlanner();
+    initItinerary();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });

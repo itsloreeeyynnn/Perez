@@ -84,6 +84,10 @@
               </li>
 
               <li class="nav-item">
+                <a class="nav-link" href="#itinerary">Itinerary</a>
+              </li>
+
+              <li class="nav-item">
                 <a class="nav-link" href="#gallery">Gallery</a>
               </li>
             </ul>
@@ -875,14 +879,14 @@
               <div class="planner-step">
                 <h3 class="planner-step-title"><span>1</span> Where are you coming from?</h3>
                 <div class="row g-3">
-                  <div class="col-md-6"><label class="form-label" for="planner-origin">Starting point</label><select class="form-select" id="planner-origin"><option value="">Choose origin</option><option value="manila">Manila</option><option value="atimonan">Atimonan</option><option value="gumaca">Gumaca</option><option value="other">Other location</option></select></div>
-                  <div class="col-md-6" id="custom-origin-field" hidden><label class="form-label" for="planner-custom-origin">Your location</label><input class="form-control" id="planner-custom-origin" maxlength="120" placeholder="Enter your starting location"></div>
+                  <div class="col-md-6"><label class="form-label" for="planner-origin">Starting point</label><select class="form-select" id="planner-origin"><option value="">Select your starting point</option><optgroup label="Common origins"><option value="manila">Metro Manila</option><option value="lucena">Lucena City</option><option value="san-pablo">San Pablo City</option></optgroup><optgroup label="Quezon / nearby"><option value="tayabas">Tayabas City</option><option value="sariaya">Sariaya</option><option value="candelaria">Candelaria</option><option value="tiaong">Tiaong</option><option value="pagbilao">Pagbilao</option><option value="atimonan">Atimonan</option><option value="gumaca">Gumaca</option><option value="lopez">Lopez</option><option value="calauag">Calauag</option><option value="tagkawayan">Tagkawayan</option></optgroup><optgroup label="Other"><option value="other">Other</option></optgroup></select></div>
+                  <div class="col-md-6" id="custom-origin-field" hidden><label class="form-label" for="planner-custom-origin">Where are you coming from?</label><input class="form-control" id="planner-custom-origin" maxlength="120" placeholder="e.g. Batangas City"></div>
                 </div>
                 <div id="planner-route" class="mt-3"></div>
               </div>
 
               <div class="planner-step" id="planner-route-choices" hidden>
-                <h3 class="planner-step-title"><span>2</span> Where will you land on Alabat Island?</h3>
+                <h3 class="planner-step-title"><span>2</span> Where will you land?</h3>
                 <div class="row g-3">
                   <div class="col-md-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="routeOption" value="direct"><span><strong>Perez</strong><small>Land directly in Perez by lantsa aboard MB Capricorn.</small></span></label></div>
                   <div class="col-md-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="routeOption" value="via-alabat"><span><strong>Alabat</strong><small>Land in Alabat by lantsa or RORO, then ride a tricycle to Perez.</small></span></label></div>
@@ -941,6 +945,14 @@
               <h3 class="fs-5 mt-5">Passenger Vessel Reference</h3>
               <div class="table-responsive travel-table-wrapper" tabindex="0"><table class="table table-striped table-bordered table-hover align-middle mb-0"><thead><tr><th>Vessel</th><th>Route</th><th>Departure</th><th>Regular</th><th>Student</th><th>Senior/PWD</th><th>Children</th></tr></thead><tbody><tr><th>MB Capricorn</th><td>Atimonan → Perez</td><td>11:00 AM</td><td>₱200</td><td>₱175</td><td>₱160</td><td>₱100</td></tr><tr><th>M/V Nhelsea 2</th><td>Atimonan → Alabat</td><td>8:00 AM, 12:00 NN</td><td>₱180</td><td>₱140</td><td>₱140</td><td>₱90</td></tr><tr><th>MV Viva Flos Carmeli</th><td>Atimonan → Alabat</td><td>9:00 AM, 5:00 PM</td><td>₱180</td><td>₱140</td><td>₱140</td><td>₱90</td></tr><tr><th>MV Pinoy Roro 1</th><td>Atimonan → Alabat</td><td>10:00 AM, 2:00 PM, 6:00 PM</td><td>₱150</td><td>₱123.21</td><td>₱107.14</td><td>₱75</td></tr></tbody></table></div>
               <p class="travel-budget-note mt-3 mb-0" id="travel-budget-note"><i class="bi bi-info-circle me-2"></i>Schedules and fares reflect the references supplied for this project. Travelers should confirm current operator advisories before departure.</p>
+
+              <div class="itinerary-cta mt-4">
+                <div>
+                  <h3 class="fs-5 fw-bold mb-1">Build Your Itinerary</h3>
+                  <p class="small text-secondary mb-0">Your trip details are ready. Start planning what you'll do each day.</p>
+                </div>
+                <a href="#itinerary" class="btn btn-gold flex-shrink-0">Build Your Itinerary <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i></a>
+              </div>
             </div>
 
             <!-- Events -->
@@ -1010,6 +1022,76 @@
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        <!-- =========================================================
+     ITINERARY BUILDER
+========================================================= -->
+
+        <section class="section-padding itinerary-section" id="itinerary">
+          <div class="container">
+            <div class="row destination-header align-items-end">
+              <div class="col-lg-7">
+                <div class="section-label">My Perez Trip</div>
+
+                <h2 class="section-title">Build Your Itinerary</h2>
+
+                <p class="mt-3 mb-0">
+                  Plan what you want to explore during your stay in Perez.
+                </p>
+
+                <p class="itinerary-trip-meta mt-2 mb-0" id="itinerary-trip-meta">
+                  2 Days &bull; 2 Travelers
+                </p>
+              </div>
+
+              <div class="col-lg-5 text-lg-end mt-3 mt-lg-0">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  id="clear-itinerary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#clear-itinerary-modal"
+                >
+                  <i class="bi bi-trash me-1" aria-hidden="true"></i>Clear
+                  Itinerary
+                </button>
+              </div>
+            </div>
+
+            <div class="row g-4 mt-1">
+              <div class="col-lg-6">
+                <div class="itinerary-card">
+                  <h3 class="itinerary-card-title">Your Journey</h3>
+                  <div id="itinerary-journey"></div>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <div class="itinerary-card">
+                  <h3 class="itinerary-card-title">Trip Summary</h3>
+                  <div id="itinerary-summary"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="itinerary-tabs-wrap">
+              <ul
+                class="nav nav-pills itinerary-day-tabs"
+                id="itinerary-day-tabs"
+                aria-label="Trip days"
+              ></ul>
+            </div>
+
+            <div id="itinerary-day-panel"></div>
+
+            <p
+              class="visually-hidden"
+              id="itinerary-status"
+              role="status"
+              aria-live="polite"
+            ></p>
           </div>
         </section>
 
@@ -1283,14 +1365,15 @@
               <button
                 type="button"
                 class="btn btn-gold"
-                disabled
+                id="experience-add-itinerary"
+                data-itinerary-add="experience"
                 aria-describedby="experience-itinerary-note"
               >
                 Add to Itinerary</button
               ><small
                 class="d-block text-secondary mt-1"
                 id="experience-itinerary-note"
-                >Available in Trip Planner (coming soon).</small
+                >Adds this experience to a day in your trip plan.</small
               >
             </div>
             <button
@@ -1302,6 +1385,488 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ==================== Itinerary builder modals ==================== -->
+
+    <!-- Add a destination or experience to a day -->
+    <div
+      class="modal fade"
+      id="add-itinerary-modal"
+      tabindex="-1"
+      aria-labelledby="add-itinerary-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="add-itinerary-title">
+              Add to Your Trip
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="fw-bold mb-3" id="add-itinerary-item-name"></p>
+            <div class="mb-3">
+              <label class="form-label" for="add-itinerary-day">Which day?</label>
+              <select class="form-select" id="add-itinerary-day"></select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="add-itinerary-period"
+                >Optional time</label
+              >
+              <select class="form-select" id="add-itinerary-period">
+                <option value="any">Any Time</option>
+                <option value="morning">Morning</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="evening">Evening</option>
+              </select>
+            </div>
+            <div class="mb-0">
+              <label class="form-label" for="add-itinerary-note"
+                >Optional note</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="add-itinerary-note"
+                maxlength="300"
+                placeholder="Add a note..."
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-gold" id="add-itinerary-confirm">
+              Add to Day
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom activity -->
+    <div
+      class="modal fade"
+      id="custom-activity-modal"
+      tabindex="-1"
+      aria-labelledby="custom-activity-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="custom-activity-title">
+              Add Custom Activity
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label" for="custom-activity-name"
+                >Activity name</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="custom-activity-name"
+                maxlength="80"
+                placeholder="e.g. Breakfast"
+                required
+              />
+              <div class="invalid-feedback">
+                Enter an activity name.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="custom-activity-period">Time</label>
+              <select class="form-select" id="custom-activity-period">
+                <option value="any">Any Time</option>
+                <option value="morning">Morning</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="evening">Evening</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="custom-activity-note">Notes</label>
+              <textarea
+                class="form-control"
+                id="custom-activity-note"
+                rows="2"
+                maxlength="300"
+                placeholder="Add a note..."
+              ></textarea>
+            </div>
+            <div class="mb-0">
+              <label class="form-label" for="custom-activity-day">Add to</label>
+              <select class="form-select" id="custom-activity-day"></select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-gold"
+              id="custom-activity-confirm"
+            >
+              Add to Day
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Move an activity to another day -->
+    <div
+      class="modal fade"
+      id="move-activity-modal"
+      tabindex="-1"
+      aria-labelledby="move-activity-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="move-activity-title">
+              Move Activity
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3" id="move-activity-question"></p>
+            <label class="form-label" for="move-activity-day">Move to</label>
+            <select class="form-select" id="move-activity-day"></select>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-gold btn-sm" id="move-activity-confirm">
+              Move
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit an activity -->
+    <div
+      class="modal fade"
+      id="edit-activity-modal"
+      tabindex="-1"
+      aria-labelledby="edit-activity-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="edit-activity-title">
+              Edit Activity
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="fw-bold" id="edit-activity-name"></p>
+            <div class="mb-3" id="edit-activity-name-field" hidden>
+              <label class="form-label" for="edit-activity-custom-name"
+                >Activity name</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="edit-activity-custom-name"
+                maxlength="80"
+              />
+              <div class="invalid-feedback">Enter an activity name.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="edit-activity-period"
+                >Time period</label
+              >
+              <select class="form-select" id="edit-activity-period">
+                <option value="any">Any Time</option>
+                <option value="morning">Morning</option>
+                <option value="afternoon">Afternoon</option>
+                <option value="evening">Evening</option>
+              </select>
+            </div>
+            <div class="mb-0">
+              <label class="form-label" for="edit-activity-note">Note</label>
+              <input
+                type="text"
+                class="form-control"
+                id="edit-activity-note"
+                maxlength="300"
+                placeholder="Add a note..."
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-gold" id="edit-activity-confirm">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remove confirmation -->
+    <div
+      class="modal fade"
+      id="remove-activity-modal"
+      tabindex="-1"
+      aria-labelledby="remove-activity-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="remove-activity-title">
+              Remove Activity
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-0" id="remove-activity-question"></p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              id="remove-activity-confirm"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Duplicate confirmation -->
+    <div
+      class="modal fade"
+      id="duplicate-activity-modal"
+      tabindex="-1"
+      aria-labelledby="duplicate-activity-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="duplicate-activity-title">
+              Already Planned
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-0" id="duplicate-activity-question"></p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-gold btn-sm"
+              id="duplicate-activity-confirm"
+            >
+              Add Anyway
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day reduction confirmation -->
+    <div
+      class="modal fade"
+      id="reduce-days-modal"
+      tabindex="-1"
+      aria-labelledby="reduce-days-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="reduce-days-title">
+              Reduce Trip Days
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p id="reduce-days-intro"></p>
+            <ul class="mb-0" id="reduce-days-list"></ul>
+          </div>
+          <div class="modal-footer flex-wrap">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              id="reduce-days-cancel"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm"
+              id="reduce-days-remove"
+            >
+              Remove Activities
+            </button>
+            <button
+              type="button"
+              class="btn btn-gold btn-sm"
+              id="reduce-days-move"
+            >
+              Move Activities
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clear itinerary confirmation -->
+    <div
+      class="modal fade"
+      id="clear-itinerary-modal"
+      tabindex="-1"
+      aria-labelledby="clear-itinerary-title"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="clear-itinerary-title">
+              Clear Itinerary?
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-2">This will remove:</p>
+            <ul class="mb-3">
+              <li>all itinerary activities</li>
+              <li>custom activities</li>
+              <li>day titles</li>
+              <li>day notes</li>
+            </ul>
+            <p class="mb-0">It will <strong>not</strong> remove your journey,
+            vessel, passengers, days, or budget.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="clear-itinerary-confirm"
+            >
+              Clear Itinerary
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Itinerary toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div
+        id="itinerary-toast"
+        class="toast"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <i class="bi bi-calendar-check me-2" aria-hidden="true"></i>
+          <strong class="me-auto">My Perez Trip</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close notification"
+          ></button>
+        </div>
+        <div class="toast-body" id="itinerary-toast-body"></div>
       </div>
     </div>
 
