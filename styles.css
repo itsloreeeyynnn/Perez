@@ -1417,3 +1417,31 @@ footer {
     transform: none;
   }
 }
+
+/* Phase 3 vessel controls extend the existing navy/gold design. */
+#trip-planner [hidden] { display: none !important; }
+#trip-planner fieldset { min-width: 0; }
+#planner-vessels .journey-choice { height: auto; min-height: 145px; }
+.vessel-fare-details { margin-top: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; }
+.vessel-fare-details summary { cursor: pointer; color: var(--navy); font-size: .9rem; }
+.vessel-fare-details summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.planner-fare, .planner-notice { padding: 20px; background: #f7f5ef; border-radius: 8px; }
+.planner-notice { border-left: 3px solid var(--gold); color: var(--muted); }
+.planner-fare-list { margin: 16px 0; }
+.planner-fare-list > div { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.planner-fare-list dt { font-size: .9rem; font-weight: 500; }
+.planner-fare-list dd { margin: 0; text-align: right; }
+#planner-final-route, .planner-fare, .journey-choice { overflow-wrap: anywhere; }
+#departure-options .btn { min-height: 44px; display: inline-flex; align-items: center; }
+#departure-options .btn-check:checked + .btn { background: var(--navy); color: #fff; border-color: var(--navy); }
+#departure-options .btn-check:focus-visible + .btn { outline: 3px solid var(--gold); outline-offset: 3px; }
+#trip-planner .form-control, #trip-planner .form-select { min-height: 44px; }
+@media (max-width: 767.98px) {
+  #trip-planner .planner-step, #trip-planner .planner-summary { padding: 18px; }
+  #planner-vessels .journey-choice { min-height: 0; }
+  .planner-breakdown > div { flex-wrap: wrap; gap: 4px 12px; }
+  .planner-breakdown dd { margin-left: auto; }
+}
+
+/* Keep long contact details within narrow footer columns. */
+.contact-item { overflow-wrap: anywhere; }

@@ -534,78 +534,79 @@
     });
   }
 
-  // General planning routes supplied for this guide, not live navigation.
-  // No origin-specific fares are verified, so transportation stays user-controlled.
-  const atimonanStage = { location: 'Atimonan', icon: 'signpost-split', transport: 'Port transfer', note: 'Continue to Atimonan Port.' };
-  const portStage = { location: 'Atimonan Port', icon: 'geo-alt', transport: 'Reference gateway', note: 'Choose your onward route below. Confirm services locally.' };
-  const arrivalStage = { location: 'Perez', icon: 'geo-alt', transport: 'Arrival', note: 'Continue to your chosen destination.' };
+  // Supplied planning guidance and operator notices, not live services.
   const travelOrigins = {
-    lucena: { name: 'Lucena City', stages: [{ location: 'Lucena City', icon: 'bus-front', transport: 'Land transportation', note: 'Travel toward Atimonan.' }, atimonanStage] },
-    manila: { name: 'Manila', stages: [{ location: 'Manila', icon: 'bus-front', transport: 'Land transportation', note: 'Travel toward Quezon Province and Atimonan.' }, atimonanStage] },
-    atimonan: { name: 'Atimonan', stages: [atimonanStage] },
-    gumaca: { name: 'Gumaca', stages: [{ location: 'Gumaca', icon: 'bus-front', transport: 'Land transportation', note: 'Travel toward Atimonan.' }, atimonanStage] },
+    lucena: { name: 'Lucena City', stages: ['Lucena City', 'Land Transportation', 'Atimonan'] },
+    manila: { name: 'Manila', stages: ['Manila', 'Travel toward Quezon Province', 'Atimonan'] },
+    atimonan: { name: 'Atimonan', stages: ['Atimonan'] },
+    gumaca: { name: 'Gumaca', stages: ['Gumaca', 'Land Transportation toward Atimonan', 'Atimonan'] },
     other: { name: 'Other', stages: [] },
   };
-  const routeOptions = {
-    direct: { name: 'Direct to Perez', description: 'Take a passenger lantsa from Atimonan Port directly to Perez.' },
-    'via-alabat': { name: 'Via Alabat', description: 'Travel to Alabat by your selected transport, then continue to Perez by tricycle.' },
+  const vesselSchedules = {
+    'mb-capricorn': { name: 'MB Capricorn', route: 'Perez', departures: ['11:00 AM'] },
+    'mv-nhelsea': { name: 'M/V Nhelsea 2', route: 'Alabat', departures: ['8:00 AM', '12:00 NN'] },
+    'mv-viva-flos-carmeli': { name: 'MV Viva Flos Carmeli', route: 'Alabat', departures: ['9:00 AM', '5:00 PM'] },
+    'mv-pinoy-roro': { name: 'MV Pinoy Roro 1', route: 'Alabat', departures: ['10:00 AM', '2:00 PM', '6:00 PM'] },
   };
-  const alabatTransports = { roro: 'RORO', lantsa: 'Lantsa' };
-
-  function getJourney() {
-    const origin = travelOrigins[plannerState.origin];
-    if (!origin) return null;
-    const option = routeOptions[plannerState.routeOption];
-    const transport = plannerState.routeOption === 'direct' ? 'Lantsa' : alabatTransports[plannerState.alabatTransport];
-    const originStages = [...origin.stages, portStage];
-    const finalStages = [];
-    if (option && transport) {
-      finalStages.push({ location: transport, icon: 'water', transport: 'Sea crossing', note: option.description });
-      if (plannerState.routeOption === 'via-alabat') {
-        finalStages.push({ location: 'Alabat', icon: 'geo-alt', transport: 'Arrival at Alabat', note: 'Arrange your final connection to Perez.' },
-          { location: 'Tricycle', icon: 'truck', transport: 'Local transportation', note: 'Continue from Alabat to Perez.' });
-      }
-      finalStages.push(arrivalStage);
-    }
-    return { originStages, finalStages, option, transport, stages: [...originStages, ...finalStages] };
-  }
-  const routeNotice = 'Transportation routes, schedules, availability, and fares may change. Confirm current local transportation information before traveling.';
-  const otherRouteNotice = 'Exact routing from your location is not available in this trip planner. Atimonan Port can be used as a reference gateway when planning travel toward Perez.';
+  const vesselFares = {
+    'mb-capricorn': { regular: 200, student: 175, seniorPwd: 160, child: 100, effectiveDate: 'September 23, 2026', temporary: false },
+    'mv-nhelsea': { regular: 180, student: 140, seniorPwd: 140, child: 90, effectiveDate: 'September 27, 2026', temporary: true },
+    'mv-viva-flos-carmeli': { regular: 180, student: 140, seniorPwd: 140, child: 90, effectiveDate: 'September 26, 2026', temporary: true },
+    'mv-pinoy-roro': { regular: 150, student: 123.21, seniorPwd: 107.14, child: 75, source: 'Provided Jeanalyn Shipping passenger fare rollback notice' },
+  };
+  const routeOptions = { direct: 'Direct to Perez', 'via-alabat': 'Via Alabat' };
+  const passengerLabels = { regular: 'Regular', student: 'Student', seniorPwd: 'Senior / PWD', child: 'Children' };
+  const budgetDefaults = { otherTransportation: 500, localTransport: 150, meals: 350, accommodation: 800, activities: 300, miscellaneous: 300 };
   const plannerKey = 'perezTripPlannerV1';
-  const budgetDefaults = { transportation: 500, localTransport: 150, meals: 350, accommodation: 800, activities: 300, miscellaneous: 300 };
-  const defaultPlannerState = () => ({ origin: '', customOrigin: '', routeOption: '', alabatTransport: '', travelers: 2, days: 2, budget: { ...budgetDefaults } });
+  const otherRouteNotice = 'Exact routing from your location is not available in this planner. Atimonan Port is used as the reference gateway for the final journey toward Perez.';
+  const defaultPlannerState = () => ({ origin: '', customOrigin: '', routeOption: '', transportMode: '', vessel: '', departureTime: '', passengers: { regular: 2, student: 0, seniorPwd: 0, child: 0 }, days: 2, budget: { ...budgetDefaults } });
   let plannerState = defaultPlannerState();
+  const currency = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
+  const owns = (object, key) => typeof key === 'string' && Object.hasOwn(object, key);
 
-  function plannerNumber(value, fallback, min, max, integer = false) {
-    const number = typeof value === 'number' ? value : (typeof value === 'string' && value.trim() ? Number(value) : NaN);
+  function plannerNumber(value, fallback, min, max, wholeMoney = false) {
+    const number = typeof value === 'number' ? value : typeof value === 'string' && value.trim() ? Number(value) : NaN;
     if (!Number.isFinite(number)) return fallback;
     const bounded = Math.min(max, Math.max(min, number));
-    return integer ? Math.trunc(bounded) : Math.round(bounded);
+    return wholeMoney ? Math.round(bounded) : Math.trunc(bounded);
   }
-
+  function normalizeJourney() {
+    if (!owns(travelOrigins, plannerState.origin)) plannerState.origin = '';
+    if (!plannerState.origin || !owns(routeOptions, plannerState.routeOption)) plannerState.routeOption = '';
+    if (plannerState.routeOption === 'direct') {
+      plannerState.transportMode = 'lantsa';
+      plannerState.vessel = 'mb-capricorn';
+      plannerState.departureTime = vesselSchedules['mb-capricorn'].departures[0];
+    } else if (plannerState.routeOption === 'via-alabat') {
+      const allowed = plannerState.transportMode === 'lantsa' ? ['mv-nhelsea', 'mv-viva-flos-carmeli'] : plannerState.transportMode === 'roro' ? ['mv-pinoy-roro'] : [];
+      if (!allowed.includes(plannerState.vessel)) { plannerState.vessel = ''; plannerState.departureTime = ''; }
+      else if (!vesselSchedules[plannerState.vessel].departures.includes(plannerState.departureTime)) plannerState.departureTime = '';
+    } else {
+      plannerState.transportMode = ''; plannerState.vessel = ''; plannerState.departureTime = '';
+    }
+  }
   function restorePlannerState() {
     try {
       const saved = JSON.parse(localStorage.getItem(plannerKey));
-      if (!saved || typeof saved !== 'object' || Array.isArray(saved) ||
-          !saved.budget || typeof saved.budget !== 'object' || Array.isArray(saved.budget) ||
-          !['origin', 'customOrigin', 'travelers', 'days'].every((key) => Object.hasOwn(saved, key)) ||
-          !Object.keys(budgetDefaults).every((key) => Object.hasOwn(saved.budget, key))) return;
+      if (!saved || typeof saved !== 'object' || Array.isArray(saved)) return;
+      const defaults = defaultPlannerState();
       plannerState = {
-        origin: typeof saved.origin === 'string' && Object.hasOwn(travelOrigins, saved.origin) ? saved.origin : '',
+        origin: owns(travelOrigins, saved.origin) ? saved.origin : '',
         customOrigin: typeof saved.customOrigin === 'string' ? saved.customOrigin.slice(0, 120) : '',
-        routeOption: Object.hasOwn(routeOptions, saved.routeOption) ? saved.routeOption : '',
-        alabatTransport: Object.hasOwn(alabatTransports, saved.alabatTransport) ? saved.alabatTransport : '',
-        travelers: plannerNumber(saved.travelers, 2, 1, 20, true),
-        days: plannerNumber(saved.days, 2, 1, 7, true),
-        budget: Object.fromEntries(Object.entries(budgetDefaults).map(([key, fallback]) =>
-          [key, plannerNumber(saved.budget[key], fallback, 0, 10000000)])),
+        routeOption: owns(routeOptions, saved.routeOption) ? saved.routeOption : '',
+        transportMode: ['lantsa', 'roro'].includes(saved.transportMode) ? saved.transportMode : '',
+        vessel: owns(vesselSchedules, saved.vessel) ? saved.vessel : '',
+        departureTime: typeof saved.departureTime === 'string' ? saved.departureTime : '',
+        passengers: Object.fromEntries(Object.keys(passengerLabels).map(key => [key, plannerNumber(saved.passengers?.[key], defaults.passengers[key], 0, 10000)])),
+        days: plannerNumber(saved.days, 2, 1, 7),
+        budget: Object.fromEntries(Object.entries(budgetDefaults).map(([key, fallback]) => [key, plannerNumber(saved.budget?.[key], fallback, 0, 10000000, true)])),
       };
-    } catch { /* Missing, malformed, or unavailable storage leaves defaults intact. */ }
+      normalizeJourney();
+    } catch { /* Malformed or unavailable storage leaves safe defaults. */ }
   }
-
   function getTripDays() { return plannerState.days; }
-  function getTravelerCount() { return plannerState.travelers; }
-  function getPlannerState() { return { ...plannerState, budget: { ...plannerState.budget } }; }
+  function getTravelerCount() { return Object.values(plannerState.passengers).reduce((sum, count) => sum + count, 0); }
+  function getPlannerState() { return { ...plannerState, passengers: { ...plannerState.passengers }, budget: { ...plannerState.budget } }; }
   function savePlannerState() {
     const status = document.getElementById('planner-save-status');
     try {
@@ -615,177 +616,226 @@
       if (status) status.textContent = 'Your estimate still works, but this browser cannot save it for your next visit.';
     }
   }
-  // Phase 4 can consume these functions without a second duration field.
-  window.perezTripPlanner = Object.freeze({ getTripDays, getTravelerCount, getPlannerState, savePlannerState });
+  // Shared duration for future itinerary work; no itinerary is built here.
+  window.perezTripPlanner = Object.freeze({ getTripDays, getTravelerCount, getPlannerState });
+  function vesselFareCents() {
+    const fares = vesselFares[plannerState.vessel];
+    if (!fares) return 0;
+    // Integer centavos preserve supplied decimal fares exactly.
+    return Object.entries(plannerState.passengers).reduce((sum, [key, count]) => sum + count * Math.round(fares[key] * 100), 0);
+  }
+  function journeyComplete() { return Boolean(plannerState.origin && plannerState.vessel && plannerState.departureTime); }
 
   function initTripPlanner() {
     const planner = document.getElementById('trip-planner');
     if (!planner) return;
-    const byId = (id) => document.getElementById(id);
+    const byId = id => document.getElementById(id);
     const gettingThere = document.querySelector('#getting-there-details .travel-detail-content');
     const generalGettingThere = gettingThere?.cloneNode(true);
-    const currency = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
     const textElement = (tag, text, className = '') => {
-      const node = document.createElement(tag);
-      node.textContent = text;
-      node.className = className;
-      return node;
+      const node = document.createElement(tag); node.textContent = text; node.className = className; return node;
     };
+    const startName = () => plannerState.origin === 'other' ? plannerState.customOrigin.trim() || 'Other location' : travelOrigins[plannerState.origin]?.name || '';
+    const fareNote = key => {
+      const fare = vesselFares[key];
+      return [fare.temporary ? 'Temporary fare adjustment.' : '', fare.effectiveDate ? 'Effective ' + fare.effectiveDate + '.' : fare.source, 'Confirm current fares and passenger eligibility with the operator.'].filter(Boolean).join(' ');
+    };
+    function fareDetails(key) {
+      const details = document.createElement('details'); details.className = 'vessel-fare-details';
+      details.append(textElement('summary', 'View fare details'));
+      const list = document.createElement('dl'); list.className = 'planner-fare-list';
+      Object.entries(passengerLabels).forEach(([category, label]) => {
+        const row = document.createElement('div');
+        row.append(textElement('dt', label), textElement('dd', currency.format(vesselFares[key][category]))); list.append(row);
+      });
+      details.append(list, textElement('p', fareNote(key), 'small text-secondary mb-0')); return details;
+    }
+    function buildVesselChoices() {
+      Object.entries(vesselSchedules).forEach(([key, vessel]) => {
+        const card = document.createElement('div');
+        if (vessel.route === 'Perez') {
+          card.className = 'planner-fare';
+          card.append(textElement('h4', vessel.name, 'fs-5'), textElement('p', 'Provided Departure: ' + vessel.departures[0]), textElement('p', 'Regular from ' + currency.format(vesselFares[key].regular)), fareDetails(key));
+          byId('planner-direct-vessel').append(card); return;
+        }
+        card.className = 'col-lg-4'; card.dataset.transportMode = key === 'mv-pinoy-roro' ? 'roro' : 'lantsa';
+        const label = document.createElement('label'); label.className = 'journey-choice';
+        const input = document.createElement('input');
+        input.type = 'radio'; input.name = 'vessel'; input.value = key; input.className = 'form-check-input';
+        const copy = document.createElement('span');
+        copy.append(textElement('strong', vessel.name), textElement('small', vessel.departures.join(' • ')), textElement('small', 'Regular from ' + currency.format(vesselFares[key].regular)));
+        label.append(input, copy);
+        // Details outside the label avoid selecting a vessel when expanding fares.
+        card.append(label, fareDetails(key)); byId('planner-vessels').append(card);
+      });
+    }
+    function makeTimeline(stages, label) {
+      const timeline = document.createElement('ol'); timeline.className = 'planner-route'; timeline.setAttribute('aria-label', label);
+      stages.forEach(stage => {
+        const item = document.createElement('li'), icon = document.createElement('i');
+        icon.className = 'bi bi-' + (stage.icon || 'geo-alt'); icon.setAttribute('aria-hidden', 'true');
+        item.append(icon, textElement('strong', stage.name));
+        if (stage.note) item.append(textElement('span', stage.note));
+        timeline.append(item);
+      }); return timeline;
+    }
+    function originStages() {
+      const origin = travelOrigins[plannerState.origin];
+      return [...origin.stages.map(name => ({ name, icon: /Transportation|Travel toward/.test(name) ? 'bus-front' : 'geo-alt' })), { name: 'Atimonan Port', icon: 'signpost-split' }];
+    }
+    let renderedDepartureVessel = null;
+    function renderDepartures() {
+      const key = plannerState.vessel;
+      if (key !== renderedDepartureVessel) {
+        const options = byId('departure-options'); options.replaceChildren();
+        if (plannerState.routeOption === 'via-alabat' && key) vesselSchedules[key].departures.forEach((time, index) => {
+          const input = document.createElement('input');
+          input.type = 'radio'; input.name = 'departureTime'; input.value = time; input.className = 'btn-check'; input.id = 'departure-' + index;
+          const label = textElement('label', time, 'btn btn-outline-secondary'); label.htmlFor = input.id; options.append(input, label);
+        });
+        renderedDepartureVessel = key;
+      }
+    }
 
     function renderJourney() {
-      const origin = travelOrigins[plannerState.origin];
-      const route = byId('planner-route');
-      const isOther = plannerState.origin === 'other';
-      const journey = getJourney();
-      const finalRoute = byId('planner-final-route');
-      finalRoute.replaceChildren();
-      byId('planner-route-choices').hidden = !origin;
-      byId('planner-alabat-choices').hidden = !origin || plannerState.routeOption !== 'via-alabat';
-      planner.querySelectorAll('input[type="radio"]').forEach((input) => {
-        input.checked = plannerState[input.name] === input.value;
-      });
-      byId('custom-origin-field').hidden = !isOther;
-      route.replaceChildren();
-      if (!origin) {
-        route.append(textElement('p', 'Choose your starting point to see a suggested general route.', 'text-secondary mb-0'));
-        if (gettingThere && generalGettingThere) gettingThere.replaceChildren(...[...generalGettingThere.childNodes].map((node) => node.cloneNode(true)));
+      const hasOrigin = Boolean(plannerState.origin), viaAlabat = plannerState.routeOption === 'via-alabat';
+      byId('custom-origin-field').hidden = plannerState.origin !== 'other';
+      byId('planner-route-choices').hidden = !hasOrigin;
+      byId('planner-alabat-choices').hidden = !hasOrigin || !viaAlabat;
+      byId('planner-direct-vessel').hidden = plannerState.routeOption !== 'direct';
+      byId('planner-departures').hidden = !viaAlabat || !plannerState.vessel;
+      byId('planner-schedule-notice').hidden = !plannerState.routeOption;
+      byId('alabat-fare-note').hidden = !viaAlabat;
+      byId('planner-vessel-heading').hidden = !viaAlabat || !plannerState.transportMode;
+      byId('planner-vessels').querySelectorAll('[data-transport-mode]').forEach(card => { card.hidden = !plannerState.transportMode || card.dataset.transportMode !== plannerState.transportMode; });
+      renderDepartures();
+      planner.querySelectorAll('input[type="radio"]').forEach(input => { input.checked = plannerState[input.name] === input.value; });
+      const route = byId('planner-route'), final = byId('planner-final-route'); route.replaceChildren(); final.replaceChildren();
+      if (!hasOrigin) route.append(textElement('p', 'Choose your starting point to begin your journey.', 'text-secondary'));
+      else {
+        route.append(textElement('h4', 'Your route toward Atimonan Port', 'fs-5'));
+        if (plannerState.origin === 'other') route.append(textElement('p', 'Starting from: ' + startName()), textElement('p', otherRouteNotice, 'small text-secondary'));
+        route.append(makeTimeline(originStages(), 'General route to Atimonan Port'));
+        if (journeyComplete()) {
+          const vessel = vesselSchedules[plannerState.vessel];
+          const seaMode = plannerState.routeOption === 'direct' ? 'Lantsa' : plannerState.transportMode === 'roro' ? 'RORO' : 'Lantsa';
+          const stages = [...originStages(), { name: seaMode + ' · ' + vessel.name, icon: plannerState.transportMode === 'roro' ? 'truck-front' : 'water', note: plannerState.departureTime }];
+          if (viaAlabat) stages.push({ name: 'Alabat' }, { name: 'Tricycle', icon: 'truck', note: 'Local transportation to Perez' });
+          stages.push({ name: 'Perez' });
+          final.append(textElement('h4', 'Your Journey · ' + routeOptions[plannerState.routeOption], 'fs-5'), makeTimeline(stages, 'Complete journey to Perez'), textElement('p', 'Vessel fare: ' + currency.format(vesselFareCents() / 100), 'fw-bold'), textElement('p', fareNote(plannerState.vessel), 'small text-secondary'));
+        } else if (plannerState.routeOption) final.append(textElement('p', plannerState.vessel ? 'Choose a departure to complete your journey.' : 'Choose a vessel to continue your journey.', 'text-secondary'));
+      }
+      renderGettingThere();
+    }
+    function renderGettingThere() {
+      if (!gettingThere) return;
+      if (!plannerState.origin) {
+        if (generalGettingThere) gettingThere.replaceChildren(...[...generalGettingThere.childNodes].map(node => node.cloneNode(true)));
         return;
       }
-      const start = isOther ? (plannerState.customOrigin.trim() || 'Other location') : origin.name;
-      route.append(textElement('h4', 'Suggested journey to Atimonan Port', 'fs-5'));
-      route.append(textElement('p', 'Starting from: ' + start));
-      if (isOther) route.append(textElement('p', otherRouteNotice, 'small text-secondary'));
-      route.append(makeTimeline(journey.originStages, 'Suggested journey to Atimonan Port'));
-      if (journey.option) {
-        finalRoute.append(textElement('h4', journey.option.name, 'fs-5'));
-        if (journey.finalStages.length) {
-          finalRoute.append(textElement('p', journey.option.description));
-          finalRoute.append(makeTimeline(journey.finalStages, 'Journey from Atimonan Port to Perez'));
-        } else finalRoute.append(textElement('p', 'Choose RORO or Lantsa to complete your journey.'));
+      const facts = document.createElement('dl'); facts.className = 'travel-tip-list';
+      const rows = { From: startName(), Gateway: 'Atimonan Port' };
+      if (!plannerState.routeOption) {
+        rows['Next Step'] = 'Choose whether you will land in Perez or Alabat.';
+      } else if (plannerState.routeOption === 'direct') {
+        rows['Island Landing'] = 'Perez'; rows['Sea Transport'] = 'Lantsa'; rows['Vessel'] = 'MB Capricorn'; rows['Departure'] = '11:00 AM'; rows['Final Stop'] = 'Perez';
+      } else {
+        rows['Island Landing'] = 'Alabat';
+        rows['Sea Transport'] = plannerState.transportMode ? (plannerState.transportMode === 'roro' ? 'RORO' : 'Lantsa') : 'Choose Lantsa or RORO';
+        if (plannerState.vessel) rows['Vessel'] = vesselSchedules[plannerState.vessel].name;
+        if (plannerState.departureTime) rows['Departure'] = plannerState.departureTime;
+        rows['Final Connection'] = 'Tricycle from Alabat to Perez';
       }
-      finalRoute.append(textElement('p', 'General planning routes, subject to availability. ' + routeNotice, 'small text-secondary mb-0'));
-      if (gettingThere) {
-        gettingThere.replaceChildren(textElement('p', 'Your Current Plan', 'travel-detail-label'));
-        const facts = document.createElement('dl');
-        facts.className = 'travel-tip-list';
-        const addFact = (label, value) => facts.append(textElement('dt', label), textElement('dd', value));
-        addFact('From', start);
-        addFact('Route', journey.option?.name || 'Choose a route from Atimonan Port in Plan Your Visit.');
-        if (journey.option) addFact('From Atimonan Port', journey.transport || 'Choose RORO or Lantsa');
-        if (plannerState.routeOption === 'via-alabat' && journey.transport) {
-          addFact('Arrival', 'Alabat');
-          addFact('Final Connection', 'Tricycle to Perez');
-        }
-        if (journey.finalStages.length) addFact('Destination', 'Perez');
-        gettingThere.append(facts);
-        if (isOther) gettingThere.append(textElement('p', otherRouteNotice, 'travel-detail-note'));
-        const list = document.createElement('ol');
-        list.className = 'travel-route';
-        journey.stages.forEach((stage) => list.append(textElement('li', stage.location)));
-        gettingThere.append(list, textElement('p', routeNotice, 'travel-detail-note'));
+      if (plannerState.vessel) rows['Vessel Fare'] = getTravelerCount() ? currency.format(vesselFareCents() / 100) : 'Add at least one traveler.';
+      Object.entries(rows).forEach(([label, value]) => facts.append(textElement('dt', label), textElement('dd', value)));
+      const routeStages = originStages();
+      if (plannerState.routeOption === 'direct') routeStages.push({ name: 'Lantsa · MB Capricorn', icon: 'water', note: '11:00 AM' }, { name: 'Perez', icon: 'geo-alt' });
+      else if (plannerState.routeOption === 'via-alabat') {
+        if (plannerState.transportMode) routeStages.push({ name: plannerState.transportMode === 'roro' ? 'RORO' : 'Lantsa', icon: plannerState.transportMode === 'roro' ? 'truck-front' : 'water' });
+        if (plannerState.vessel) routeStages.push({ name: vesselSchedules[plannerState.vessel].name, icon: 'water', note: plannerState.departureTime || 'Choose departure' });
+        routeStages.push({ name: 'Alabat', icon: 'geo-alt' }, { name: 'Tricycle to Perez', icon: 'truck' }, { name: 'Perez', icon: 'geo-alt' });
       }
+      gettingThere.replaceChildren(textElement('p', 'Your Route Based on Your Input', 'travel-detail-label'), makeTimeline(routeStages, 'Getting there based on your trip planner input'), facts, textElement('p', 'Schedules and fares may change. Confirm the latest operator or port advisory before traveling.', 'travel-detail-note'));
+      if (plannerState.origin === 'other') gettingThere.append(textElement('p', otherRouteNotice, 'travel-detail-note'));
     }
-
-    function makeTimeline(stages, label) {
-      const timeline = document.createElement('ol');
-      timeline.className = 'planner-route';
-      timeline.setAttribute('aria-label', label);
-      stages.forEach((stage) => {
-        const item = document.createElement('li');
-        const icon = document.createElement('i');
-        icon.className = 'bi bi-' + stage.icon;
-        icon.setAttribute('aria-hidden', 'true');
-        item.append(icon, textElement('strong', stage.location), textElement('span', stage.transport), textElement('p', stage.note));
-        timeline.append(item);
-      });
-      return timeline;
-    }
-
     function renderBudget() {
-      const days = getTripDays(), travelers = getTravelerCount(), nights = Math.max(days - 1, 0);
-      const budget = plannerState.budget;
+      const days = getTripDays(), travelers = getTravelerCount(), nights = Math.max(days - 1, 0), budget = plannerState.budget;
       const costs = {
-        transportation: budget.transportation,
-        localTransport: budget.localTransport * days,
-        meals: budget.meals * travelers * days,
-        accommodation: budget.accommodation * nights,
-        activities: budget.activities,
-        miscellaneous: budget.miscellaneous,
+        vesselFare: vesselFareCents(), otherTransportation: budget.otherTransportation * 100,
+        localTransport: budget.localTransport * days * 100, meals: budget.meals * travelers * days * 100,
+        accommodation: budget.accommodation * nights * 100, activities: budget.activities * 100, miscellaneous: budget.miscellaneous * 100,
       };
       const duration = days + (days === 1 ? ' day' : ' days') + ' • ' + nights + (nights === 1 ? ' night' : ' nights');
-      byId('planner-duration').textContent = duration;
+      byId('planner-duration').textContent = duration; byId('planner-total-travelers').textContent = travelers;
+      byId('passenger-message').hidden = travelers > 0;
       byId('summary-trip').textContent = travelers + (travelers === 1 ? ' traveler' : ' travelers') + ' • ' + duration;
-      Object.entries(costs).forEach(([key, value]) => { byId('summary-' + key).textContent = currency.format(value); });
-      const total = Object.values(costs).reduce((sum, value) => sum + value, 0);
-      byId('summary-total').textContent = currency.format(total);
-      byId('summary-person').textContent = currency.format(total / travelers);
+      byId('summary-pending').textContent = !travelers ? 'Add at least one traveler to calculate your trip estimate.' : !plannerState.vessel ? 'Choose a vessel to include its fare. This subtotal currently covers additional expenses only.' : !journeyComplete() ? 'Vessel fare included. Select a departure to complete your journey.' : 'Includes the selected outward vessel fare and your additional estimates.';
+      Object.entries(costs).forEach(([key, cents]) => { byId('summary-' + key).textContent = key === 'vesselFare' && !plannerState.vessel ? 'Choose vessel' : currency.format(cents / 100); });
+      const totalCents = Object.values(costs).reduce((sum, cents) => sum + cents, 0);
+      byId('summary-total').textContent = travelers ? currency.format(totalCents / 100) : '—';
+      byId('summary-person').textContent = travelers ? currency.format(totalCents / 100 / travelers) : '—';
+      const breakdown = byId('planner-fare-breakdown'); breakdown.replaceChildren();
+      if (!plannerState.vessel) breakdown.append(textElement('p', 'Choose a route and vessel to see your automatic fare.'));
+      else {
+        breakdown.append(textElement('p', vesselSchedules[plannerState.vessel].name, 'fw-bold'));
+        const list = document.createElement('dl'); list.className = 'planner-fare-list';
+        Object.entries(plannerState.passengers).filter(([, count]) => count > 0).forEach(([key, count]) => {
+          const fare = vesselFares[plannerState.vessel][key], row = document.createElement('div');
+          row.append(textElement('dt', count + ' ' + passengerLabels[key] + ' × ' + currency.format(fare)), textElement('dd', currency.format(count * Math.round(fare * 100) / 100))); list.append(row);
+        });
+        breakdown.append(list, textElement('p', 'Total Vessel Fare: ' + currency.format(costs.vesselFare / 100), 'fw-bold'), textElement('p', fareNote(plannerState.vessel), 'small text-secondary'));
+      }
     }
-
+    function render() { renderJourney(); renderBudget(); }
     function syncControls() {
-      ['origin', 'customOrigin', 'travelers', 'days'].forEach((key) => {
-        byId(key === 'customOrigin' ? 'planner-custom-origin' : 'planner-' + key).value = plannerState[key];
-      });
-      Object.entries(plannerState.budget).forEach(([key, value]) => { byId('budget-' + key).value = value; });
-      renderJourney();
-      renderBudget();
+      byId('planner-origin').value = plannerState.origin; byId('planner-custom-origin').value = plannerState.customOrigin; byId('planner-days').value = plannerState.days;
+      Object.entries(plannerState.passengers).forEach(([key, value]) => { byId('passenger-' + key).value = value; });
+      Object.entries(plannerState.budget).forEach(([key, value]) => { byId('budget-' + key).value = value; }); render();
     }
-    restorePlannerState();
-    syncControls();
-    savePlannerState();
-    byId('planner-origin').addEventListener('change', (event) => {
-      plannerState.origin = Object.hasOwn(travelOrigins, event.target.value) ? event.target.value : '';
-      renderJourney();
-      savePlannerState();
+    buildVesselChoices(); restorePlannerState(); syncControls(); savePlannerState();
+    byId('planner-origin').addEventListener('change', event => {
+      plannerState.origin = event.target.value; normalizeJourney(); render(); savePlannerState();
     });
-    byId('planner-custom-origin').addEventListener('input', (event) => {
-      plannerState.customOrigin = event.target.value.slice(0, 120);
-      renderJourney();
-      savePlannerState();
+    byId('planner-custom-origin').addEventListener('input', event => {
+      plannerState.customOrigin = event.target.value.slice(0, 120); renderJourney(); savePlannerState();
     });
-    planner.querySelectorAll('input[type="radio"]').forEach((input) => {
-      input.addEventListener('change', () => {
-        if (!input.checked) return;
-        plannerState[input.name] = input.value;
-        renderJourney();
-        savePlannerState();
-      });
+    planner.addEventListener('change', event => {
+      const input = event.target;
+      if (!input.matches('input[type="radio"]') || !input.checked) return;
+      if (input.name === 'routeOption' && plannerState.routeOption !== input.value) {
+        plannerState.routeOption = input.value; plannerState.transportMode = ''; plannerState.vessel = ''; plannerState.departureTime = '';
+      } else if (input.name === 'transportMode' && plannerState.transportMode !== input.value) {
+        plannerState.transportMode = input.value; plannerState.vessel = ''; plannerState.departureTime = '';
+      } else if (input.name === 'vessel' && plannerState.vessel !== input.value) {
+        plannerState.vessel = input.value; plannerState.departureTime = '';
+      } else if (input.name === 'departureTime') plannerState.departureTime = input.value;
+      normalizeJourney(); render(); savePlannerState();
     });
-    planner.querySelectorAll('input[type="number"]').forEach((input) => {
-      const update = (event) => {
-        const key = input.dataset.budget;
-        const value = plannerNumber(input.value, key ? budgetDefaults[key] : 2, key ? 0 : 1,
-          key ? 10000000 : input.id === 'planner-days' ? 7 : 20, !key);
-        if (key) plannerState.budget[key] = value;
-        else plannerState[input.name] = value;
-        // Allow an empty field while typing; commit its safe default on blur/change.
+    planner.querySelectorAll('input[type="number"]').forEach(input => {
+      const update = event => {
+        const budgetKey = input.dataset.budget, passengerKey = input.dataset.passenger;
+        const value = plannerNumber(input.value, budgetKey ? budgetDefaults[budgetKey] : passengerKey ? 0 : 2, budgetKey || passengerKey ? 0 : 1, budgetKey ? 10000000 : passengerKey ? 10000 : 7, Boolean(budgetKey));
+        if (budgetKey) plannerState.budget[budgetKey] = value;
+        else if (passengerKey) plannerState.passengers[passengerKey] = value;
+        else plannerState.days = value;
+        // Allow a temporary blank while typing; commit a safe value on change.
         if (input.value !== '' || event.type === 'change') input.value = value;
-        renderBudget();
-        savePlannerState();
+        render(); savePlannerState();
       };
-      input.addEventListener('input', update);
-      input.addEventListener('change', update);
+      input.addEventListener('input', update); input.addEventListener('change', update);
     });
-    byId('reset-budget').addEventListener('click', () => {
-      plannerState.budget = { ...budgetDefaults };
-      syncControls();
-      savePlannerState();
-    });
+    byId('reset-budget').addEventListener('click', () => { plannerState.budget = { ...budgetDefaults }; syncControls(); savePlannerState(); });
     const confirmation = byId('reset-trip-confirmation');
     byId('reset-trip').addEventListener('click', () => {
-      confirmation.hidden = false;
-      byId('cancel-reset-trip').focus({ preventScroll: true });
+      confirmation.hidden = false; byId('reset-trip').setAttribute('aria-expanded', 'true'); byId('cancel-reset-trip').focus({ preventScroll: true });
     });
     function closeConfirmation() {
-      confirmation.hidden = true;
-      byId('reset-trip').focus({ preventScroll: true });
+      confirmation.hidden = true; byId('reset-trip').setAttribute('aria-expanded', 'false'); byId('reset-trip').focus({ preventScroll: true });
     }
     byId('cancel-reset-trip').addEventListener('click', closeConfirmation);
-    confirmation.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeConfirmation(); });
+    confirmation.addEventListener('keydown', event => { if (event.key === 'Escape') closeConfirmation(); });
     byId('confirm-reset-trip').addEventListener('click', () => {
-      plannerState = defaultPlannerState();
-      syncControls();
-      savePlannerState();
-      closeConfirmation();
+      plannerState = defaultPlannerState(); syncControls(); savePlannerState(); closeConfirmation();
     });
   }
 

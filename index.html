@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -28,1032 +28,1278 @@
     />
 
     <!-- Leaflet 1.9.4 -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body>
     <div class="page-wrapper">
-    <!-- =========================================================
+      <!-- =========================================================
      NAVBAR
 ========================================================= -->
 
-    <nav class="navbar navbar-expand-lg navbar-dark main-navbar">
-      <div class="container">
-        <a class="navbar-brand" href="#home"> PEREZ <span>QUEZON</span> </a>
+      <nav class="navbar navbar-expand-lg navbar-dark main-navbar">
+        <div class="container">
+          <a class="navbar-brand" href="#home"> PEREZ <span>QUEZON</span> </a>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbar"
-          aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar"
+            aria-controls="navbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-        <div class="collapse navbar-collapse" id="navbar">
-          <ul class="navbar-nav mx-auto">
-            <li class="nav-item">
-              <a class="nav-link active" href="#home" aria-current="location">Home</a>
-            </li>
+          <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item">
+                <a class="nav-link active" href="#home" aria-current="location"
+                  >Home</a
+                >
+              </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="#about-perez">About Us</a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#about-perez">About Us</a>
+              </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="#destinations">Explore</a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#destinations">Explore</a>
+              </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="#experiences">Experiences</a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#experiences">Experiences</a>
+              </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="#events">Events</a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#events">Events</a>
+              </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="#gallery">Gallery</a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#gallery">Gallery</a>
+              </li>
+            </ul>
 
-          </ul>
+            <div class="d-flex align-items-center gap-3">
+              <button class="navbar-search" aria-label="Find a destination">
+                <i class="bi bi-search"></i>
+              </button>
 
-          <div class="d-flex align-items-center gap-3">
-            <button class="navbar-search" aria-label="Find a destination">
-              <i class="bi bi-search"></i>
-            </button>
-
-            <a class="btn-trip" href="#trip-planner">Plan Your Trip</a>
+              <a class="btn-trip" href="#travel">Plan Your Trip</a>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
 
-    <div class="main-content">
-
-    <!-- =========================================================
+      <div class="main-content">
+        <!-- =========================================================
      HERO
 ========================================================= -->
 
-    <section class="hero" id="home">
-      <div class="hero-background" aria-hidden="true"></div>
-      <div class="hero-content">
-        <div class="hero-eyebrow">An Unspoiled Island Paradise</div>
+        <section class="hero" id="home">
+          <div class="hero-background" aria-hidden="true"></div>
+          <div class="hero-content">
+            <div class="hero-eyebrow">An Unspoiled Island Paradise</div>
 
-        <h1>Discover <span>Perez, Quezon</span></h1>
+            <h1>Discover <span>Perez, Quezon</span></h1>
 
-        <p class="hero-description">
-          Escape to the serene shores of Perez Island. Experience rich heritage,
-          vibrant festival rhythms, and natural marine sanctuaries waiting to be
-          explored.
-        </p>
+            <p class="hero-description">
+              Escape to the serene shores of Perez Island. Experience rich
+              heritage, vibrant festival rhythms, and natural marine sanctuaries
+              waiting to be explored.
+            </p>
 
-        <div class="hero-actions">
-          <a href="#destinations" class="btn btn-gold me-sm-2"> Explore Now </a>
+            <div class="hero-actions">
+              <a href="#destinations" class="btn btn-gold me-sm-2">
+                Explore Now
+              </a>
 
-          <a href="#trip-planner" class="btn btn-outline-light-custom">
-            Plan Your Visit
-          </a>
-        </div>
-      </div>
-      <a href="#about-perez" class="hero-scroll">Scroll to explore <i class="bi bi-chevron-down" aria-hidden="true"></i></a>
-    </section>
+              <a href="#travel" class="btn btn-outline-light-custom">
+                Plan Your Visit
+              </a>
+            </div>
+          </div>
+          <a href="#about-perez" class="hero-scroll"
+            >Scroll to explore
+            <i class="bi bi-chevron-down" aria-hidden="true"></i
+          ></a>
+        </section>
 
-    <!-- =========================================================
+        <!-- =========================================================
      QUICK NAVIGATION
 ========================================================= -->
 
-    <section class="quick-nav-section" id="quick-navigation">
-      <div class="container">
-        <div class="quick-nav">
-          <div class="row row-cols-3 row-cols-md-6 g-0">
-            <div class="col">
-              <a href="#destinations" class="quick-item active">
-                <div class="quick-icon">
-                  <i class="bi bi-compass"></i>
+        <section class="quick-nav-section" id="quick-navigation">
+          <div class="container">
+            <div class="quick-nav">
+              <div class="row row-cols-3 row-cols-md-6 g-0">
+                <div class="col">
+                  <a href="#destinations" class="quick-item active">
+                    <div class="quick-icon">
+                      <i class="bi bi-compass"></i>
+                    </div>
+                    <span>Explore</span>
+                  </a>
                 </div>
-                <span>Explore</span>
-              </a>
-            </div>
 
-            <div class="col">
-              <a href="#map" class="quick-item">
-                <div class="quick-icon">
-                  <i class="bi bi-map"></i>
+                <div class="col">
+                  <a href="#map" class="quick-item">
+                    <div class="quick-icon">
+                      <i class="bi bi-map"></i>
+                    </div>
+                    <span>Map</span>
+                  </a>
                 </div>
-                <span>Map</span>
-              </a>
-            </div>
 
-            <div class="col">
-              <a href="#events" class="quick-item">
-                <div class="quick-icon">
-                  <i class="bi bi-calendar-event"></i>
+                <div class="col">
+                  <a href="#events" class="quick-item">
+                    <div class="quick-icon">
+                      <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <span>Events</span>
+                  </a>
                 </div>
-                <span>Events</span>
-              </a>
-            </div>
 
-            <div class="col">
-              <a href="#" class="quick-item">
-                <div class="quick-icon">
-                  <i class="bi bi-house-door"></i>
+                <div class="col">
+                  <a href="#" class="quick-item">
+                    <div class="quick-icon">
+                      <i class="bi bi-house-door"></i>
+                    </div>
+                    <span>Stay</span>
+                  </a>
                 </div>
-                <span>Stay</span>
-              </a>
-            </div>
 
-            <div class="col">
-              <a href="#" class="quick-item">
-                <div class="quick-icon">
-                  <i class="bi bi-cup-hot"></i>
+                <div class="col">
+                  <a href="#" class="quick-item">
+                    <div class="quick-icon">
+                      <i class="bi bi-cup-hot"></i>
+                    </div>
+                    <span>Eat</span>
+                  </a>
                 </div>
-                <span>Eat</span>
-              </a>
-            </div>
 
-            <div class="col">
-              <a href="#travel" class="quick-item">
-                <div class="quick-icon">
-                  <i class="bi bi-question-circle"></i>
+                <div class="col">
+                  <a href="#travel" class="quick-item">
+                    <div class="quick-icon">
+                      <i class="bi bi-question-circle"></i>
+                    </div>
+                    <span>Travel Info</span>
+                  </a>
                 </div>
-                <span>Travel Info</span>
-              </a>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- Destination Information -->
-    <section class="section-padding destination-info-section" id="about-perez">
-      <div class="container">
-        <div class="row g-4 align-items-center">
-          <div class="col-lg-5">
-            <img src="placeholder.svg" class="img-fluid rounded destination-info-image" alt="Placeholder for a view of Perez, Quezon" />
+        <!-- Destination Information -->
+        <section
+          class="section-padding destination-info-section"
+          id="about-perez"
+        >
+          <div class="container">
+            <div class="row g-4 align-items-center">
+              <div class="col-lg-5">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid rounded destination-info-image"
+                  alt="Placeholder for a view of Perez, Quezon"
+                />
+              </div>
+              <div class="col-lg-7">
+                <div class="section-label">Discover Perez</div>
+                <h2 class="section-title mb-4">Gateway to Alabat Island</h2>
+
+                <h3 class="destination-info-label">LOCATION</h3>
+                <p>
+                  Perez is a municipality in Quezon Province located on Alabat
+                  Island. It is a coastal community characterized by beaches,
+                  rivers, creeks, springs, upland areas, and mangrove
+                  ecosystems.
+                </p>
+
+                <h3 class="destination-info-label">BACKGROUND</h3>
+                <p>
+                  Perez is a coastal municipality whose local identity is
+                  closely connected to its natural environment, fishing
+                  communities, agriculture, local traditions, and island
+                  setting. Its natural surroundings make it a destination for
+                  coastal recreation and ecotourism.
+                </p>
+
+                <dl class="row g-3 mb-0 mt-2">
+                  <div class="col-6">
+                    <div class="destination-fact h-100">
+                      <dt>Province</dt>
+                      <dd>Quezon</dd>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="destination-fact h-100">
+                      <dt>Island</dt>
+                      <dd>Alabat Island</dd>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="destination-fact h-100">
+                      <dt>Destination Type</dt>
+                      <dd>Coastal Municipality</dd>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="destination-fact h-100">
+                      <dt>Known For</dt>
+                      <dd>Beaches &amp; Marine Life</dd>
+                    </div>
+                  </div>
+                </dl>
+              </div>
+            </div>
           </div>
-          <div class="col-lg-7">
-            <div class="section-label">Discover Perez</div>
-            <h2 class="section-title mb-4">Gateway to Alabat Island</h2>
+        </section>
 
-            <h3 class="destination-info-label">LOCATION</h3>
-            <p>Perez is a municipality in Quezon Province located on Alabat Island. It is a coastal community characterized by beaches, rivers, creeks, springs, upland areas, and mangrove ecosystems.</p>
-
-            <h3 class="destination-info-label">BACKGROUND</h3>
-            <p>Perez is a coastal municipality whose local identity is closely connected to its natural environment, fishing communities, agriculture, local traditions, and island setting. Its natural surroundings make it a destination for coastal recreation and ecotourism.</p>
-
-            <dl class="row g-3 mb-0 mt-2">
-              <div class="col-6">
-                <div class="destination-fact h-100">
-                  <dt>Province</dt>
-                  <dd>Quezon</dd>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="destination-fact h-100">
-                  <dt>Island</dt>
-                  <dd>Alabat Island</dd>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="destination-fact h-100">
-                  <dt>Destination Type</dt>
-                  <dd>Coastal Municipality</dd>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="destination-fact h-100">
-                  <dt>Known For</dt>
-                  <dd>Beaches &amp; Marine Life</dd>
-                </div>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
+        <!-- =========================================================
      TOP DESTINATIONS
 ========================================================= -->
 
-    <section class="section-padding" id="destinations">
-      <div class="container">
-        <div class="row destination-header align-items-end">
-          <div class="col-lg-6">
-            <div class="section-label">Discover the best</div>
+        <section class="section-padding" id="destinations">
+          <div class="container">
+            <div class="row destination-header align-items-end">
+              <div class="col-lg-6">
+                <div class="section-label">Discover the best</div>
 
-            <h2 class="section-title">Top Destinations</h2>
-          </div>
+                <h2 class="section-title">Top Destinations</h2>
+              </div>
 
-          <div class="col-lg-6">
-            <div class="filter-tabs" role="group" aria-label="Filter destinations">
-              <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+              <div class="col-lg-6">
+                <div
+                  class="filter-tabs"
+                  role="group"
+                  aria-label="Filter destinations"
+                >
+                  <button
+                    type="button"
+                    class="filter-btn active"
+                    data-filter="all"
+                    aria-pressed="true"
+                  >
+                    All
+                  </button>
 
-              <button type="button" class="filter-btn" data-filter="beaches" aria-pressed="false">Beaches</button>
+                  <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="beaches"
+                    aria-pressed="false"
+                  >
+                    Beaches
+                  </button>
 
-              <button type="button" class="filter-btn" data-filter="nature" aria-pressed="false">Nature</button>
+                  <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="nature"
+                    aria-pressed="false"
+                  >
+                    Nature
+                  </button>
 
-              <button type="button" class="filter-btn" data-filter="culture" aria-pressed="false">Culture</button>
+                  <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="culture"
+                    aria-pressed="false"
+                  >
+                    Culture
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p
+              id="destination-filter-status"
+              class="visually-hidden"
+              role="status"
+              aria-live="polite"
+            ></p>
+            <div class="row g-4">
+              <!-- Destination 1 -->
+
+              <div class="col-sm-6 col-lg-3">
+                <article
+                  class="destination-card"
+                  data-destination="perez-beach"
+                  data-category="beaches"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid destination-image"
+                    alt="Perez Beach"
+                  />
+
+                  <div class="destination-body">
+                    <div class="destination-category">BEACHES</div>
+
+                    <h3 class="destination-title">Perez Beach</h3>
+
+                    <p class="destination-text">
+                      An pristine stretch of sand and turquoise shallow waters
+                      ideal for peaceful sunbathing and swimming.
+                    </p>
+
+                    <button type="button" class="learn-more">
+                      Learn More
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </article>
+              </div>
+
+              <!-- Destination 2 -->
+
+              <div class="col-sm-6 col-lg-3">
+                <article
+                  class="destination-card"
+                  data-destination="alabat-mangroves"
+                  data-category="nature"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid destination-image"
+                    alt="Alabat Island Mangroves"
+                  />
+
+                  <div class="destination-body">
+                    <div class="destination-category">NATURE</div>
+
+                    <h3 class="destination-title">Alabat Island Mangroves</h3>
+
+                    <p class="destination-text">
+                      Navigate through vibrant lush mangrove forests protecting
+                      the rich marine bio-diversity of the island.
+                    </p>
+
+                    <button type="button" class="learn-more">
+                      Learn More
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </article>
+              </div>
+
+              <!-- Destination 3 -->
+
+              <div class="col-sm-6 col-lg-3">
+                <article
+                  class="destination-card"
+                  data-destination="san-antonio"
+                  data-category="culture"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid destination-image"
+                    alt="San Antonio De Padua"
+                  />
+
+                  <div class="destination-body">
+                    <div class="destination-category">CULTURE</div>
+
+                    <h3 class="destination-title">San Antonio De Padua</h3>
+
+                    <p class="destination-text">
+                      Discover the serene spiritual charm of San Antonio de
+                      Padua Parish Church, a peaceful sanctuary nestled in the
+                      heart of Perez, Quezon.
+                    </p>
+
+                    <button type="button" class="learn-more">
+                      Learn More
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </article>
+              </div>
+
+              <!-- Destination 4 -->
+
+              <div class="col-sm-6 col-lg-3">
+                <article
+                  class="destination-card"
+                  data-destination="fish-sanctuaries"
+                  data-category="nature"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid destination-image"
+                    alt="Perez Fish Sanctuaries"
+                  />
+
+                  <div class="destination-body">
+                    <div class="destination-category">ECOTOURISM</div>
+
+                    <h3 class="destination-title">Perez Fish Sanctuaries</h3>
+
+                    <p class="destination-text">
+                      Snorkel in clear ocean waters teeming with healthy coral
+                      reefs and colorful local marine life.
+                    </p>
+
+                    <button type="button" class="learn-more">
+                      Learn More
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
+                </article>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <p id="destination-filter-status" class="visually-hidden" role="status" aria-live="polite"></p>
-        <div class="row g-4">
-          <!-- Destination 1 -->
-
-          <div class="col-sm-6 col-lg-3">
-            <article class="destination-card" data-destination="perez-beach" data-category="beaches">
-              <img
-                src="placeholder.svg"
-                class="img-fluid destination-image"
-                alt="Perez Beach"
-              />
-
-              <div class="destination-body">
-                <div class="destination-category">BEACHES</div>
-
-                <h3 class="destination-title">Perez Beach</h3>
-
-                <p class="destination-text">
-                  An pristine stretch of sand and turquoise shallow waters ideal
-                  for peaceful sunbathing and swimming.
-                </p>
-
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
-              </div>
-            </article>
-          </div>
-
-          <!-- Destination 2 -->
-
-          <div class="col-sm-6 col-lg-3">
-            <article class="destination-card" data-destination="alabat-mangroves" data-category="nature">
-              <img
-                src="placeholder.svg"
-                class="img-fluid destination-image"
-                alt="Alabat Island Mangroves"
-              />
-
-              <div class="destination-body">
-                <div class="destination-category">NATURE</div>
-
-                <h3 class="destination-title">Alabat Island Mangroves</h3>
-
-                <p class="destination-text">
-                  Navigate through vibrant lush mangrove forests protecting the
-                  rich marine bio-diversity of the island.
-                </p>
-
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
-              </div>
-            </article>
-          </div>
-
-          <!-- Destination 3 -->
-
-          <div class="col-sm-6 col-lg-3">
-            <article class="destination-card" data-destination="san-antonio" data-category="culture">
-              <img
-                src="placeholder.svg"
-                class="img-fluid destination-image"
-                alt="San Antonio De Padua"
-              />
-
-              <div class="destination-body">
-                <div class="destination-category">CULTURE</div>
-
-                <h3 class="destination-title">San Antonio De Padua</h3>
-
-                <p class="destination-text">
-                  Discover the serene spiritual charm of San Antonio de Padua
-                  Parish Church, a peaceful sanctuary nestled in the heart of
-                  Perez, Quezon.
-                </p>
-
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
-              </div>
-            </article>
-          </div>
-
-          <!-- Destination 4 -->
-
-          <div class="col-sm-6 col-lg-3">
-            <article class="destination-card" data-destination="fish-sanctuaries" data-category="nature">
-              <img
-                src="placeholder.svg"
-                class="img-fluid destination-image"
-                alt="Perez Fish Sanctuaries"
-              />
-
-              <div class="destination-body">
-                <div class="destination-category">ECOTOURISM</div>
-
-                <h3 class="destination-title">Perez Fish Sanctuaries</h3>
-
-                <p class="destination-text">
-                  Snorkel in clear ocean waters teeming with healthy coral reefs
-                  and colorful local marine life.
-                </p>
-
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
+        <!-- =========================================================
      EXPLORE AREA / MAP
 ========================================================= -->
 
-    <section class="explore-area section-padding" id="map">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-lg-5">
-            <div class="section-label">Navigate Alabat Island</div>
+        <section class="explore-area section-padding" id="map">
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-lg-5">
+                <div class="section-label">Navigate Alabat Island</div>
 
-            <h2 class="section-title">Explore the Area</h2>
+                <h2 class="section-title">Explore the Area</h2>
 
-            <p class="explore-description">
-              Perez is a coastal town with prominent hills and upland areas
-              covering Barangays Pambuhan, Mainit Norte, and Sangirin. It has
-              irregular coastlines with rugged surfaces and beaches.
-            </p>
+                <p class="explore-description">
+                  Perez is a coastal town with prominent hills and upland areas
+                  covering Barangays Pambuhan, Mainit Norte, and Sangirin. It
+                  has irregular coastlines with rugged surfaces and beaches.
+                </p>
 
-            <p class="explore-description">
-              Inland water bodies consist of rivers, creeks, and springs. Most
-              notable are Sangirin River, Mainit River, Pinagtubigan Weste
-              River, Pinagsibangan River, Caguisi River and Mayanti Creek.
-            </p>
+                <p class="explore-description">
+                  Inland water bodies consist of rivers, creeks, and springs.
+                  Most notable are Sangirin River, Mainit River, Pinagtubigan
+                  Weste River, Pinagsibangan River, Caguisi River and Mayanti
+                  Creek.
+                </p>
 
-            <ul class="map-legend">
-              <li>
-                <span class="legend-dot dot-beach"></span>
-                Beaches
-              </li>
+                <ul class="map-legend">
+                  <li>
+                    <span class="legend-dot dot-beach"></span>
+                    Beaches
+                  </li>
 
-              <li>
-                <span class="legend-dot dot-mangrove"></span>
-                Ecological Mangrove Reserves
-              </li>
+                  <li>
+                    <span class="legend-dot dot-mangrove"></span>
+                    Ecological Mangrove Reserves
+                  </li>
 
-              <li>
-                <span class="legend-dot dot-history"></span>
-                Historical &amp; Plaza Sites
-              </li>
+                  <li>
+                    <span class="legend-dot dot-history"></span>
+                    Historical &amp; Plaza Sites
+                  </li>
 
-              <li>
-                <span class="legend-dot dot-snorkel"></span>
-                Snorkeling &amp; Dive Parks
-              </li>
-            </ul>
-          </div>
+                  <li>
+                    <span class="legend-dot dot-snorkel"></span>
+                    Snorkeling &amp; Dive Parks
+                  </li>
+                </ul>
+              </div>
 
-          <div class="col-lg-7">
-            <div id="perez-map" role="region" aria-label="Interactive map of Perez municipality" aria-describedby="map-help">
-              <p class="p-4">Loading the Perez map...</p>
+              <div class="col-lg-7">
+                <div
+                  id="perez-map"
+                  role="region"
+                  aria-label="Interactive map of Perez municipality"
+                  aria-describedby="map-help"
+                >
+                  <p class="p-4">Loading the Perez map...</p>
+                </div>
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    id="map-interact"
+                    aria-controls="perez-map"
+                    aria-pressed="false"
+                    hidden
+                  >
+                    Interact with map
+                  </button>
+                  <span class="small text-secondary" id="map-help"
+                    >Drag to pan. Use the mouse wheel or + / - buttons to
+                    zoom.</span
+                  >
+                </div>
+                <p class="small text-secondary mt-2 mb-1">
+                  The pin is a general municipality reference point, not an
+                  attraction location. Attraction coordinates still need
+                  verification.
+                </p>
+                <a
+                  class="small"
+                  href="https://perezquezon.gov.ph/profile/"
+                  target="_blank"
+                  rel="noopener"
+                  >Municipality location source</a
+                >
+                <p id="map-status" class="small mt-2 mb-0" role="status"></p>
+              </div>
             </div>
-            <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
-              <button type="button" class="btn btn-sm btn-outline-secondary" id="map-interact" aria-controls="perez-map" aria-pressed="false" hidden>Interact with map</button>
-              <span class="small text-secondary" id="map-help">Drag to pan. Use the mouse wheel or + / - buttons to zoom.</span>
-            </div>
-            <p class="small text-secondary mt-2 mb-1">The pin is a general municipality reference point, not an attraction location. Attraction coordinates still need verification.</p>
-            <a class="small" href="https://perezquezon.gov.ph/profile/" target="_blank" rel="noopener">Municipality location source</a>
-            <p id="map-status" class="small mt-2 mb-0" role="status"></p>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- =========================================================
+        <!-- =========================================================
      UNIQUE EXPERIENCES
 ========================================================= -->
 
-    <section class="section-padding" id="experiences">
-      <div class="container">
-        <div class="experiences-header">
-          <div class="section-label">What to expect</div>
+        <section class="section-padding" id="experiences">
+          <div class="container">
+            <div class="experiences-header">
+              <div class="section-label">What to expect</div>
 
-          <h2 class="section-title">Unique Experiences</h2>
-        </div>
+              <h2 class="section-title">Unique Experiences</h2>
+            </div>
 
-        <div class="row g-3">
-          <div class="col-md-4">
-            <button type="button" class="experience-card" data-experience="pristine-beaches" data-bs-toggle="modal" data-bs-target="#experience-modal" aria-haspopup="dialog" aria-controls="experience-modal">
-<img src="placeholder.svg" class="img-fluid" alt="Pristine Beaches" />
+            <div class="row g-3">
+              <div class="col-md-4">
+                <button
+                  type="button"
+                  class="experience-card"
+                  data-experience="pristine-beaches"
+                  data-bs-toggle="modal"
+                  data-bs-target="#experience-modal"
+                  aria-haspopup="dialog"
+                  aria-controls="experience-modal"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid"
+                    alt="Pristine Beaches"
+                  />
 
-              <span class="experience-name">
-                <span>Pristine Beaches</span>
-                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
-              
-              </span>
-            </button>
+                  <span class="experience-name">
+                    <span>Pristine Beaches</span>
+                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-md-4">
+                <button
+                  type="button"
+                  class="experience-card"
+                  data-experience="coastal-nature"
+                  data-bs-toggle="modal"
+                  data-bs-target="#experience-modal"
+                  aria-haspopup="dialog"
+                  aria-controls="experience-modal"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid"
+                    alt="Coastal Nature"
+                  />
+
+                  <span class="experience-name">
+                    <span>Coastal Nature</span>
+                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-md-4">
+                <button
+                  type="button"
+                  class="experience-card"
+                  data-experience="local-cuisine"
+                  data-bs-toggle="modal"
+                  data-bs-target="#experience-modal"
+                  aria-haspopup="dialog"
+                  aria-controls="experience-modal"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid"
+                    alt="Local Seafood and Cuisine"
+                  />
+
+                  <span class="experience-name">
+                    <span>Local Seafood &amp; Cuisine</span>
+                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-md-6">
+                <button
+                  type="button"
+                  class="experience-card large"
+                  data-experience="culture-festival"
+                  data-bs-toggle="modal"
+                  data-bs-target="#experience-modal"
+                  aria-haspopup="dialog"
+                  aria-controls="experience-modal"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid"
+                    alt="Culture and Festival"
+                  />
+
+                  <span class="experience-name">
+                    <span>Culture &amp; Festival</span>
+                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+
+              <div class="col-md-6">
+                <button
+                  type="button"
+                  class="experience-card large"
+                  data-experience="ecotourism"
+                  data-bs-toggle="modal"
+                  data-bs-target="#experience-modal"
+                  aria-haspopup="dialog"
+                  aria-controls="experience-modal"
+                >
+                  <img
+                    src="placeholder.svg"
+                    class="img-fluid"
+                    alt="Ecotourism"
+                  />
+
+                  <span class="experience-name">
+                    <span>Ecotourism</span>
+                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div class="col-md-4">
-            <button type="button" class="experience-card" data-experience="coastal-nature" data-bs-toggle="modal" data-bs-target="#experience-modal" aria-haspopup="dialog" aria-controls="experience-modal">
-<img src="placeholder.svg" class="img-fluid" alt="Coastal Nature" />
-
-              <span class="experience-name">
-                <span>Coastal Nature</span>
-                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
-              
-              </span>
-            </button>
-          </div>
-
-          <div class="col-md-4">
-            <button type="button" class="experience-card" data-experience="local-cuisine" data-bs-toggle="modal" data-bs-target="#experience-modal" aria-haspopup="dialog" aria-controls="experience-modal">
-<img src="placeholder.svg" class="img-fluid" alt="Local Seafood and Cuisine" />
-
-              <span class="experience-name">
-                <span>Local Seafood &amp; Cuisine</span>
-                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
-              
-              </span>
-            </button>
-          </div>
-
-          <div class="col-md-6">
-            <button type="button" class="experience-card large" data-experience="culture-festival" data-bs-toggle="modal" data-bs-target="#experience-modal" aria-haspopup="dialog" aria-controls="experience-modal">
-<img src="placeholder.svg" class="img-fluid" alt="Culture and Festival" />
-
-              <span class="experience-name">
-                <span>Culture &amp; Festival</span>
-                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
-              
-              </span>
-            </button>
-          </div>
-
-          <div class="col-md-6">
-            <button type="button" class="experience-card large" data-experience="ecotourism" data-bs-toggle="modal" data-bs-target="#experience-modal" aria-haspopup="dialog" aria-controls="experience-modal">
-<img src="placeholder.svg" class="img-fluid" alt="Ecotourism" />
-
-              <span class="experience-name">
-                <span>Ecotourism</span>
-                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
-              
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
+        <!-- =========================================================
      TRAVEL INFORMATION
 ========================================================= -->
 
-    <section class="travel-section section-padding" id="travel">
-      <div class="container">
-        <div class="row g-3 mb-4" id="travel-information-cards">
-          <!-- Getting There -->
+        <section class="travel-section section-padding" id="travel">
+          <div class="container">
+            <div class="row g-3 mb-4" id="travel-information-cards">
+              <!-- Getting There -->
 
-          <div class="col-md-4">
-            <div class="travel-card">
-              <div class="travel-icon">
-                <i class="bi bi-signpost-2"></i>
-              </div>
+              <div class="col-md-4">
+                <div class="travel-card">
+                  <div class="travel-icon">
+                    <i class="bi bi-signpost-2"></i>
+                  </div>
 
-              <h5>Getting There</h5>
+                  <h5>Getting There</h5>
 
-              <p>
-                Take a passenger boat (lantsa) or RORO ferry from Atimonan Port to Alabat Island, then continue using available local transportation toward Perez.
-              </p>
-              <div class="collapse travel-details" id="getting-there-details" data-bs-parent="#travel-information-cards">
-                <div class="travel-detail-content">
-                  <p class="travel-detail-label">General route</p>
-                  <ol class="travel-route" aria-label="General journey to Perez">
-                    <li>Mainland Quezon</li><li>Atimonan Port</li><li>Passenger Boat / Ferry</li><li>Alabat Island</li><li>Local Transportation</li><li>Perez</li>
-                  </ol>
-                  <p class="travel-detail-note">Routes and transportation availability may vary. Confirm local transportation schedules before traveling.</p>
+                  <p>
+                    Take a passenger boat (lantsa) or RORO ferry from Atimonan
+                    Port to Alabat Island, then continue using available local
+                    transportation toward Perez.
+                  </p>
+                  <div
+                    class="collapse travel-details"
+                    id="getting-there-details"
+                    data-bs-parent="#travel-information-cards"
+                  >
+                    <div class="travel-detail-content">
+                      <p class="travel-detail-label">General route</p>
+                      <ol
+                        class="travel-route"
+                        aria-label="General journey to Perez"
+                      >
+                        <li>Mainland Quezon</li>
+                        <li>Atimonan Port</li>
+                        <li>Passenger Boat / Ferry</li>
+                        <li>Alabat Island</li>
+                        <li>Local Transportation</li>
+                        <li>Perez</li>
+                      </ol>
+                      <p class="travel-detail-note">
+                        Routes and transportation availability may vary. Confirm
+                        local transportation schedules before traveling.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="travel-toggle"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#getting-there-details"
+                    aria-expanded="false"
+                    aria-controls="getting-there-details"
+                  >
+                    <span class="travel-toggle-label">View Details</span
+                    ><i class="bi bi-chevron-down" aria-hidden="true"></i>
+                  </button>
                 </div>
               </div>
-              <button type="button" class="travel-toggle" data-bs-toggle="collapse" data-bs-target="#getting-there-details" aria-expanded="false" aria-controls="getting-there-details">
-                <span class="travel-toggle-label">View Details</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
 
-          <!-- Best Time -->
+              <!-- Best Time -->
 
-          <div class="col-md-4">
-            <div class="travel-card">
-              <div class="travel-icon">
-                <i class="bi bi-sun"></i>
-              </div>
+              <div class="col-md-4">
+                <div class="travel-card">
+                  <div class="travel-icon">
+                    <i class="bi bi-sun"></i>
+                  </div>
 
-              <h5>Best Time to Visit</h5>
+                  <h5>Best Time to Visit</h5>
 
-              <p>
-                Visit between March and May for generally drier weather, calmer sea conditions, and more opportunities for beaches and other outdoor activities.
-              </p>
-              <div class="collapse travel-details" id="best-time-details" data-bs-parent="#travel-information-cards">
-                <div class="travel-detail-content">
-                  <dl class="travel-tip-list">
-                    <dt>Drier months</dt><dd>March &ndash; May</dd>
-                    <dt>Good for</dt><dd>Beach visits, outdoor activities, and coastal sightseeing.</dd>
-                    <dt>Reminder</dt><dd>Weather and sea conditions may change, so visitors should check current conditions before traveling.</dd>
-                  </dl>
+                  <p>
+                    Visit between March and May for generally drier weather,
+                    calmer sea conditions, and more opportunities for beaches
+                    and other outdoor activities.
+                  </p>
+                  <div
+                    class="collapse travel-details"
+                    id="best-time-details"
+                    data-bs-parent="#travel-information-cards"
+                  >
+                    <div class="travel-detail-content">
+                      <dl class="travel-tip-list">
+                        <dt>Drier months</dt>
+                        <dd>March &ndash; May</dd>
+                        <dt>Good for</dt>
+                        <dd>
+                          Beach visits, outdoor activities, and coastal
+                          sightseeing.
+                        </dd>
+                        <dt>Reminder</dt>
+                        <dd>
+                          Weather and sea conditions may change, so visitors
+                          should check current conditions before traveling.
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="travel-toggle"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#best-time-details"
+                    aria-expanded="false"
+                    aria-controls="best-time-details"
+                  >
+                    <span class="travel-toggle-label">View Details</span
+                    ><i class="bi bi-chevron-down" aria-hidden="true"></i>
+                  </button>
                 </div>
               </div>
-              <button type="button" class="travel-toggle" data-bs-toggle="collapse" data-bs-target="#best-time-details" aria-expanded="false" aria-controls="best-time-details">
-                <span class="travel-toggle-label">View Details</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
 
-          <!-- Local Tips -->
+              <!-- Local Tips -->
 
-          <div class="col-md-4">
-            <div class="travel-card">
-              <div class="travel-icon">
-                <i class="bi bi-lightbulb"></i>
-              </div>
+              <div class="col-md-4">
+                <div class="travel-card">
+                  <div class="travel-icon">
+                    <i class="bi bi-lightbulb"></i>
+                  </div>
 
-              <h5>Local Tips</h5>
+                  <h5>Local Tips</h5>
 
-              <p>
-                Bring sufficient cash since access to ATMs may be limited. Local tricycles and motorcycles can be used for short-distance transportation around the area.
-              </p>
-              <div class="collapse travel-details" id="local-tips-details" data-bs-parent="#travel-information-cards">
-                <div class="travel-detail-content">
-                  <dl class="travel-tip-list">
-                    <dt>Cash</dt><dd>Bring sufficient cash because access to ATMs and electronic payment options may be limited.</dd>
-                    <dt>Local transport</dt><dd>Tricycles and motorcycles may be available for short-distance travel.</dd>
-                    <dt>What to bring</dt><dd>Water, sun protection, comfortable footwear, and basic personal necessities.</dd>
-                    <dt>Responsible travel</dt><dd>Help keep beaches and coastal areas clean and follow local environmental guidelines.</dd>
-                  </dl>
+                  <p>
+                    Bring sufficient cash since access to ATMs may be limited.
+                    Local tricycles and motorcycles can be used for
+                    short-distance transportation around the area.
+                  </p>
+                  <div
+                    class="collapse travel-details"
+                    id="local-tips-details"
+                    data-bs-parent="#travel-information-cards"
+                  >
+                    <div class="travel-detail-content">
+                      <dl class="travel-tip-list">
+                        <dt>Cash</dt>
+                        <dd>
+                          Bring sufficient cash because access to ATMs and
+                          electronic payment options may be limited.
+                        </dd>
+                        <dt>Local transport</dt>
+                        <dd>
+                          Tricycles and motorcycles may be available for
+                          short-distance travel.
+                        </dd>
+                        <dt>What to bring</dt>
+                        <dd>
+                          Water, sun protection, comfortable footwear, and basic
+                          personal necessities.
+                        </dd>
+                        <dt>Responsible travel</dt>
+                        <dd>
+                          Help keep beaches and coastal areas clean and follow
+                          local environmental guidelines.
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="travel-toggle"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#local-tips-details"
+                    aria-expanded="false"
+                    aria-controls="local-tips-details"
+                  >
+                    <span class="travel-toggle-label">View Details</span
+                    ><i class="bi bi-chevron-down" aria-hidden="true"></i>
+                  </button>
                 </div>
               </div>
-              <button type="button" class="travel-toggle" data-bs-toggle="collapse" data-bs-target="#local-tips-details" aria-expanded="false" aria-controls="local-tips-details">
-                <span class="travel-toggle-label">View Details</span><i class="bi bi-chevron-down" aria-hidden="true"></i>
-              </button>
             </div>
-          </div>
-        </div>
 
-        <div class="travel-budget my-5" id="trip-planner" aria-labelledby="planner-title">
-          <div class="planner-heading">
-            <div><div class="section-label">Plan Your Visit</div>
-              <h2 class="section-title" id="planner-title">Plan Your Perez Trip</h2>
-              <p class="mt-3 mb-0">Build a simple travel estimate for your visit.</p></div>
-            <button type="button" class="btn btn-outline-secondary" id="reset-trip">Reset Trip</button>
-          </div>
-          <div id="reset-trip-confirmation" class="planner-reset mt-3" hidden>
-            <p id="reset-trip-question">Reset your origin, travelers, days, and budget to their defaults?</p>
-            <div class="d-flex flex-wrap gap-2" role="group" aria-labelledby="reset-trip-question">
-              <button type="button" class="btn btn-gold" id="confirm-reset-trip">Yes, reset trip</button>
-              <button type="button" class="btn btn-outline-secondary" id="cancel-reset-trip">Keep my trip</button>
+            <div class="travel-budget my-5" id="trip-planner">
+              <div class="planner-heading">
+                <div>
+                  <div class="section-label">Plan Your Journey & Budget</div>
+                  <h2 class="section-title" id="travel-budget-title">Build Your Perez Trip</h2>
+                  <p class="travel-budget-description mt-3 mb-0">Choose where you are coming from, how you want to cross from Atimonan, your travelers, and your budget. Vessel fares are calculated automatically from the passenger categories below.</p>
+                </div>
+                <button type="button" class="btn btn-outline-secondary" id="reset-trip" aria-expanded="false"><i class="bi bi-arrow-counterclockwise me-2"></i>Reset Trip</button>
+              </div>
+
+              <div class="planner-reset mt-3" id="reset-trip-confirmation" hidden>
+                <strong>Reset the whole trip?</strong><p class="mb-2">This clears your route, passengers, duration, and budget estimates.</p>
+                <button class="btn btn-sm btn-danger" type="button" id="confirm-reset-trip">Yes, reset</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="cancel-reset-trip">Cancel</button>
+              </div>
+              <p class="small text-secondary mt-2" id="planner-save-status" aria-live="polite"></p>
+
+              <div class="planner-step">
+                <h3 class="planner-step-title"><span>1</span> Where are you coming from?</h3>
+                <div class="row g-3">
+                  <div class="col-md-6"><label class="form-label" for="planner-origin">Starting point</label><select class="form-select" id="planner-origin"><option value="">Choose origin</option><option value="manila">Manila</option><option value="atimonan">Atimonan</option><option value="gumaca">Gumaca</option><option value="other">Other location</option></select></div>
+                  <div class="col-md-6" id="custom-origin-field" hidden><label class="form-label" for="planner-custom-origin">Your location</label><input class="form-control" id="planner-custom-origin" maxlength="120" placeholder="Enter your starting location"></div>
+                </div>
+                <div id="planner-route" class="mt-3"></div>
+              </div>
+
+              <div class="planner-step" id="planner-route-choices" hidden>
+                <h3 class="planner-step-title"><span>2</span> Where will you land on Alabat Island?</h3>
+                <div class="row g-3">
+                  <div class="col-md-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="routeOption" value="direct"><span><strong>Perez</strong><small>Land directly in Perez by lantsa aboard MB Capricorn.</small></span></label></div>
+                  <div class="col-md-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="routeOption" value="via-alabat"><span><strong>Alabat</strong><small>Land in Alabat by lantsa or RORO, then ride a tricycle to Perez.</small></span></label></div>
+                </div>
+                <div id="planner-direct-vessel" class="mt-3" hidden></div>
+                <div id="planner-alabat-choices" class="mt-4" hidden>
+                  <h4 class="fs-6 text-uppercase fw-bold">How do you want to cross to Alabat?</h4>
+                  <div class="d-flex flex-wrap gap-2 mb-4" id="planner-transport-modes">
+                    <input type="radio" class="btn-check" name="transportMode" value="lantsa" id="transport-lantsa"><label class="btn btn-outline-secondary" for="transport-lantsa"><i class="bi bi-water me-2"></i>Lantsa</label>
+                    <input type="radio" class="btn-check" name="transportMode" value="roro" id="transport-roro"><label class="btn btn-outline-secondary" for="transport-roro"><i class="bi bi-truck-front me-2"></i>RORO</label>
+                  </div>
+                  <h4 class="fs-6 text-uppercase fw-bold" id="planner-vessel-heading" hidden>Choose a vessel</h4>
+                  <div class="row g-3" id="planner-vessels"></div>
+                  <p class="small text-secondary mt-3 mb-0" id="alabat-fare-note">Alabat vessel fares shown below use the supplied September 2026 fare notices.</p>
+                </div>
+                <div id="planner-departures" class="mt-4" hidden><h4 class="fs-6 text-uppercase fw-bold">Choose departure</h4><div class="d-flex flex-wrap gap-2" id="departure-options"></div></div>
+                <p class="small text-secondary mt-3 mb-0" id="planner-schedule-notice" hidden><i class="bi bi-info-circle me-1"></i>Provided schedules are based on the August 14, 2026 Atimonan Feeder Port update and may change due to weather, capacity, or operator advisories.</p>
+                <div id="planner-final-route" class="mt-4"></div>
+              </div>
+
+              <div class="planner-step">
+                <h3 class="planner-step-title"><span>3</span> Travelers & trip duration</h3>
+                <div class="row g-3">
+                  <div class="col-6 col-lg"><label class="form-label" for="passenger-regular">Regular</label><input type="number" class="form-control" id="passenger-regular" data-passenger="regular" min="0" step="1"></div>
+                  <div class="col-6 col-lg"><label class="form-label" for="passenger-student">Student</label><input type="number" class="form-control" id="passenger-student" data-passenger="student" min="0" step="1"></div>
+                  <div class="col-6 col-lg"><label class="form-label" for="passenger-seniorPwd">Senior / PWD</label><input type="number" class="form-control" id="passenger-seniorPwd" data-passenger="seniorPwd" min="0" step="1"></div>
+                  <div class="col-6 col-lg"><label class="form-label" for="passenger-child">Children</label><input type="number" class="form-control" id="passenger-child" data-passenger="child" min="0" step="1"></div>
+                  <div class="col-12 col-lg"><label class="form-label" for="planner-days">Trip days</label><input type="number" class="form-control" id="planner-days" min="1" max="7" step="1"></div>
+                </div>
+                <p class="small text-secondary mt-3 mb-0"><strong id="planner-total-travelers">0</strong> traveler(s) • <span id="planner-duration">2 days • 1 night</span></p>
+                <p class="small text-danger mt-2 mb-0" id="passenger-message" hidden>Add at least one traveler.</p>
+              </div>
+
+              <div class="row g-4 align-items-start">
+                <div class="col-lg-7">
+                  <div class="planner-step mt-0">
+                    <h3 class="planner-step-title"><span>4</span> Plan your budget</h3>
+                    <p class="small text-secondary">Use whole-peso estimates. The up/down arrows change each amount by ₱1.</p>
+                    <div class="row g-3">
+                      <div class="col-md-6"><label class="form-label" for="budget-otherTransportation">Other transportation</label><div class="input-group"><span class="input-group-text">₱</span><input type="number" class="form-control" id="budget-otherTransportation" data-budget="otherTransportation" min="0" step="1"></div></div>
+                      <div class="col-md-6"><label class="form-label" for="budget-localTransport">Local transport / day</label><div class="input-group"><span class="input-group-text">₱</span><input type="number" class="form-control" id="budget-localTransport" data-budget="localTransport" min="0" step="1"></div></div>
+                      <div class="col-md-6"><label class="form-label" for="budget-meals">Meals / person / day</label><div class="input-group"><span class="input-group-text">₱</span><input type="number" class="form-control" id="budget-meals" data-budget="meals" min="0" step="1"></div></div>
+                      <div class="col-md-6"><label class="form-label" for="budget-accommodation">Accommodation / night</label><div class="input-group"><span class="input-group-text">₱</span><input type="number" class="form-control" id="budget-accommodation" data-budget="accommodation" min="0" step="1"></div></div>
+                      <div class="col-md-6"><label class="form-label" for="budget-activities">Activities</label><div class="input-group"><span class="input-group-text">₱</span><input type="number" class="form-control" id="budget-activities" data-budget="activities" min="0" step="1"></div></div>
+                      <div class="col-md-6"><label class="form-label" for="budget-miscellaneous">Miscellaneous</label><div class="input-group"><span class="input-group-text">₱</span><input type="number" class="form-control" id="budget-miscellaneous" data-budget="miscellaneous" min="0" step="1"></div></div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-3" id="reset-budget">Reset budget estimates</button>
+                    <div class="mt-4" id="planner-fare-breakdown"></div>
+                  </div>
+                </div>
+                <div class="col-lg-5">
+                  <aside class="planner-summary" aria-live="polite"><h3>Your Trip Estimate</h3><p id="summary-trip">0 travelers</p><p id="summary-pending"></p><dl class="planner-breakdown"><div><dt>Vessel fare</dt><dd id="summary-vesselFare">—</dd></div><div><dt>Other transportation</dt><dd id="summary-otherTransportation">—</dd></div><div><dt>Local transportation</dt><dd id="summary-localTransport">—</dd></div><div><dt>Meals</dt><dd id="summary-meals">—</dd></div><div><dt>Accommodation</dt><dd id="summary-accommodation">—</dd></div><div><dt>Activities</dt><dd id="summary-activities">—</dd></div><div><dt>Miscellaneous</dt><dd id="summary-miscellaneous">—</dd></div></dl><div class="planner-total"><div>Estimated total</div><strong id="summary-total">—</strong><small>Approx. <span id="summary-person">—</span> per traveler</small></div></aside>
+                </div>
+              </div>
+
+              <h3 class="fs-5 mt-5">Passenger Vessel Reference</h3>
+              <div class="table-responsive travel-table-wrapper" tabindex="0"><table class="table table-striped table-bordered table-hover align-middle mb-0"><thead><tr><th>Vessel</th><th>Route</th><th>Departure</th><th>Regular</th><th>Student</th><th>Senior/PWD</th><th>Children</th></tr></thead><tbody><tr><th>MB Capricorn</th><td>Atimonan → Perez</td><td>11:00 AM</td><td>₱200</td><td>₱175</td><td>₱160</td><td>₱100</td></tr><tr><th>M/V Nhelsea 2</th><td>Atimonan → Alabat</td><td>8:00 AM, 12:00 NN</td><td>₱180</td><td>₱140</td><td>₱140</td><td>₱90</td></tr><tr><th>MV Viva Flos Carmeli</th><td>Atimonan → Alabat</td><td>9:00 AM, 5:00 PM</td><td>₱180</td><td>₱140</td><td>₱140</td><td>₱90</td></tr><tr><th>MV Pinoy Roro 1</th><td>Atimonan → Alabat</td><td>10:00 AM, 2:00 PM, 6:00 PM</td><td>₱150</td><td>₱123.21</td><td>₱107.14</td><td>₱75</td></tr></tbody></table></div>
+              <p class="travel-budget-note mt-3 mb-0" id="travel-budget-note"><i class="bi bi-info-circle me-2"></i>Schedules and fares reflect the references supplied for this project. Travelers should confirm current operator advisories before departure.</p>
             </div>
-          </div>
-          <section class="planner-step" aria-labelledby="journey-title">
-            <h3 class="planner-step-title" id="journey-title"><span>1</span> Your Journey</h3>
-            <label class="form-label" for="planner-origin">Where are you coming from?</label>
-            <select class="form-select" id="planner-origin" name="origin">
-              <option value="">Select your starting point</option>
-              <option value="lucena">Lucena City</option><option value="manila">Manila</option>
-              <option value="atimonan">Atimonan</option><option value="gumaca">Gumaca</option><option value="other">Other</option>
-            </select>
-            <div class="mt-3" id="custom-origin-field" hidden>
-              <label class="form-label" for="planner-custom-origin">Enter your starting location</label>
-              <input class="form-control" type="text" id="planner-custom-origin" name="customOrigin" maxlength="120" autocomplete="address-level2">
-            </div>
-            <div id="planner-route" class="mt-4" aria-live="polite"></div>
-            <fieldset id="planner-route-choices" class="mt-4" hidden>
-              <legend class="planner-step-title">Choose Your Route</legend>
-              <div class="row g-3">
-                <div class="col-md-6"><label class="journey-choice">
-                  <input class="form-check-input" type="radio" name="routeOption" value="direct">
-                  <span><strong>Direct to Perez</strong><small>Lantsa directly to Perez</small></span>
-                </label></div>
-                <div class="col-md-6"><label class="journey-choice">
-                  <input class="form-check-input" type="radio" name="routeOption" value="via-alabat">
-                  <span><strong>Via Alabat</strong><small>RORO or Lantsa to Alabat, then continue to Perez by tricycle</small></span>
-                </label></div>
+
+            <!-- Events -->
+
+            <div class="row g-4 align-items-stretch">
+              <div class="col-lg-6">
+                <div class="feature-event">
+                  <img src="placeholder.svg" alt="Kayakas Festival" />
+
+                  <div class="feature-event-content">
+                    <span class="event-badge"> JUNE 15–20 </span>
+
+                    <h3>Kayakas Festival</h3>
+
+                    <p>
+                      A thanksgiving celebration of the bountiful coconut
+                      harvest and the marine livelihood of Perez, featuring
+                      energetic street dances, boats, and local crafts.
+                    </p>
+                  </div>
+                </div>
               </div>
-            </fieldset>
-            <fieldset id="planner-alabat-choices" class="mt-4" hidden>
-              <legend class="planner-step-title">Choose Transport to Alabat</legend>
-              <div class="row g-3">
-                <div class="col-sm-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="alabatTransport" value="roro"><span><strong>RORO</strong></span></label></div>
-                <div class="col-sm-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="alabatTransport" value="lantsa"><span><strong>Lantsa</strong></span></label></div>
-              </div>
-            </fieldset>
-            <div id="planner-final-route" class="mt-4" aria-live="polite"></div>
-          </section>
-          <section class="planner-step" aria-labelledby="trip-title">
-            <h3 class="planner-step-title" id="trip-title"><span>2</span> Your Trip</h3>
-            <div class="row g-3">
-              <div class="col-sm-6"><label class="form-label" for="planner-travelers">Number of Travelers</label>
-                <input class="form-control" id="planner-travelers" name="travelers" type="number" min="1" max="20" step="1" value="2"></div>
-              <div class="col-sm-6"><label class="form-label" for="planner-days">Number of Days</label>
-                <input class="form-control" id="planner-days" name="days" type="number" min="1" max="7" step="1" value="2"></div>
-            </div>
-            <p id="planner-duration" class="mt-3 mb-0" aria-live="polite"></p>
-          </section>
-          <h3 class="planner-step-title"><span>3</span> Your Budget</h3>
-          <div class="section-label">Plan Your Budget</div>
-          <h2 class="section-title" id="travel-budget-title">Estimated Travel Expenses</h2>
-          <p class="travel-budget-description mt-3">Use this sample budget as a general planning guide. Actual prices may vary depending on transportation, accommodation, season, and personal preferences.</p>
 
-          <div class="table-responsive travel-table-wrapper" tabindex="0" role="region" aria-labelledby="travel-budget-title">
-            <table class="table table-striped table-bordered table-hover align-middle mb-0" aria-labelledby="travel-budget-title" aria-describedby="travel-budget-note">
-              <thead>
-                <tr>
-                  <th scope="col">Expense</th>
-                  <th scope="col">Estimated Cost</th>
-                  <th scope="col">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">Transportation to/from Perez</th>
-                  <td>₱300 – ₱800</td>
-                  <td>Varies depending on origin and transportation used.</td>
-                </tr>
-                <tr>
-                  <th scope="row">Local Transportation</th>
-                  <td>₱100 – ₱300</td>
-                  <td>Tricycle or motorcycle transportation.</td>
-                </tr>
-                <tr>
-                  <th scope="row">Meals</th>
-                  <td>₱200 – ₱500</td>
-                  <td>Estimated daily food budget.</td>
-                </tr>
-                <tr>
-                  <th scope="row">Accommodation</th>
-                  <td>₱500 – ₱1,500</td>
-                  <td>Estimated overnight accommodation.</td>
-                </tr>
-                <tr>
-                  <th scope="row">Activities</th>
-                  <td>Free – ₱500</td>
-                  <td>Depends on the destination and chosen activity.</td>
-                </tr>
-                <tr>
-                  <th scope="row">Miscellaneous</th>
-                  <td>₱200 – ₱500</td>
-                  <td>Souvenirs and other personal expenses.</td>
-                </tr>
-                <tr class="table-warning fw-semibold">
-                  <th scope="row">Estimated Daily Budget</th>
-                  <td>₱1,300 – ₱4,100</td>
-                  <td>Approximate sample budget only.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="travel-budget-note mt-3 mb-0" id="travel-budget-note"><i class="bi bi-info-circle me-2" aria-hidden="true"></i>Costs shown are estimates for project demonstration purposes and are not official tourism rates.</p>
+              <div class="col-lg-6" id="events">
+                <h3 class="events-title">Upcoming Local Events</h3>
 
-          <div class="row g-4 mt-3">
-            <section class="col-lg-7" aria-labelledby="build-budget-title">
-              <h3 id="build-budget-title" class="planner-step-title">Build Your Budget</h3>
-              <p>Adjust the values below to create your own estimated trip budget.</p>
-              <p class="small text-secondary">Sample values are provided for planning and can be changed. All amounts are editable estimates in Philippine pesos, not official rates.</p>
-              <div class="row g-3">
-              <div class="col-md-6"><label class="form-label" for="budget-transportation">Transportation</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-transportation" name="transportation" data-budget="transportation" type="number" min="0" max="10000000" step="1" value="500" aria-describedby="budget-transportation-help"></div><div class="form-text" id="budget-transportation-help">Whole trip, all travelers; include your return journey.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-localTransport">Local Transportation Per Day</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-localTransport" name="localTransport" data-budget="localTransport" type="number" min="0" max="10000000" step="1" value="150" aria-describedby="budget-localTransport-help"></div><div class="form-text" id="budget-localTransport-help">Daily total for your group.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-meals">Meals Per Person Per Day</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-meals" name="meals" data-budget="meals" type="number" min="0" max="10000000" step="1" value="350" aria-describedby="budget-meals-help"></div><div class="form-text" id="budget-meals-help">Daily food estimate for one traveler.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-accommodation">Accommodation Per Night</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-accommodation" name="accommodation" data-budget="accommodation" type="number" min="0" max="10000000" step="1" value="800" aria-describedby="budget-accommodation-help"></div><div class="form-text" id="budget-accommodation-help">Nightly total for your group.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-activities">Activities</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-activities" name="activities" data-budget="activities" type="number" min="0" max="10000000" step="1" value="300" aria-describedby="budget-activities-help"></div><div class="form-text" id="budget-activities-help">Whole trip, all travelers.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-miscellaneous">Miscellaneous</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-miscellaneous" name="miscellaneous" data-budget="miscellaneous" type="number" min="0" max="10000000" step="1" value="300" aria-describedby="budget-miscellaneous-help"></div><div class="form-text" id="budget-miscellaneous-help">Whole trip, all travelers.</div></div>
-              </div>
-              <button type="button" class="btn btn-outline-secondary mt-4" id="reset-budget">Reset Budget</button>
-            </section>
-            <aside class="col-lg-5" aria-labelledby="budget-summary-title">
-              <div class="planner-summary" aria-live="polite" aria-atomic="true">
-                <h3 id="budget-summary-title">Your Estimated Trip</h3>
-                <p id="summary-trip"></p><dl class="planner-breakdown"><div><dt>Transportation</dt><dd id="summary-transportation"></dd></div>
-<div><dt>Local Transportation</dt><dd id="summary-localTransport"></dd></div>
-<div><dt>Meals</dt><dd id="summary-meals"></dd></div>
-<div><dt>Accommodation</dt><dd id="summary-accommodation"></dd></div>
-<div><dt>Activities</dt><dd id="summary-activities"></dd></div>
-<div><dt>Miscellaneous</dt><dd id="summary-miscellaneous"></dd></div></dl>
-                <div class="planner-total"><div>Estimated Trip Total</div><strong id="summary-total"></strong></div>
-                <p class="mb-0 mt-3">Estimated Per Person <strong id="summary-person"></strong></p>
-              </div>
-            </aside>
-          </div>
-          <p class="small text-secondary mt-3 mb-0" id="planner-save-status" role="status"></p>
-        </div>
+                <div class="event-row">
+                  <div class="event-date">
+                    <span class="month">May</span>
+                    <span class="day">15</span>
+                  </div>
 
-        <!-- Events -->
+                  <div class="event-info">
+                    <strong>Fisherman's Feast Day</strong>
+                    <small>Coastal San Jose Barangay</small>
+                  </div>
 
-        <div class="row g-4 align-items-stretch">
-          <div class="col-lg-6">
-            <div class="feature-event">
-              <img src="placeholder.svg" alt="Kayakas Festival" />
+                  <i class="bi bi-chevron-right event-arrow"></i>
+                </div>
 
-              <div class="feature-event-content">
-                <span class="event-badge"> JUNE 15–20 </span>
+                <div class="event-row">
+                  <div class="event-date">
+                    <span class="month">June</span>
+                    <span class="day">04</span>
+                  </div>
 
-                <h3>Kayakas Festival</h3>
+                  <div class="event-info">
+                    <strong>Coconut Agri-Trade Fair</strong>
+                    <small>Municipal Complex</small>
+                  </div>
 
-                <p>
-                  A thanksgiving celebration of the bountiful coconut harvest
-                  and the marine livelihood of Perez, featuring energetic street
-                  dances, boats, and local crafts.
-                </p>
+                  <i class="bi bi-chevron-right event-arrow"></i>
+                </div>
+
+                <div class="event-row">
+                  <div class="event-date">
+                    <span class="month">June</span>
+                    <span class="day">18</span>
+                  </div>
+
+                  <div class="event-info">
+                    <strong>Perez Flotilla Parade</strong>
+                    <small>Sande Bay Sanctuaries</small>
+                  </div>
+
+                  <i class="bi bi-chevron-right event-arrow"></i>
+                </div>
               </div>
             </div>
           </div>
+        </section>
 
-          <div class="col-lg-6" id="events">
-            <h3 class="events-title">Upcoming Local Events</h3>
-
-            <div class="event-row">
-              <div class="event-date">
-                <span class="month">May</span>
-                <span class="day">15</span>
-              </div>
-
-              <div class="event-info">
-                <strong>Fisherman's Feast Day</strong>
-                <small>Coastal San Jose Barangay</small>
-              </div>
-
-              <i class="bi bi-chevron-right event-arrow"></i>
-            </div>
-
-            <div class="event-row">
-              <div class="event-date">
-                <span class="month">June</span>
-                <span class="day">04</span>
-              </div>
-
-              <div class="event-info">
-                <strong>Coconut Agri-Trade Fair</strong>
-                <small>Municipal Complex</small>
-              </div>
-
-              <i class="bi bi-chevron-right event-arrow"></i>
-            </div>
-
-            <div class="event-row">
-              <div class="event-date">
-                <span class="month">June</span>
-                <span class="day">18</span>
-              </div>
-
-              <div class="event-info">
-                <strong>Perez Flotilla Parade</strong>
-                <small>Sande Bay Sanctuaries</small>
-              </div>
-
-              <i class="bi bi-chevron-right event-arrow"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
+        <!-- =========================================================
      PHOTO GALLERY
 ========================================================= -->
 
-    <section class="section-padding" id="gallery">
-      <div class="container">
-        <div
-          class="gallery-header d-flex align-items-end justify-content-between"
-        >
-          <div>
-            <div class="section-label">Captured Moments</div>
+        <section class="section-padding" id="gallery">
+          <div class="container">
+            <div
+              class="gallery-header d-flex align-items-end justify-content-between"
+            >
+              <div>
+                <div class="section-label">Captured Moments</div>
 
-            <h2 class="section-title">Photo Gallery</h2>
+                <h2 class="section-title">Photo Gallery</h2>
+              </div>
+
+              <a href="#" class="gallery-link"> View All Photos </a>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+
+              <div class="col-6 col-md-4 col-lg-3">
+                <img
+                  src="placeholder.svg"
+                  class="img-fluid img-thumbnail gallery-image"
+                  alt="Perez gallery photo"
+                />
+              </div>
+            </div>
           </div>
+        </section>
 
-          <a href="#" class="gallery-link"> View All Photos </a>
-        </div>
-
-        <div class="row g-3">
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3">
-            <img
-              src="placeholder.svg"
-              class="img-fluid img-thumbnail gallery-image"
-              alt="Perez gallery photo"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
+        <!-- =========================================================
      NEWSLETTER
 ========================================================= -->
 
-    <section class="newsletter-wrapper">
-      <div class="container">
-        <div class="newsletter">
-          <div class="row align-items-center">
-            <div class="col-lg-7">
-              <h4>Join Our Newsletter</h4>
+        <section class="newsletter-wrapper">
+          <div class="container">
+            <div class="newsletter">
+              <div class="row align-items-center">
+                <div class="col-lg-7">
+                  <h4>Join Our Newsletter</h4>
 
-              <p>
-                Get updates on the upcoming festival schedules, travel guides,
-                and ecotourism activities.
-              </p>
-            </div>
+                  <p>
+                    Get updates on the upcoming festival schedules, travel
+                    guides, and ecotourism activities.
+                  </p>
+                </div>
 
-            <div class="col-lg-5">
-              <form class="newsletter-form">
-                <input
-                  type="email"
-                  class="form-control"
-                  placeholder="Enter your email address"
-                />
+                <div class="col-lg-5">
+                  <form class="newsletter-form">
+                    <input
+                      type="email"
+                      class="form-control"
+                      placeholder="Enter your email address"
+                    />
 
-                <button type="submit">Subscribe</button>
-              </form>
+                    <button type="submit">Subscribe</button>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- =========================================================
+        <!-- =========================================================
      FOOTER
 ========================================================= -->
 
-    <footer id="footer">
-      <div class="container">
-        <div class="row g-4">
-          <!-- About -->
+        <footer id="footer">
+          <div class="container">
+            <div class="row g-4">
+              <!-- About -->
 
-          <div class="col-lg-5">
-            <div class="footer-brand">PEREZ <span>QUEZON</span></div>
+              <div class="col-lg-5">
+                <div class="footer-brand">PEREZ <span>QUEZON</span></div>
 
-            <p class="footer-description">
-              The pristine gateway municipality of Alabat Island. Experience
-              untouched natural beauty and rich historical Quezon culture.
-            </p>
-          </div>
+                <p class="footer-description">
+                  The pristine gateway municipality of Alabat Island. Experience
+                  untouched natural beauty and rich historical Quezon culture.
+                </p>
+              </div>
 
-          <!-- Quick Links -->
+              <!-- Quick Links -->
 
-          <div class="col-6 col-lg-3">
-            <div class="footer-title">Quick Links</div>
+              <div class="col-6 col-lg-3">
+                <div class="footer-title">Quick Links</div>
 
-            <ul class="footer-links">
-              <li>
-                <a href="#">About Perez</a>
-              </li>
+                <ul class="footer-links">
+                  <li>
+                    <a href="#">About Perez</a>
+                  </li>
 
-              <li>
-                <a href="#">Tourist Destinations</a>
-              </li>
+                  <li>
+                    <a href="#">Tourist Destinations</a>
+                  </li>
 
-              <li>
-                <a href="#">Local Festivals</a>
-              </li>
+                  <li>
+                    <a href="#">Local Festivals</a>
+                  </li>
 
-              <li>
-                <a href="#">Accommodations</a>
-              </li>
+                  <li>
+                    <a href="#">Accommodations</a>
+                  </li>
 
-              <li>
-                <a href="#">Marine Parks</a>
-              </li>
-            </ul>
-          </div>
+                  <li>
+                    <a href="#">Marine Parks</a>
+                  </li>
+                </ul>
+              </div>
 
-          <!-- Contact -->
+              <!-- Contact -->
 
-          <div class="col-6 col-lg-4">
-            <div class="footer-title">Contact Us</div>
+              <div class="col-6 col-lg-4">
+                <div class="footer-title">Contact Us</div>
 
-            <div class="contact-item">
-              <i class="bi bi-telephone"></i>
-              (042) 000-0000
+                <div class="contact-item">
+                  <i class="bi bi-telephone"></i>
+                  (042) 000-0000
+                </div>
+
+                <div class="contact-item">
+                  <i class="bi bi-envelope"></i>
+                  tourism@perezquezon.gov.ph
+                </div>
+
+                <div class="socials">
+                  <a href="#" aria-label="Facebook">
+                    <i class="bi bi-facebook"></i>
+                  </a>
+
+                  <a href="#" aria-label="Instagram">
+                    <i class="bi bi-instagram"></i>
+                  </a>
+
+                  <a href="#" aria-label="Youtube">
+                    <i class="bi bi-youtube"></i>
+                  </a>
+
+                  <a href="#" aria-label="Tiktok">
+                    <i class="bi bi-tiktok"></i>
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <div class="contact-item">
-              <i class="bi bi-envelope"></i>
-              tourism@perezquezon.gov.ph
-            </div>
+            <div
+              class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center"
+            >
+              <span>
+                © 2025 Municipality of Perez, Quezon. All rights reserved.
+              </span>
 
-            <div class="socials">
-              <a href="#" aria-label="Facebook">
-                <i class="bi bi-facebook"></i>
-              </a>
-
-              <a href="#" aria-label="Instagram">
-                <i class="bi bi-instagram"></i>
-              </a>
-
-              <a href="#" aria-label="Youtube">
-                <i class="bi bi-youtube"></i>
-              </a>
-
-              <a href="#" aria-label="Tiktok">
-                <i class="bi bi-tiktok"></i>
-              </a>
+              <div>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div
-          class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center"
-        >
-          <span>
-            © 2025 Municipality of Perez, Quezon. All rights reserved.
-          </span>
-
-          <div>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-          </div>
-        </div>
+        </footer>
       </div>
-    </footer>
-
-    </div><!-- /.main-content -->
-    </div><!-- /.page-wrapper -->
+      <!-- /.main-content -->
+    </div>
+    <!-- /.page-wrapper -->
 
     <!-- One reusable experience modal, outside the main scroll container. -->
-    <div class="modal fade" id="experience-modal" tabindex="-1" aria-labelledby="experience-modal-title" aria-describedby="experience-description" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="experience-modal"
+      tabindex="-1"
+      aria-labelledby="experience-modal-title"
+      aria-describedby="experience-description"
+      aria-hidden="true"
+    >
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <div><div class="section-label">Experience Details</div><h2 class="modal-title fs-4" id="experience-modal-title">Explore Perez</h2></div>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close experience details"></button>
+            <div>
+              <div class="section-label">Experience Details</div>
+              <h2 class="modal-title fs-4" id="experience-modal-title">
+                Explore Perez
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close experience details"
+            ></button>
           </div>
           <div class="modal-body">
-            <img id="experience-modal-image" class="img-fluid rounded experience-modal-image mb-3" src="placeholder.svg" alt="" />
+            <img
+              id="experience-modal-image"
+              class="img-fluid rounded experience-modal-image mb-3"
+              src="placeholder.svg"
+              alt=""
+            />
             <p id="experience-description"></p>
             <dl class="experience-facts">
-              <dt>Suggested duration</dt><dd id="experience-duration"></dd>
-              <dt>Suggested time of day</dt><dd id="experience-time"></dd>
-              <dt id="experience-cost-label" hidden>Estimated cost</dt><dd id="experience-cost" hidden></dd>
+              <dt>Suggested duration</dt>
+              <dd id="experience-duration"></dd>
+              <dt>Suggested time of day</dt>
+              <dd id="experience-time"></dd>
+              <dt id="experience-cost-label" hidden>Estimated cost</dt>
+              <dd id="experience-cost" hidden></dd>
             </dl>
-            <p class="small text-secondary mb-0">Suggestions for planning only. Confirm access and arrangements locally.</p>
+            <p class="small text-secondary mb-0">
+              Suggestions for planning only. Confirm access and arrangements
+              locally.
+            </p>
           </div>
           <div class="modal-footer">
-            <div class="me-auto"><button type="button" class="btn btn-gold" disabled aria-describedby="experience-itinerary-note">Add to Itinerary</button><small class="d-block text-secondary mt-1" id="experience-itinerary-note">Available in Trip Planner (coming soon).</small></div>
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="me-auto">
+              <button
+                type="button"
+                class="btn btn-gold"
+                disabled
+                aria-describedby="experience-itinerary-note"
+              >
+                Add to Itinerary</button
+              ><small
+                class="d-block text-secondary mt-1"
+                id="experience-itinerary-note"
+                >Available in Trip Planner (coming soon).</small
+              >
+            </div>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -1063,7 +1309,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
     <script src="script.js"></script>
   </body>
 </html>
