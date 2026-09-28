@@ -505,12 +505,6 @@ img {
 .destination-card.flip-card {
   perspective: 1200px;
 }
-.destination-front { cursor: pointer; }
-.destination-front:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
-.destination-explore-hint { display: inline-flex; gap: 8px; align-items: center; color: var(--navy); font-size: .8rem; }
-@media (hover: hover) {
-  .flip-card:not(.is-flipped):hover { box-shadow: 0 8px 22px rgb(7 22 41 / 12%); }
-}
 
 .destination-flipper {
   display: grid;
@@ -928,50 +922,6 @@ img {
 /* ========================================
    FEATURE EVENT
 ======================================== */
-
-/* Phase 3: one planner within the existing travel budget area. */
-#trip-planner { padding-top: 24px; }
-#trip-planner > .row { margin-inline: 0; }
-.journey-choice { display: flex; align-items: flex-start; gap: 12px; height: 100%; padding: 18px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
-.journey-choice strong, .journey-choice small { display: block; }
-.journey-choice small { margin-top: 6px; color: var(--muted); }
-.journey-choice .form-check-input { flex-shrink: 0; }
-.journey-choice:has(:checked) { border-color: var(--gold); background: #fff8e6; }
-.journey-choice:has(:focus-visible) { outline: 2px solid var(--gold); outline-offset: 3px; }
-.journey-choice .form-check-input:checked { background-color: var(--navy); border-color: var(--navy); }
-.planner-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.planner-heading > .btn { flex-shrink: 0; }
-.planner-step { margin: 28px 0; padding: 24px; background: #fff; border: 1px solid var(--border); border-radius: 12px; }
-.planner-step-title { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-family: "DM Sans", sans-serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-.planner-step-title > span { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: var(--gold-light); }
-.planner-route { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 22px; padding: 0; margin: 24px 0; list-style: none; }
-.planner-route li { position: relative; min-width: 0; padding: 0 12px 0 18px; border-left: 2px solid var(--gold); }
-.planner-route li:not(:last-child)::after { content: "→"; position: absolute; right: -15px; top: 0; color: var(--navy); }
-.planner-route i { display: block; color: var(--navy); font-size: 1.4rem; margin-bottom: 8px; }
-.planner-route strong, .planner-route span { display: block; }
-.planner-route span { margin: 5px 0; font-size: .85rem; font-weight: 600; }
-.planner-route p { margin: 0; color: var(--muted); font-size: .85rem; }
-#planner-route, .travel-detail-content { overflow-wrap: anywhere; }
-#trip-planner .form-label { font-size: .9rem; font-weight: 600; }
-#trip-planner .form-control:focus, #trip-planner .form-select:focus { border-color: var(--gold); box-shadow: 0 0 0 .2rem rgb(213 166 46 / 20%); }
-.planner-summary { padding: 28px; background: var(--navy); color: #fff; border-radius: 12px; }
-.planner-summary h3 { font-size: 1.5rem; color: #fff; }
-.planner-summary > p { color: #d9e0e9; font-size: .9rem; }
-.planner-breakdown { margin: 24px 0; }
-.planner-breakdown > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
-.planner-breakdown dt { font-size: .875rem; font-weight: 400; }
-.planner-breakdown dd { margin: 0; font-size: .9rem; text-align: right; overflow-wrap: anywhere; }
-.planner-total { border-top: 1px solid #526072; padding-top: 20px; }
-.planner-total > div { font-size: .8rem; text-transform: uppercase; letter-spacing: 1px; }
-.planner-total strong { display: block; color: var(--gold-light); font-size: clamp(1.6rem, 3vw, 2.2rem); overflow-wrap: anywhere; }
-#summary-person { display: block; color: var(--gold-light); margin-top: 4px; }
-.planner-reset { padding: 20px; background: #fff7e2; border: 1px solid var(--gold); border-radius: 8px; }
-@media (max-width: 767.98px) {
-  .planner-heading { align-items: flex-start; flex-direction: column; }
-  .planner-step, .planner-summary { padding: 20px; }
-  .planner-route { grid-template-columns: 1fr; gap: 24px; }
-  .planner-route li:not(:last-child)::after { content: "↓"; left: -8px; right: auto; top: auto; bottom: -24px; }
-}
 
 .feature-event {
   position: relative;

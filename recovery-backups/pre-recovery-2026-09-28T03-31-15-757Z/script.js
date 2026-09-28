@@ -172,11 +172,11 @@
     links.forEach((link) => {
       const hash = link.getAttribute('href');
       const target = document.getElementById(hash.slice(1));
-      if (hash === '#trip-planner') {
+      if (hash === '#travel') {
         // Events live inside Travel, so observe the travel cards and budget
         // separately instead of letting the enclosing section mask Events.
-        track(document.getElementById('travel-information-cards'), hash);
-        track(target, hash);
+        track(target?.querySelector('.travel-card')?.closest('.row'), hash);
+        track(target?.querySelector('.travel-budget'), hash);
       } else if (hash === '#events') {
         track(target?.closest('.row'), hash);
       } else {
@@ -266,7 +266,6 @@
             column.hidden = false;
             column.classList.toggle('is-filtering-in', wasHidden);
           } else {
-            destinationCardActions.get(card.dataset.destination)?.(false, false);
             column.classList.remove('is-filtering-in');
           }
         });
@@ -283,8 +282,9 @@
   function initDestinationCards() {
     document.querySelectorAll('[data-destination]').forEach((card) => {
       const details = destinationDetails[card.dataset.destination];
+      const learnMore = card.querySelector('.learn-more');
       const name = card.querySelector('.destination-title')?.textContent.trim();
-      if (!details || !name) return;
+      if (!details || !learnMore || !name) return;
 
       const flipper = document.createElement('div');
       flipper.className = 'destination-flipper';
@@ -316,35 +316,25 @@
       flipper.append(front, back);
       card.append(flipper);
       card.classList.add('flip-card');
-      front.tabIndex = 0;
-      front.setAttribute('role', 'button');
-      front.setAttribute('aria-controls', back.id);
-      front.setAttribute('aria-expanded', 'false');
-      front.setAttribute('aria-label', `Explore ${name}`);
+      learnMore.setAttribute('aria-controls', back.id);
+      learnMore.setAttribute('aria-expanded', 'false');
+      learnMore.setAttribute('aria-label', `Learn more about ${name}`);
       const backButton = back.querySelector('.destination-back-button');
       backButton.setAttribute('aria-label', `Back to ${name}`);
 
-      function flip(showDetails, moveFocus = true) {
+      function flip(showDetails) {
         card.classList.toggle('is-flipped', showDetails);
-        front.setAttribute('aria-expanded', String(showDetails));
+        learnMore.setAttribute('aria-expanded', String(showDetails));
         const visible = showDetails ? back : front;
         const hidden = showDetails ? front : back;
         visible.inert = false;
         visible.removeAttribute('aria-hidden');
-        if (moveFocus) (showDetails ? backTitle : front).focus({ preventScroll: true });
+        (showDetails ? backTitle : learnMore).focus({ preventScroll: true });
         hidden.inert = true;
         hidden.setAttribute('aria-hidden', 'true');
       }
       destinationCardActions.set(card.dataset.destination, flip);
-      front.addEventListener('click', (event) => {
-        if (!event.target.closest('a, button, input, select, textarea')) flip(true);
-      });
-      front.addEventListener('keydown', (event) => {
-        if (event.target === front && (event.key === 'Enter' || event.key === ' ')) {
-          event.preventDefault();
-          flip(true);
-        }
-      });
+      learnMore.addEventListener('click', () => flip(true));
       backButton.addEventListener('click', () => flip(false));
       back.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
@@ -534,261 +524,6 @@
     });
   }
 
-  // General planning routes supplied for this guide, not live navigation.
-  // No origin-specific fares are verified, so transportation stays user-controlled.
-  const atimonanStage = { location: 'Atimonan', icon: 'signpost-split', transport: 'Port transfer', note: 'Continue to Atimonan Port.' };
-  const portStage = { location: 'Atimonan Port', icon: 'geo-alt', transport: 'Reference gateway', note: 'Choose your onward route below. Confirm services locally.' };
-  const arrivalStage = { location: 'Perez', icon: 'geo-alt', transport: 'Arrival', note: 'Continue to your chosen destination.' };
-  const travelOrigins = {
-    lucena: { name: 'Lucena City', stages: [{ location: 'Lucena City', icon: 'bus-front', transport: 'Land transportation', note: 'Travel toward Atimonan.' }, atimonanStage] },
-    manila: { name: 'Manila', stages: [{ location: 'Manila', icon: 'bus-front', transport: 'Land transportation', note: 'Travel toward Quezon Province and Atimonan.' }, atimonanStage] },
-    atimonan: { name: 'Atimonan', stages: [atimonanStage] },
-    gumaca: { name: 'Gumaca', stages: [{ location: 'Gumaca', icon: 'bus-front', transport: 'Land transportation', note: 'Travel toward Atimonan.' }, atimonanStage] },
-    other: { name: 'Other', stages: [] },
-  };
-  const routeOptions = {
-    direct: { name: 'Direct to Perez', description: 'Take a passenger lantsa from Atimonan Port directly to Perez.' },
-    'via-alabat': { name: 'Via Alabat', description: 'Travel to Alabat by your selected transport, then continue to Perez by tricycle.' },
-  };
-  const alabatTransports = { roro: 'RORO', lantsa: 'Lantsa' };
-
-  function getJourney() {
-    const origin = travelOrigins[plannerState.origin];
-    if (!origin) return null;
-    const option = routeOptions[plannerState.routeOption];
-    const transport = plannerState.routeOption === 'direct' ? 'Lantsa' : alabatTransports[plannerState.alabatTransport];
-    const originStages = [...origin.stages, portStage];
-    const finalStages = [];
-    if (option && transport) {
-      finalStages.push({ location: transport, icon: 'water', transport: 'Sea crossing', note: option.description });
-      if (plannerState.routeOption === 'via-alabat') {
-        finalStages.push({ location: 'Alabat', icon: 'geo-alt', transport: 'Arrival at Alabat', note: 'Arrange your final connection to Perez.' },
-          { location: 'Tricycle', icon: 'truck', transport: 'Local transportation', note: 'Continue from Alabat to Perez.' });
-      }
-      finalStages.push(arrivalStage);
-    }
-    return { originStages, finalStages, option, transport, stages: [...originStages, ...finalStages] };
-  }
-  const routeNotice = 'Transportation routes, schedules, availability, and fares may change. Confirm current local transportation information before traveling.';
-  const otherRouteNotice = 'Exact routing from your location is not available in this trip planner. Atimonan Port can be used as a reference gateway when planning travel toward Perez.';
-  const plannerKey = 'perezTripPlannerV1';
-  const budgetDefaults = { transportation: 500, localTransport: 150, meals: 350, accommodation: 800, activities: 300, miscellaneous: 300 };
-  const defaultPlannerState = () => ({ origin: '', customOrigin: '', routeOption: '', alabatTransport: '', travelers: 2, days: 2, budget: { ...budgetDefaults } });
-  let plannerState = defaultPlannerState();
-
-  function plannerNumber(value, fallback, min, max, integer = false) {
-    const number = typeof value === 'number' ? value : (typeof value === 'string' && value.trim() ? Number(value) : NaN);
-    if (!Number.isFinite(number)) return fallback;
-    const bounded = Math.min(max, Math.max(min, number));
-    return integer ? Math.trunc(bounded) : Math.round(bounded);
-  }
-
-  function restorePlannerState() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(plannerKey));
-      if (!saved || typeof saved !== 'object' || Array.isArray(saved) ||
-          !saved.budget || typeof saved.budget !== 'object' || Array.isArray(saved.budget) ||
-          !['origin', 'customOrigin', 'travelers', 'days'].every((key) => Object.hasOwn(saved, key)) ||
-          !Object.keys(budgetDefaults).every((key) => Object.hasOwn(saved.budget, key))) return;
-      plannerState = {
-        origin: typeof saved.origin === 'string' && Object.hasOwn(travelOrigins, saved.origin) ? saved.origin : '',
-        customOrigin: typeof saved.customOrigin === 'string' ? saved.customOrigin.slice(0, 120) : '',
-        routeOption: Object.hasOwn(routeOptions, saved.routeOption) ? saved.routeOption : '',
-        alabatTransport: Object.hasOwn(alabatTransports, saved.alabatTransport) ? saved.alabatTransport : '',
-        travelers: plannerNumber(saved.travelers, 2, 1, 20, true),
-        days: plannerNumber(saved.days, 2, 1, 7, true),
-        budget: Object.fromEntries(Object.entries(budgetDefaults).map(([key, fallback]) =>
-          [key, plannerNumber(saved.budget[key], fallback, 0, 10000000)])),
-      };
-    } catch { /* Missing, malformed, or unavailable storage leaves defaults intact. */ }
-  }
-
-  function getTripDays() { return plannerState.days; }
-  function getTravelerCount() { return plannerState.travelers; }
-  function getPlannerState() { return { ...plannerState, budget: { ...plannerState.budget } }; }
-  function savePlannerState() {
-    const status = document.getElementById('planner-save-status');
-    try {
-      localStorage.setItem(plannerKey, JSON.stringify(getPlannerState()));
-      if (status) status.textContent = 'Your trip is saved automatically on this browser.';
-    } catch {
-      if (status) status.textContent = 'Your estimate still works, but this browser cannot save it for your next visit.';
-    }
-  }
-  // Phase 4 can consume these functions without a second duration field.
-  window.perezTripPlanner = Object.freeze({ getTripDays, getTravelerCount, getPlannerState, savePlannerState });
-
-  function initTripPlanner() {
-    const planner = document.getElementById('trip-planner');
-    if (!planner) return;
-    const byId = (id) => document.getElementById(id);
-    const gettingThere = document.querySelector('#getting-there-details .travel-detail-content');
-    const generalGettingThere = gettingThere?.cloneNode(true);
-    const currency = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
-    const textElement = (tag, text, className = '') => {
-      const node = document.createElement(tag);
-      node.textContent = text;
-      node.className = className;
-      return node;
-    };
-
-    function renderJourney() {
-      const origin = travelOrigins[plannerState.origin];
-      const route = byId('planner-route');
-      const isOther = plannerState.origin === 'other';
-      const journey = getJourney();
-      const finalRoute = byId('planner-final-route');
-      finalRoute.replaceChildren();
-      byId('planner-route-choices').hidden = !origin;
-      byId('planner-alabat-choices').hidden = !origin || plannerState.routeOption !== 'via-alabat';
-      planner.querySelectorAll('input[type="radio"]').forEach((input) => {
-        input.checked = plannerState[input.name] === input.value;
-      });
-      byId('custom-origin-field').hidden = !isOther;
-      route.replaceChildren();
-      if (!origin) {
-        route.append(textElement('p', 'Choose your starting point to see a suggested general route.', 'text-secondary mb-0'));
-        if (gettingThere && generalGettingThere) gettingThere.replaceChildren(...[...generalGettingThere.childNodes].map((node) => node.cloneNode(true)));
-        return;
-      }
-      const start = isOther ? (plannerState.customOrigin.trim() || 'Other location') : origin.name;
-      route.append(textElement('h4', 'Suggested journey to Atimonan Port', 'fs-5'));
-      route.append(textElement('p', 'Starting from: ' + start));
-      if (isOther) route.append(textElement('p', otherRouteNotice, 'small text-secondary'));
-      route.append(makeTimeline(journey.originStages, 'Suggested journey to Atimonan Port'));
-      if (journey.option) {
-        finalRoute.append(textElement('h4', journey.option.name, 'fs-5'));
-        if (journey.finalStages.length) {
-          finalRoute.append(textElement('p', journey.option.description));
-          finalRoute.append(makeTimeline(journey.finalStages, 'Journey from Atimonan Port to Perez'));
-        } else finalRoute.append(textElement('p', 'Choose RORO or Lantsa to complete your journey.'));
-      }
-      finalRoute.append(textElement('p', 'General planning routes, subject to availability. ' + routeNotice, 'small text-secondary mb-0'));
-      if (gettingThere) {
-        gettingThere.replaceChildren(textElement('p', 'Your Current Plan', 'travel-detail-label'));
-        const facts = document.createElement('dl');
-        facts.className = 'travel-tip-list';
-        const addFact = (label, value) => facts.append(textElement('dt', label), textElement('dd', value));
-        addFact('From', start);
-        addFact('Route', journey.option?.name || 'Choose a route from Atimonan Port in Plan Your Visit.');
-        if (journey.option) addFact('From Atimonan Port', journey.transport || 'Choose RORO or Lantsa');
-        if (plannerState.routeOption === 'via-alabat' && journey.transport) {
-          addFact('Arrival', 'Alabat');
-          addFact('Final Connection', 'Tricycle to Perez');
-        }
-        if (journey.finalStages.length) addFact('Destination', 'Perez');
-        gettingThere.append(facts);
-        if (isOther) gettingThere.append(textElement('p', otherRouteNotice, 'travel-detail-note'));
-        const list = document.createElement('ol');
-        list.className = 'travel-route';
-        journey.stages.forEach((stage) => list.append(textElement('li', stage.location)));
-        gettingThere.append(list, textElement('p', routeNotice, 'travel-detail-note'));
-      }
-    }
-
-    function makeTimeline(stages, label) {
-      const timeline = document.createElement('ol');
-      timeline.className = 'planner-route';
-      timeline.setAttribute('aria-label', label);
-      stages.forEach((stage) => {
-        const item = document.createElement('li');
-        const icon = document.createElement('i');
-        icon.className = 'bi bi-' + stage.icon;
-        icon.setAttribute('aria-hidden', 'true');
-        item.append(icon, textElement('strong', stage.location), textElement('span', stage.transport), textElement('p', stage.note));
-        timeline.append(item);
-      });
-      return timeline;
-    }
-
-    function renderBudget() {
-      const days = getTripDays(), travelers = getTravelerCount(), nights = Math.max(days - 1, 0);
-      const budget = plannerState.budget;
-      const costs = {
-        transportation: budget.transportation,
-        localTransport: budget.localTransport * days,
-        meals: budget.meals * travelers * days,
-        accommodation: budget.accommodation * nights,
-        activities: budget.activities,
-        miscellaneous: budget.miscellaneous,
-      };
-      const duration = days + (days === 1 ? ' day' : ' days') + ' • ' + nights + (nights === 1 ? ' night' : ' nights');
-      byId('planner-duration').textContent = duration;
-      byId('summary-trip').textContent = travelers + (travelers === 1 ? ' traveler' : ' travelers') + ' • ' + duration;
-      Object.entries(costs).forEach(([key, value]) => { byId('summary-' + key).textContent = currency.format(value); });
-      const total = Object.values(costs).reduce((sum, value) => sum + value, 0);
-      byId('summary-total').textContent = currency.format(total);
-      byId('summary-person').textContent = currency.format(total / travelers);
-    }
-
-    function syncControls() {
-      ['origin', 'customOrigin', 'travelers', 'days'].forEach((key) => {
-        byId(key === 'customOrigin' ? 'planner-custom-origin' : 'planner-' + key).value = plannerState[key];
-      });
-      Object.entries(plannerState.budget).forEach(([key, value]) => { byId('budget-' + key).value = value; });
-      renderJourney();
-      renderBudget();
-    }
-    restorePlannerState();
-    syncControls();
-    savePlannerState();
-    byId('planner-origin').addEventListener('change', (event) => {
-      plannerState.origin = Object.hasOwn(travelOrigins, event.target.value) ? event.target.value : '';
-      renderJourney();
-      savePlannerState();
-    });
-    byId('planner-custom-origin').addEventListener('input', (event) => {
-      plannerState.customOrigin = event.target.value.slice(0, 120);
-      renderJourney();
-      savePlannerState();
-    });
-    planner.querySelectorAll('input[type="radio"]').forEach((input) => {
-      input.addEventListener('change', () => {
-        if (!input.checked) return;
-        plannerState[input.name] = input.value;
-        renderJourney();
-        savePlannerState();
-      });
-    });
-    planner.querySelectorAll('input[type="number"]').forEach((input) => {
-      const update = (event) => {
-        const key = input.dataset.budget;
-        const value = plannerNumber(input.value, key ? budgetDefaults[key] : 2, key ? 0 : 1,
-          key ? 10000000 : input.id === 'planner-days' ? 7 : 20, !key);
-        if (key) plannerState.budget[key] = value;
-        else plannerState[input.name] = value;
-        // Allow an empty field while typing; commit its safe default on blur/change.
-        if (input.value !== '' || event.type === 'change') input.value = value;
-        renderBudget();
-        savePlannerState();
-      };
-      input.addEventListener('input', update);
-      input.addEventListener('change', update);
-    });
-    byId('reset-budget').addEventListener('click', () => {
-      plannerState.budget = { ...budgetDefaults };
-      syncControls();
-      savePlannerState();
-    });
-    const confirmation = byId('reset-trip-confirmation');
-    byId('reset-trip').addEventListener('click', () => {
-      confirmation.hidden = false;
-      byId('cancel-reset-trip').focus({ preventScroll: true });
-    });
-    function closeConfirmation() {
-      confirmation.hidden = true;
-      byId('reset-trip').focus({ preventScroll: true });
-    }
-    byId('cancel-reset-trip').addEventListener('click', closeConfirmation);
-    confirmation.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeConfirmation(); });
-    byId('confirm-reset-trip').addEventListener('click', () => {
-      plannerState = defaultPlannerState();
-      syncControls();
-      savePlannerState();
-      closeConfirmation();
-    });
-  }
-
   function init() {
     initHero();
     initSmoothScrolling();
@@ -800,7 +535,6 @@
     initExperienceModal();
     initExperienceReveal();
     initTravelInfoCards();
-    initTripPlanner();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });

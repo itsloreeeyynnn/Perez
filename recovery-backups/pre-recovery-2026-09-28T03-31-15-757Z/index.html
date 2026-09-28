@@ -85,7 +85,7 @@
               <i class="bi bi-search"></i>
             </button>
 
-            <a class="btn-trip" href="#trip-planner">Plan Your Trip</a>
+            <a class="btn-trip" href="#travel">Plan Your Trip</a>
           </div>
         </div>
       </div>
@@ -113,7 +113,7 @@
         <div class="hero-actions">
           <a href="#destinations" class="btn btn-gold me-sm-2"> Explore Now </a>
 
-          <a href="#trip-planner" class="btn btn-outline-light-custom">
+          <a href="#travel" class="btn btn-outline-light-custom">
             Plan Your Visit
           </a>
         </div>
@@ -283,7 +283,10 @@
                   for peaceful sunbathing and swimming.
                 </p>
 
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
+                <button type="button" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </button>
               </div>
             </article>
           </div>
@@ -308,7 +311,10 @@
                   rich marine bio-diversity of the island.
                 </p>
 
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
+                <button type="button" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </button>
               </div>
             </article>
           </div>
@@ -334,7 +340,10 @@
                   Perez, Quezon.
                 </p>
 
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
+                <button type="button" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </button>
               </div>
             </article>
           </div>
@@ -359,7 +368,10 @@
                   and colorful local marine life.
                 </p>
 
-                <span class="destination-explore-hint">Click to explore <i class="bi bi-arrow-repeat" aria-hidden="true"></i></span>
+                <button type="button" class="learn-more">
+                  Learn More
+                  <i class="bi bi-arrow-right"></i>
+                </button>
               </div>
             </article>
           </div>
@@ -599,66 +611,7 @@
           </div>
         </div>
 
-        <div class="travel-budget my-5" id="trip-planner" aria-labelledby="planner-title">
-          <div class="planner-heading">
-            <div><div class="section-label">Plan Your Visit</div>
-              <h2 class="section-title" id="planner-title">Plan Your Perez Trip</h2>
-              <p class="mt-3 mb-0">Build a simple travel estimate for your visit.</p></div>
-            <button type="button" class="btn btn-outline-secondary" id="reset-trip">Reset Trip</button>
-          </div>
-          <div id="reset-trip-confirmation" class="planner-reset mt-3" hidden>
-            <p id="reset-trip-question">Reset your origin, travelers, days, and budget to their defaults?</p>
-            <div class="d-flex flex-wrap gap-2" role="group" aria-labelledby="reset-trip-question">
-              <button type="button" class="btn btn-gold" id="confirm-reset-trip">Yes, reset trip</button>
-              <button type="button" class="btn btn-outline-secondary" id="cancel-reset-trip">Keep my trip</button>
-            </div>
-          </div>
-          <section class="planner-step" aria-labelledby="journey-title">
-            <h3 class="planner-step-title" id="journey-title"><span>1</span> Your Journey</h3>
-            <label class="form-label" for="planner-origin">Where are you coming from?</label>
-            <select class="form-select" id="planner-origin" name="origin">
-              <option value="">Select your starting point</option>
-              <option value="lucena">Lucena City</option><option value="manila">Manila</option>
-              <option value="atimonan">Atimonan</option><option value="gumaca">Gumaca</option><option value="other">Other</option>
-            </select>
-            <div class="mt-3" id="custom-origin-field" hidden>
-              <label class="form-label" for="planner-custom-origin">Enter your starting location</label>
-              <input class="form-control" type="text" id="planner-custom-origin" name="customOrigin" maxlength="120" autocomplete="address-level2">
-            </div>
-            <div id="planner-route" class="mt-4" aria-live="polite"></div>
-            <fieldset id="planner-route-choices" class="mt-4" hidden>
-              <legend class="planner-step-title">Choose Your Route</legend>
-              <div class="row g-3">
-                <div class="col-md-6"><label class="journey-choice">
-                  <input class="form-check-input" type="radio" name="routeOption" value="direct">
-                  <span><strong>Direct to Perez</strong><small>Lantsa directly to Perez</small></span>
-                </label></div>
-                <div class="col-md-6"><label class="journey-choice">
-                  <input class="form-check-input" type="radio" name="routeOption" value="via-alabat">
-                  <span><strong>Via Alabat</strong><small>RORO or Lantsa to Alabat, then continue to Perez by tricycle</small></span>
-                </label></div>
-              </div>
-            </fieldset>
-            <fieldset id="planner-alabat-choices" class="mt-4" hidden>
-              <legend class="planner-step-title">Choose Transport to Alabat</legend>
-              <div class="row g-3">
-                <div class="col-sm-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="alabatTransport" value="roro"><span><strong>RORO</strong></span></label></div>
-                <div class="col-sm-6"><label class="journey-choice"><input class="form-check-input" type="radio" name="alabatTransport" value="lantsa"><span><strong>Lantsa</strong></span></label></div>
-              </div>
-            </fieldset>
-            <div id="planner-final-route" class="mt-4" aria-live="polite"></div>
-          </section>
-          <section class="planner-step" aria-labelledby="trip-title">
-            <h3 class="planner-step-title" id="trip-title"><span>2</span> Your Trip</h3>
-            <div class="row g-3">
-              <div class="col-sm-6"><label class="form-label" for="planner-travelers">Number of Travelers</label>
-                <input class="form-control" id="planner-travelers" name="travelers" type="number" min="1" max="20" step="1" value="2"></div>
-              <div class="col-sm-6"><label class="form-label" for="planner-days">Number of Days</label>
-                <input class="form-control" id="planner-days" name="days" type="number" min="1" max="7" step="1" value="2"></div>
-            </div>
-            <p id="planner-duration" class="mt-3 mb-0" aria-live="polite"></p>
-          </section>
-          <h3 class="planner-step-title"><span>3</span> Your Budget</h3>
+        <div class="travel-budget my-5">
           <div class="section-label">Plan Your Budget</div>
           <h2 class="section-title" id="travel-budget-title">Estimated Travel Expenses</h2>
           <p class="travel-budget-description mt-3">Use this sample budget as a general planning guide. Actual prices may vary depending on transportation, accommodation, season, and personal preferences.</p>
@@ -712,37 +665,6 @@
             </table>
           </div>
           <p class="travel-budget-note mt-3 mb-0" id="travel-budget-note"><i class="bi bi-info-circle me-2" aria-hidden="true"></i>Costs shown are estimates for project demonstration purposes and are not official tourism rates.</p>
-
-          <div class="row g-4 mt-3">
-            <section class="col-lg-7" aria-labelledby="build-budget-title">
-              <h3 id="build-budget-title" class="planner-step-title">Build Your Budget</h3>
-              <p>Adjust the values below to create your own estimated trip budget.</p>
-              <p class="small text-secondary">Sample values are provided for planning and can be changed. All amounts are editable estimates in Philippine pesos, not official rates.</p>
-              <div class="row g-3">
-              <div class="col-md-6"><label class="form-label" for="budget-transportation">Transportation</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-transportation" name="transportation" data-budget="transportation" type="number" min="0" max="10000000" step="1" value="500" aria-describedby="budget-transportation-help"></div><div class="form-text" id="budget-transportation-help">Whole trip, all travelers; include your return journey.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-localTransport">Local Transportation Per Day</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-localTransport" name="localTransport" data-budget="localTransport" type="number" min="0" max="10000000" step="1" value="150" aria-describedby="budget-localTransport-help"></div><div class="form-text" id="budget-localTransport-help">Daily total for your group.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-meals">Meals Per Person Per Day</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-meals" name="meals" data-budget="meals" type="number" min="0" max="10000000" step="1" value="350" aria-describedby="budget-meals-help"></div><div class="form-text" id="budget-meals-help">Daily food estimate for one traveler.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-accommodation">Accommodation Per Night</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-accommodation" name="accommodation" data-budget="accommodation" type="number" min="0" max="10000000" step="1" value="800" aria-describedby="budget-accommodation-help"></div><div class="form-text" id="budget-accommodation-help">Nightly total for your group.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-activities">Activities</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-activities" name="activities" data-budget="activities" type="number" min="0" max="10000000" step="1" value="300" aria-describedby="budget-activities-help"></div><div class="form-text" id="budget-activities-help">Whole trip, all travelers.</div></div>
-              <div class="col-md-6"><label class="form-label" for="budget-miscellaneous">Miscellaneous</label><div class="input-group"><span class="input-group-text">₱</span><input class="form-control" id="budget-miscellaneous" name="miscellaneous" data-budget="miscellaneous" type="number" min="0" max="10000000" step="1" value="300" aria-describedby="budget-miscellaneous-help"></div><div class="form-text" id="budget-miscellaneous-help">Whole trip, all travelers.</div></div>
-              </div>
-              <button type="button" class="btn btn-outline-secondary mt-4" id="reset-budget">Reset Budget</button>
-            </section>
-            <aside class="col-lg-5" aria-labelledby="budget-summary-title">
-              <div class="planner-summary" aria-live="polite" aria-atomic="true">
-                <h3 id="budget-summary-title">Your Estimated Trip</h3>
-                <p id="summary-trip"></p><dl class="planner-breakdown"><div><dt>Transportation</dt><dd id="summary-transportation"></dd></div>
-<div><dt>Local Transportation</dt><dd id="summary-localTransport"></dd></div>
-<div><dt>Meals</dt><dd id="summary-meals"></dd></div>
-<div><dt>Accommodation</dt><dd id="summary-accommodation"></dd></div>
-<div><dt>Activities</dt><dd id="summary-activities"></dd></div>
-<div><dt>Miscellaneous</dt><dd id="summary-miscellaneous"></dd></div></dl>
-                <div class="planner-total"><div>Estimated Trip Total</div><strong id="summary-total"></strong></div>
-                <p class="mb-0 mt-3">Estimated Per Person <strong id="summary-person"></strong></p>
-              </div>
-            </aside>
-          </div>
-          <p class="small text-secondary mt-3 mb-0" id="planner-save-status" role="status"></p>
         </div>
 
         <!-- Events -->
