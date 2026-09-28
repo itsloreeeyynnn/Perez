@@ -173,12 +173,10 @@
       const hash = link.getAttribute('href');
       const target = document.getElementById(hash.slice(1));
       if (hash === '#trip-planner') {
-        // Events live inside Travel, so observe the travel cards and budget
-        // separately instead of letting the enclosing section mask Events.
+        // The planner sits inside Travel, so observe the travel cards and the
+        // planner block separately instead of letting the section mask it.
         track(document.getElementById('travel-information-cards'), hash);
         track(target, hash);
-      } else if (hash === '#events') {
-        track(target?.closest('.row'), hash);
       } else {
         track(target, hash);
       }
@@ -489,31 +487,356 @@
     });
   }
 
-  function initExperienceReveal() {
-    const main = document.querySelector('.main-content');
-    const cards = [...document.querySelectorAll('[data-experience]')];
-    if (!main || !cards.length || reducedMotion.matches || !('IntersectionObserver' in window)) return;
-    const observer = new IntersectionObserver((entries) => {
+  // One shared IntersectionObserver powers every scroll reveal on the page
+  // (experiences and events). Each element reveals once and never flickers.
+  let revealObserver = null;
+  let revealMotionBound = false;
+  function getRevealObserver(main) {
+    if (revealObserver || !('IntersectionObserver' in window)) return revealObserver;
+    revealObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add('is-revealed');
-        observer.unobserve(entry.target); // One reveal per visit, never boundary flicker.
+        revealObserver.unobserve(entry.target);
       });
     }, { root: main, threshold: 0.15 });
-    cards.forEach((card, index) => {
-      const column = card.parentElement;
-      column.classList.add('experience-reveal');
-      column.style.setProperty('--reveal-delay', `${index % 3 * 80}ms`);
-      observer.observe(column);
-      card.addEventListener('focus', () => {
-        column.classList.add('is-revealed');
-        observer.unobserve(column);
+    return revealObserver;
+  }
+  function revealOnScroll(targets, focusables = []) {
+    const main = document.querySelector('.main-content');
+    if (!main || !targets.filter(Boolean).length || reducedMotion.matches || !('IntersectionObserver' in window)) return;
+    const observer = getRevealObserver(main);
+    if (!observer) return;
+    targets.forEach((target, index) => {
+      if (!target) return;
+      target.classList.add('experience-reveal');
+      target.style.setProperty('--reveal-delay', `${index % 3 * 80}ms`);
+      observer.observe(target);
+    });
+    focusables.forEach((focusable, index) => {
+      const target = targets[index];
+      if (!focusable || !target) return;
+      focusable.addEventListener('focus', () => {
+        target.classList.add('is-revealed');
+        observer.unobserve(target);
       });
     });
+    if (revealMotionBound) return;
+    revealMotionBound = true;
     reducedMotion.addEventListener('change', () => {
       if (!reducedMotion.matches) return;
-      cards.forEach((card) => card.parentElement.classList.add('is-revealed'));
+      document.querySelectorAll('.experience-reveal').forEach((node) => node.classList.add('is-revealed'));
       observer.disconnect();
+      revealObserver = null;
+    });
+  }
+
+  function initExperienceReveal() {
+    const cards = [...document.querySelectorAll('[data-experience]')];
+    revealOnScroll(cards.map((card) => card.parentElement), cards);
+  }
+
+  // ===================== Phase 5 · Events in Perez =====================
+  // Every field below repeats information already shown on this site. No
+  // event name, date, venue, or description is invented here.
+  const eventCategoryLabels = {
+    festivals: 'Festivals',
+    culture: 'Culture',
+    community: 'Community',
+    religious: 'Religious',
+  };
+  const eventCategoryOrder = ['festivals', 'culture', 'community', 'religious'];
+  const eventsData = [
+    {
+      id: 'kayakas-festival',
+      name: 'Kayakas Festival',
+      category: 'festivals',
+      dateType: 'annual',
+      dateLabel: 'June 15–20',
+      month: 'June',
+      location: '',
+      shortDescription: 'A thanksgiving celebration of the bountiful coconut harvest and the marine livelihood of Perez, featuring energetic street dances, boats, and local crafts.',
+      fullDescription: 'A thanksgiving celebration of the bountiful coconut harvest and the marine livelihood of Perez, featuring energetic street dances, boats, and local crafts.',
+      image: 'placeholder.svg',
+      itineraryEligible: true,
+    },
+    {
+      id: 'fishermans-feast-day',
+      name: 'Fisherman\'s Feast Day',
+      category: 'religious',
+      dateType: 'annual',
+      dateLabel: 'May 15',
+      month: 'May',
+      location: 'Coastal San Jose Barangay',
+      shortDescription: '',
+      fullDescription: '',
+      image: 'placeholder.svg',
+      itineraryEligible: true,
+    },
+    {
+      id: 'coconut-agri-trade-fair',
+      name: 'Coconut Agri-Trade Fair',
+      category: 'community',
+      dateType: 'annual',
+      dateLabel: 'June 04',
+      month: 'June',
+      location: 'Municipal Complex',
+      shortDescription: '',
+      fullDescription: '',
+      image: 'placeholder.svg',
+      itineraryEligible: true,
+    },
+    {
+      id: 'perez-flotilla-parade',
+      name: 'Perez Flotilla Parade',
+      category: 'culture',
+      dateType: 'annual',
+      dateLabel: 'June 18',
+      month: 'June',
+      location: 'Sande Bay Sanctuaries',
+      shortDescription: '',
+      fullDescription: '',
+      image: 'placeholder.svg',
+      itineraryEligible: true,
+    },
+  ];
+  const EVENT_LOCATION_FALLBACK = 'Location to be announced.';
+  const EVENT_SCHEDULE_UNAVAILABLE = 'Schedule information is not currently available.';
+  const EVENT_EXACT_DATE_WARNING = 'This event has a fixed date. Confirm that it falls within your trip dates before adding it.';
+  const EVENT_TBA_DATE_WARNING = 'This event does not have a confirmed date. Confirm the schedule locally before adding it.';
+
+  const findEventById = (id) => (typeof id === 'string' && id ? eventsData.find((event) => event.id === id) || null : null);
+  const eventName = (id) => findEventById(id)?.name || '';
+  const eventCategoryLabel = (category) => eventCategoryLabels[category] || category || '';
+
+  function formatEventDate(event) {
+    if (!event) return '';
+    if (event.dateLabel) return event.dateLabel;
+    if (event.month) return event.month;
+    return '';
+  }
+
+  function getEventStatus(event) {
+    if (!event) return '';
+    if (event.dateType === 'exact') {
+      const timestamp = Date.parse(event.dateLabel || event.month || '');
+      if (Number.isNaN(timestamp)) return 'Date to be announced';
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return timestamp >= today.getTime() ? 'Upcoming' : 'Past event';
+    }
+    if (event.dateType === 'annual') return 'Annual';
+    if (event.dateType === 'month') return 'Seasonal';
+    if (event.dateType === 'tba') return 'Date to be announced';
+    return 'Schedule varies';
+  }
+
+  function eventDateWarning(refId) {
+    const event = findEventById(refId);
+    if (!event) return '';
+    if (event.dateType === 'exact') return EVENT_EXACT_DATE_WARNING;
+    if (event.dateType === 'variable' || event.dateType === 'tba' || event.dateType === 'unknown') return EVENT_TBA_DATE_WARNING;
+    return '';
+  }
+
+  function eventMeta(className, iconName, text) {
+    const row = document.createElement('span');
+    row.className = className;
+    const icon = document.createElement('i');
+    icon.className = 'bi bi-' + iconName;
+    icon.setAttribute('aria-hidden', 'true');
+    row.append(icon, document.createTextNode(' ' + text));
+    return row;
+  }
+
+  function buildEventCard(event) {
+    const column = document.createElement('div');
+    column.className = 'col-sm-6 col-lg-3 event-column';
+    column.dataset.eventColumn = event.id;
+
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'event-card';
+    card.dataset.event = event.id;
+    card.dataset.eventCategory = event.category;
+    card.dataset.bsToggle = 'modal';
+    card.dataset.bsTarget = '#eventDetailsModal';
+    card.setAttribute('aria-haspopup', 'dialog');
+    card.setAttribute('aria-controls', 'eventDetailsModal');
+
+    const image = document.createElement('img');
+    image.className = 'event-card-image';
+    image.src = event.image || 'placeholder.svg';
+    image.alt = event.name;
+
+    const body = document.createElement('span');
+    body.className = 'event-card-body';
+
+    const badges = document.createElement('span');
+    badges.className = 'event-card-badges';
+    const category = document.createElement('span');
+    category.className = 'event-card-category';
+    category.textContent = eventCategoryLabel(event.category);
+    const status = document.createElement('span');
+    status.className = 'event-card-status';
+    status.textContent = getEventStatus(event);
+    badges.append(category, status);
+
+    const title = document.createElement('span');
+    title.className = 'event-card-title';
+    title.textContent = event.name;
+
+    body.append(badges, title);
+
+    const dateText = formatEventDate(event);
+    if (dateText) body.append(eventMeta('event-card-meta event-card-date', 'calendar3', dateText));
+    body.append(eventMeta('event-card-meta event-card-location', 'geo-alt', event.location || EVENT_LOCATION_FALLBACK));
+    if (event.shortDescription) {
+      const description = document.createElement('span');
+      description.className = 'event-card-text';
+      description.textContent = event.shortDescription;
+      body.append(description);
+    }
+
+    const link = document.createElement('span');
+    link.className = 'event-card-link';
+    link.append(document.createTextNode('Click to learn more '));
+    const arrow = document.createElement('i');
+    arrow.className = 'bi bi-arrow-right';
+    arrow.setAttribute('aria-hidden', 'true');
+    link.append(arrow);
+    body.append(link);
+
+    card.append(image, body);
+    column.append(card);
+    return column;
+  }
+
+  function renderEventFilters() {
+    const host = document.getElementById('event-filters');
+    if (!host) return;
+    host.replaceChildren();
+    if (!eventsData.length) return;
+    const extras = [...new Set(eventsData.map((event) => event.category))]
+      .filter((category) => !eventCategoryOrder.includes(category));
+    const values = [
+      ['all', 'All'],
+      ...eventCategoryOrder
+        .filter((category) => eventsData.some((event) => event.category === category))
+        .concat(extras)
+        .map((category) => [category, eventCategoryLabel(category)]),
+    ];
+    values.forEach(([value, label], index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'filter-btn' + (index === 0 ? ' active' : '');
+      button.dataset.eventFilter = value;
+      button.setAttribute('aria-pressed', String(index === 0));
+      button.textContent = label;
+      host.append(button);
+    });
+  }
+
+  function renderEvents(filter = 'all') {
+    const grid = document.getElementById('events-grid');
+    if (!grid) return;
+    const emptyAll = document.getElementById('events-empty');
+    const emptyCategory = document.getElementById('events-empty-category');
+    const status = document.getElementById('event-filter-status');
+    const hasEvents = eventsData.length > 0;
+    const visible = eventsData.filter((event) => filter === 'all' || event.category === filter);
+    grid.replaceChildren();
+    visible.forEach((event) => grid.append(buildEventCard(event)));
+    grid.hidden = visible.length === 0;
+    if (emptyAll) emptyAll.hidden = hasEvents;
+    if (emptyCategory) emptyCategory.hidden = !hasEvents || visible.length > 0;
+    if (status) {
+      status.textContent = hasEvents
+        ? `${visible.length} ${visible.length === 1 ? 'event' : 'events'} shown: ${filter === 'all' ? 'All' : eventCategoryLabel(filter)}.`
+        : 'Event information is currently being prepared.';
+    }
+    revealOnScroll(
+      [...grid.querySelectorAll('.event-column')],
+      [...grid.querySelectorAll('[data-event]')],
+    );
+  }
+
+  function setEventFilter(filter) {
+    const active = typeof filter === 'string' && filter ? filter : 'all';
+    document.querySelectorAll('[data-event-filter]').forEach((button) => {
+      const selected = button.dataset.eventFilter === active;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+    renderEvents(active);
+  }
+
+  function openEventDetails(eventId, trigger) {
+    const modal = document.getElementById('eventDetailsModal');
+    if (!modal || !window.bootstrap?.Modal || !findEventById(eventId)) return;
+    const relatedTarget = trigger?.dataset?.event === eventId
+      ? trigger
+      : document.querySelector(`[data-event="${eventId}"]`);
+    if (!relatedTarget) return;
+    window.bootstrap.Modal.getOrCreateInstance(modal).show(relatedTarget);
+  }
+
+  function initEventDetailsModal() {
+    const modal = document.getElementById('eventDetailsModal');
+    if (!modal || !window.bootstrap?.Modal) return;
+    modal.addEventListener('show.bs.modal', (event) => {
+      const details = findEventById(event.relatedTarget?.dataset?.event);
+      if (!details) { event.preventDefault(); return; }
+      modal.querySelector('#event-details-title').textContent = details.name;
+      const image = modal.querySelector('#event-details-image');
+      image.src = details.image || 'placeholder.svg';
+      image.alt = details.name;
+      modal.querySelector('#event-details-category').textContent = eventCategoryLabel(details.category);
+      modal.querySelector('#event-details-status').textContent = getEventStatus(details);
+
+      const description = modal.querySelector('#event-details-description');
+      description.textContent = details.fullDescription || details.shortDescription || '';
+      description.hidden = !description.textContent;
+
+      const dateText = formatEventDate(details);
+      const dateLabel = modal.querySelector('#event-details-date-label');
+      const dateValue = modal.querySelector('#event-details-date');
+      dateLabel.hidden = !dateText;
+      dateValue.hidden = !dateText;
+      dateValue.textContent = dateText;
+
+      const scheduleLabel = modal.querySelector('#event-details-schedule-label');
+      const scheduleValue = modal.querySelector('#event-details-schedule');
+      const needsSchedule = !dateText;
+      scheduleLabel.hidden = !needsSchedule;
+      scheduleValue.hidden = !needsSchedule;
+      scheduleValue.textContent = needsSchedule ? EVENT_SCHEDULE_UNAVAILABLE : '';
+
+      modal.querySelector('#event-details-location-label').hidden = false;
+      const locationValue = modal.querySelector('#event-details-location');
+      locationValue.hidden = false;
+      locationValue.textContent = details.location || EVENT_LOCATION_FALLBACK;
+
+      const addButton = modal.querySelector('#event-add-itinerary');
+      const note = modal.querySelector('#event-itinerary-note');
+      const eligible = details.itineraryEligible !== false;
+      addButton.hidden = !eligible;
+      note.hidden = !eligible;
+      note.classList.toggle('d-block', eligible);
+      addButton.dataset.refId = details.id;
+    });
+  }
+
+  function initEvents() {
+    if (!document.getElementById('events')) return;
+    renderEventFilters();
+    renderEvents('all');
+    initEventDetailsModal();
+    // Delegated so filters keep working after any re-render of the buttons.
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest?.('[data-event-filter]');
+      if (!button) return;
+      setEventFilter(button.dataset.eventFilter);
     });
   }
 
@@ -867,7 +1190,7 @@
   // vessel, fare, or budget calculations.
   const itineraryKey = 'perezItineraryV1';
   const itineraryPeriods = { any: 'Any Time', morning: 'Morning', afternoon: 'Afternoon', evening: 'Evening' };
-  const itineraryTypes = { destination: 'Destination', experience: 'Experience', custom: 'Custom' };
+  const itineraryTypes = { destination: 'Destination', experience: 'Experience', event: 'Event', custom: 'Custom' };
   const itineraryLimits = { title: 60, dayNotes: 600, name: 80, note: 300 };
   let itineraryState = { days: {} };
   let activeItineraryDay = 1;
@@ -907,11 +1230,16 @@
     if (item.type === 'custom') return item.name;
     if (item.type === 'destination') return destinationName(item.refId);
     if (item.type === 'experience') return experienceName(item.refId);
+    if (item.type === 'event') return eventName(item.refId);
     return '';
   }
+  // An event whose id is missing from eventsData still renders, with an
+  // explicit fallback name, instead of disappearing from the trip plan.
+  const itemDisplayName = (item) => itemSourceName(item) || (item?.type === 'event' ? 'Event information unavailable' : '');
   function validItineraryRef(type, refId) {
     if (type === 'destination') return Boolean(destinationDetails[refId]);
     if (type === 'experience') return experiences.some((e) => e.id === refId);
+    if (type === 'event') return Boolean(findEventById(refId));
     return false;
   }
   function sameSource(item, target) {
@@ -928,6 +1256,12 @@
     if (type === 'custom') {
       const name = clampText(raw.name, itineraryLimits.name).trim();
       return name ? { id, type, name, period, note } : null;
+    }
+    if (type === 'event') {
+      // Event items survive even when eventsData no longer lists the id, so
+      // an existing trip plan is never silently rewritten at load.
+      if (typeof raw.refId !== 'string' || !raw.refId.trim()) return null;
+      return { id, type, refId: raw.refId.slice(0, 64), period, note };
     }
     if (typeof raw.refId !== 'string' || !validItineraryRef(type, raw.refId)) return null;
     return { id, type, refId: raw.refId, period, note };
@@ -1196,11 +1530,11 @@
     box.append(
       icon,
       itineraryNode('p', `Nothing planned for Day ${dayNumber} yet.`, 'itinerary-empty-title'),
-      itineraryNode('p', 'Explore destinations and experiences, then add them to this day.'),
+      itineraryNode('p', 'Explore destinations, experiences, and events, then add them to this day.'),
     );
     const actions = document.createElement('div');
     actions.className = 'itinerary-empty-actions';
-    [['Browse Destinations', '#destinations'], ['Browse Experiences', '#experiences']].forEach(([label, href]) => {
+    [['Browse Destinations', '#destinations'], ['Browse Experiences', '#experiences'], ['Browse Events', '#events']].forEach(([label, href]) => {
       const link = document.createElement('a');
       link.href = href;
       link.className = 'btn btn-sm btn-outline-secondary';
@@ -1236,15 +1570,15 @@
     main.className = 'itinerary-item-main';
     const top = document.createElement('div');
     top.className = 'itinerary-item-top';
+    const name = itemDisplayName(item);
     top.append(
       itineraryNode('span', itineraryTypes[item.type], 'itinerary-item-type'),
-      itineraryNode('strong', itemSourceName(item), 'itinerary-item-name'),
+      itineraryNode('strong', name, 'itinerary-item-name'),
       itineraryNode('span', itineraryPeriods[item.period], 'badge itinerary-period'),
     );
     main.append(top);
     if (item.note) main.append(itineraryNode('p', item.note, 'itinerary-item-note'));
 
-    const name = itemSourceName(item);
     const controls = document.createElement('div');
     controls.className = 'itinerary-item-controls';
     controls.append(
@@ -1254,6 +1588,11 @@
       itineraryItemButton('edit', 'pencil', 'Edit', { text: 'Edit' }),
       itineraryItemButton('remove', 'trash', 'Remove', { text: 'Remove' }),
     );
+    if (item.type === 'event' && findEventById(item.refId)) {
+      const view = itineraryItemButton('view-event', 'calendar-event', 'View Event', { text: 'View Event' });
+      view.dataset.event = item.refId;
+      controls.append(view);
+    }
     card.append(main, controls);
     return card;
   }
@@ -1399,11 +1738,16 @@
 
   function openAddToItinerary(target) {
     itineraryUI.addTarget = target;
-    const name = target.type === 'destination' ? destinationName(target.refId) : experienceName(target.refId);
-    itineraryEl('add-itinerary-item-name').textContent = name;
+    itineraryEl('add-itinerary-item-name').textContent = itemDisplayName(target);
     fillDaySelect(itineraryEl('add-itinerary-day'), activeItineraryDay);
     itineraryEl('add-itinerary-period').value = 'any';
     itineraryEl('add-itinerary-note').value = '';
+    const warning = itineraryEl('add-itinerary-date-warning');
+    if (warning) {
+      const message = target.type === 'event' ? eventDateWarning(target.refId) : '';
+      warning.textContent = message;
+      warning.hidden = !message;
+    }
     showModal('add-itinerary-modal');
   }
   function confirmAddToItinerary() {
@@ -1469,14 +1813,14 @@
     saveItinerary();
     renderActiveDay();
     renderItinerarySummary();
-    announceItinerary(`${itemSourceName(day.items[next])} moved to position ${next + 1} of Day ${activeItineraryDay}`);
+    announceItinerary(`${itemDisplayName(day.items[next])} moved to position ${next + 1} of Day ${activeItineraryDay}`);
   }
 
   function openMoveModal(id) {
     const item = findItineraryItem(id);
     if (!item) return;
     itineraryUI.moving = { id, day: activeItineraryDay };
-    itineraryEl('move-activity-question').textContent = `Move "${itemSourceName(item)}" to:`;
+    itineraryEl('move-activity-question').textContent = `Move "${itemDisplayName(item)}" to:`;
     fillDaySelect(itineraryEl('move-activity-day'), activeItineraryDay);
     showModal('move-activity-modal');
   }
@@ -1505,7 +1849,7 @@
     const custom = item.type === 'custom';
     itineraryEl('edit-activity-name-field').hidden = !custom;
     itineraryEl('edit-activity-name').hidden = custom;
-    itineraryEl('edit-activity-name').textContent = itemSourceName(item);
+    itineraryEl('edit-activity-name').textContent = itemDisplayName(item);
     itineraryEl('edit-activity-custom-name').value = custom ? item.name : '';
     itineraryEl('edit-activity-custom-name').classList.remove('is-invalid');
     itineraryEl('edit-activity-period').value = item.period;
@@ -1544,7 +1888,7 @@
     if (!item) return;
     itineraryUI.removing = { id, day: activeItineraryDay };
     itineraryEl('remove-activity-question').textContent =
-      `Remove "${itemSourceName(item)}" from Day ${activeItineraryDay}?`;
+      `Remove "${itemDisplayName(item)}" from Day ${activeItineraryDay}?`;
     showModal('remove-activity-modal');
   }
   function confirmRemove() {
@@ -1559,7 +1903,7 @@
     saveItinerary();
     renderActiveDay();
     renderItinerarySummary();
-    showItineraryToast(`Removed "${itemSourceName(removed)}" from Day ${pending.day}`);
+    showItineraryToast(`Removed "${itemDisplayName(removed)}" from Day ${pending.day}`);
   }
 
   function clearItinerary() {
@@ -1585,10 +1929,12 @@
       let refId = trigger.dataset.refId || null;
       if (type === 'experience' && !refId) refId = itineraryUI.experienceId;
       if (!validItineraryRef(type, refId)) return;
-      const experienceModal = itineraryEl('experience-modal');
-      if (experienceModal?.classList.contains('show') && window.bootstrap?.Modal) {
-        const instance = window.bootstrap.Modal.getOrCreateInstance(experienceModal);
-        experienceModal.addEventListener('hidden.bs.modal', () => openAddToItinerary({ type, refId }), { once: true });
+      // Close whichever source modal is open (experience or event) before the
+      // shared Add to Your Trip modal appears.
+      const openModal = trigger.closest('.modal.show');
+      if (openModal && window.bootstrap?.Modal) {
+        const instance = window.bootstrap.Modal.getOrCreateInstance(openModal);
+        openModal.addEventListener('hidden.bs.modal', () => openAddToItinerary({ type, refId }), { once: true });
         instance.hide();
         return;
       }
@@ -1624,6 +1970,10 @@
       else if (action === 'move') openMoveModal(itemId);
       else if (action === 'edit') openEditModal(itemId);
       else if (action === 'remove') openRemoveModal(itemId);
+      else if (action === 'view-event') {
+        const item = findItineraryItem(itemId);
+        if (item?.type === 'event') openEventDetails(item.refId, control);
+      }
     });
 
     itineraryEl('add-itinerary-confirm')?.addEventListener('click', confirmAddToItinerary);
@@ -1662,6 +2012,7 @@
     initPerezMap();
     initExperienceCards();
     initExperienceModal();
+    initEvents();
     initExperienceReveal();
     initTravelInfoCards();
     initTripPlanner();

@@ -973,130 +973,6 @@ img {
   .planner-route li:not(:last-child)::after { content: "↓"; left: -8px; right: auto; top: auto; bottom: -24px; }
 }
 
-.feature-event {
-  position: relative;
-  min-height: 260px;
-  overflow: hidden;
-  border-radius: 4px;
-  background: #8f969f;
-}
-
-.feature-event img {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.feature-event::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  background: linear-gradient(
-    90deg,
-    rgba(5, 13, 21, 0.78),
-    rgba(5, 13, 21, 0.2)
-  );
-}
-
-.feature-event-content {
-  position: absolute;
-  z-index: 2;
-  bottom: 25px;
-  left: 25px;
-  max-width: 380px;
-  color: #fff;
-}
-
-.event-badge {
-  margin-bottom: 8px;
-  padding: 5px 10px;
-  display: inline-block;
-  color: #1d2733;
-  background: var(--gold);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.feature-event h3 {
-  margin-bottom: 8px;
-  font-size: 1.55rem;
-}
-
-.feature-event p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-/* ========================================
-   EVENTS LIST
-======================================== */
-
-.events-title {
-  margin-bottom: 15px;
-  font-size: 1.375rem;
-}
-
-.event-row {
-  min-height: 70px;
-  padding: 10px 16px;
-
-  display: flex;
-  align-items: center;
-
-  border-bottom: 1px solid #edf0f2;
-  background: #fff;
-}
-
-.event-row:last-child {
-  border-bottom: 0;
-}
-
-.event-date {
-  width: 58px;
-  flex-shrink: 0;
-  text-align: center;
-}
-
-.event-date .month {
-  display: block;
-  color: var(--gold);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.event-date .day {
-  display: block;
-  font-family: "Playfair Display", serif;
-  font-size: 1.0625rem;
-  font-weight: 600;
-}
-
-.event-info {
-  flex-grow: 1;
-  padding-left: 10px;
-  border-left: 1px solid #edf0f2;
-}
-
-.event-info strong {
-  display: block;
-  font-family: "Playfair Display", serif;
-  font-size: 1rem;
-}
-
-.event-info small {
-  color: #9299a2;
-  font-size: 0.875rem;
-}
-
-.event-arrow {
-  color: #9ca3ac;
-  font-size: 0.875rem;
-}
-
 /* ========================================
    GALLERY
 ======================================== */
@@ -1677,4 +1553,226 @@ footer {
   .itinerary-item { padding: 12px; }
   .itinerary-item-controls { width: 100%; }
   .itinerary-item-controls .btn { flex: 1 1 auto; justify-content: center; }
+}
+
+
+/* ========================================
+   PHASE 5 - EVENTS IN PEREZ
+======================================== */
+
+.events-section {
+  background: var(--page-bg);
+}
+
+.events-section .section-title + p {
+  max-width: 560px;
+  color: var(--muted);
+}
+
+#event-filters {
+  justify-content: flex-end;
+}
+
+.event-column {
+  min-width: 0;
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.event-card:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.event-card-image {
+  width: 100%;
+  height: 170px;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: #e9ecef;
+}
+
+.event-card-body {
+  display: block;
+  flex-grow: 1;
+  padding: 18px;
+}
+
+.event-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.event-card-category,
+.event-card-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.event-card-category {
+  color: #1d2733;
+  background: var(--gold);
+}
+
+.event-card-status {
+  color: var(--navy);
+  background: #eef2f7;
+}
+
+.event-card-title {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-family: "Playfair Display", serif;
+  font-size: 1.1875rem;
+  font-weight: 600;
+}
+
+.event-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.event-card-meta i {
+  color: var(--gold);
+}
+
+.event-card-text {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.event-card-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+  color: #a17a1d;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.events-empty {
+  margin-top: 20px;
+  padding: 28px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: #fdfdfb;
+  color: var(--muted);
+  text-align: center;
+}
+
+.events-empty p {
+  margin: 0 0 6px;
+}
+
+.events-empty p:last-child {
+  margin-bottom: 0;
+}
+
+.events-empty-title {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.event-modal-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #e9ecef;
+}
+
+.event-details-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.event-details-chip {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 3px;
+  color: #1d2733;
+  background: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#event-details-status {
+  color: var(--navy);
+  background: #eef2f7;
+}
+
+.itinerary-date-warning {
+  padding: 10px 12px;
+  border-left: 3px solid var(--gold);
+  background: #fff7e2;
+  color: #7a5a10;
+  line-height: 1.5;
+}
+
+@media (max-width: 767.98px) {
+  .event-card-image {
+    height: 200px;
+  }
+
+  .events-section .section-title + p {
+    max-width: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .event-card-body {
+    padding: 16px;
+  }
+
+  #eventDetailsModal .modal-body {
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event-card {
+    transition: none;
+  }
+
+  .event-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
 }

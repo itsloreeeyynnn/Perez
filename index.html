@@ -955,72 +955,55 @@
               </div>
             </div>
 
-            <!-- Events -->
+          </div>
+        </section>
 
-            <div class="row g-4 align-items-stretch">
-              <div class="col-lg-6">
-                <div class="feature-event">
-                  <img src="placeholder.svg" alt="Kayakas Festival" />
+        <!-- =========================================================
+     EVENTS IN PEREZ
+========================================================= -->
 
-                  <div class="feature-event-content">
-                    <span class="event-badge"> JUNE 15–20 </span>
+        <section class="section-padding events-section" id="events">
+          <div class="container">
+            <div class="row destination-header align-items-end">
+              <div class="col-lg-7">
+                <h2 class="section-title">EVENTS IN PEREZ</h2>
 
-                    <h3>Kayakas Festival</h3>
-
-                    <p>
-                      A thanksgiving celebration of the bountiful coconut
-                      harvest and the marine livelihood of Perez, featuring
-                      energetic street dances, boats, and local crafts.
-                    </p>
-                  </div>
-                </div>
+                <p class="mt-3 mb-0">
+                  Discover celebrations, traditions, and community activities
+                  in Perez.
+                </p>
               </div>
 
-              <div class="col-lg-6" id="events">
-                <h3 class="events-title">Upcoming Local Events</h3>
-
-                <div class="event-row">
-                  <div class="event-date">
-                    <span class="month">May</span>
-                    <span class="day">15</span>
-                  </div>
-
-                  <div class="event-info">
-                    <strong>Fisherman's Feast Day</strong>
-                    <small>Coastal San Jose Barangay</small>
-                  </div>
-
-                  <i class="bi bi-chevron-right event-arrow"></i>
-                </div>
-
-                <div class="event-row">
-                  <div class="event-date">
-                    <span class="month">June</span>
-                    <span class="day">04</span>
-                  </div>
-
-                  <div class="event-info">
-                    <strong>Coconut Agri-Trade Fair</strong>
-                    <small>Municipal Complex</small>
-                  </div>
-
-                  <i class="bi bi-chevron-right event-arrow"></i>
-                </div>
-
-                <div class="event-row">
-                  <div class="event-date">
-                    <span class="month">June</span>
-                    <span class="day">18</span>
-                  </div>
-
-                  <div class="event-info">
-                    <strong>Perez Flotilla Parade</strong>
-                    <small>Sande Bay Sanctuaries</small>
-                  </div>
-
-                  <i class="bi bi-chevron-right event-arrow"></i>
-                </div>
+              <div class="col-lg-5">
+                <div
+                  class="filter-tabs"
+                  id="event-filters"
+                  role="group"
+                  aria-label="Filter events"
+                ></div>
               </div>
+            </div>
+
+            <p
+              id="event-filter-status"
+              class="visually-hidden"
+              role="status"
+              aria-live="polite"
+            ></p>
+
+            <div class="row g-4" id="events-grid"></div>
+
+            <div class="events-empty" id="events-empty-category" hidden>
+              <p>No events are currently listed in this category.</p>
+            </div>
+
+            <div class="events-empty" id="events-empty" hidden>
+              <p class="events-empty-title">
+                Event information is currently being prepared.
+              </p>
+              <p class="mb-0">
+                Check back for local celebrations and community activities.
+              </p>
             </div>
           </div>
         </section>
@@ -1388,6 +1371,84 @@
       </div>
     </div>
 
+    <!-- One reusable event details modal, outside the main scroll container. -->
+    <div
+      class="modal fade"
+      id="eventDetailsModal"
+      tabindex="-1"
+      aria-labelledby="event-details-title"
+      aria-describedby="event-details-description"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <div class="section-label">Event Details</div>
+              <h2 class="modal-title fs-4" id="event-details-title">
+                Events in Perez
+              </h2>
+            </div>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close event details"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <img
+              id="event-details-image"
+              class="img-fluid rounded event-modal-image mb-3"
+              src="placeholder.svg"
+              alt=""
+            />
+            <div class="event-details-badges mb-2">
+              <span class="event-details-chip" id="event-details-category"></span>
+              <span class="event-details-chip" id="event-details-status"></span>
+            </div>
+            <p id="event-details-description"></p>
+            <dl class="experience-facts event-facts">
+              <dt id="event-details-date-label" hidden>Date</dt>
+              <dd id="event-details-date" hidden></dd>
+              <dt id="event-details-schedule-label" hidden>Schedule</dt>
+              <dd id="event-details-schedule" hidden></dd>
+              <dt id="event-details-location-label" hidden>Location</dt>
+              <dd id="event-details-location" hidden></dd>
+            </dl>
+            <p class="small text-secondary mb-0">
+              Event details repeat the information listed on this site.
+              Confirm dates and arrangements locally before planning.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <div class="me-auto">
+              <button
+                type="button"
+                class="btn btn-gold"
+                id="event-add-itinerary"
+                data-itinerary-add="event"
+                aria-describedby="event-itinerary-note"
+              >
+                Add to Itinerary</button
+              ><small
+                class="d-block text-secondary mt-1"
+                id="event-itinerary-note"
+                >Adds this event to a day in your trip plan.</small
+              >
+            </div>
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ==================== Itinerary builder modals ==================== -->
 
     <!-- Add a destination or experience to a day -->
@@ -1440,6 +1501,11 @@
                 placeholder="Add a note..."
               />
             </div>
+            <p
+              class="small itinerary-date-warning mt-3 mb-0"
+              id="add-itinerary-date-warning"
+              hidden
+            ></p>
           </div>
           <div class="modal-footer">
             <button
